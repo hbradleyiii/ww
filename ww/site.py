@@ -54,7 +54,7 @@ class Site(object):
 
         print '[*] SSL not yet implemented in Site class.'
 
-        self.domain = WW_Domain(domain)
+        self.domain = Site_Domain(domain)
         self.dirs = {}
         self.files = {}
 
