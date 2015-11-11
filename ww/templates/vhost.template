@@ -1,0 +1,90 @@
+#   -------------------------
+#      #WEBSITE#
+#   -------------------------
+<VirtualHost *:80>
+
+    ServerName #WEBSITE#
+    ServerAdmin #EMAIL#
+    
+    DocumentRoot "/var/www/#WEBSITE#/htdocs"
+
+    DirectoryIndex index.php index.html
+    
+    # gzip
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+
+    <files *.html>
+    SetOutputFilter DEFLATE
+    </files>
+
+    <files *.php>
+    SetOutputFilter DEFLATE
+    </files>
+
+    # expires headers
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+    ExpiresByType text/html "now plus 1 hour"
+    ExpiresByType text/xml "access plus 0 seconds"
+    ExpiresByType text/css "now plus 20 days"
+    ExpiresByType application/javascript "now plus 20 days"
+    ExpiresByType text/javascript "now plus 20 days"
+    ExpiresByType application/xml "access plus 0 seconds"
+    ExpiresByType application/json "access plus 0 seconds"
+    ExpiresByType application/rss+xml "access plus 1 hour"
+    ExpiresByType image/x-icon "now plus 20 days"
+    ExpiresByType image/png "now plus 20 days"
+    ExpiresByType image/jpg "now plus 20 days"
+    ExpiresByType image/jpeg "now plus 20 days"
+    ExpiresByType image/gif "now plus 20 days"
+    ExpiresByType application/javascript "now plus 7 days"
+    ExpiresByType application/x-javascript "now plus 7 days"
+    ExpiresByType text/javascript "now plus 7 days"
+    ExpiresByType text/css "now plus 7 days"
+    ExpiresByType text/plain "now plus 7 days"
+    ExpiresByType video/ogg "now plus 20 days"
+    ExpiresByType audio/ogg "now plus 20 days"
+    ExpiresByType video/mp4 "now plus 20 days"
+    ExpiresByType font/truetype "now plus 20 days"
+    ExpiresByType font/opentype "now plus 20 days"
+    ExpiresByType application/x-font-woff "now plus 20 days"
+    ExpiresByType image/svg+xml "now plus 20 days"
+    ExpiresByType application/vnd.ms-fontobject "now plus 20 days"
+
+    # Yahoo says do this, so whatever... (on one server it shouldn't matter)
+    FileETag none
+    
+  <Directory "#HTDOCS#">
+      Options -Indexes -Includes -ExecCGI
+      AllowOverride All
+      Order allow,deny
+      Allow from all
+  </Directory>
+
+    # NOT logged in /var/log/apache2
+    CustomLog "#ACCESS_LOG#" combined
+    ErrorLog "#ERROR_LOG#"
+
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName www.#WEBSITE#
+    
+    # redirect to #WEBSITE#
+    RewriteEngine on
+    RewriteRule ^(.*)$ http://#WEBSITE#$1 [L,R=301]
+
+    # NOT logged in /var/log/apache2
+    CustomLog "#ACCESS_LOG#" combined
+    ErrorLog "#ERROR_LOG#"
+
+</VirtualHost>
+# ::MM_Site::
