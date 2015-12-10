@@ -1,0 +1,6 @@
+<Files *.php>
+  deny from all
+</Files>
+<Files *.css.php>
+  allow from all
+</Files>
