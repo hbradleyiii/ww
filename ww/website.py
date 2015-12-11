@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# name:             site.py
+# name:             website.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
 # date:             11/11/2015
@@ -18,7 +18,7 @@ import time
 
 
 # localhost(function)
-#   a python decorator that creates a temporary host entry before 
+#   a python decorator that creates a temporary host entry before
 #   the function is called and removes it after it is completed.
 def localhost(function):
     def function_wrapper(self, *args, **kwargs):
@@ -30,38 +30,38 @@ def localhost(function):
     return function_wrapper
 
 
-# Site(site)
+# Website(website)
 #   a class that describes a generic website with the following properties:
-#       domain              Site domain
-#       dirs['htdocs']      Site root directory
-#       dirs['assets']      Site assets directory
-#       dirs['logs']        Site log directory
+#       domain              Website domain
+#       dirs['htdocs']      Website root directory
+#       dirs['assets']      Website assets directory
+#       dirs['logs']        Website log directory
 #       files['vhost_conf'] Apache vhost config file.
-#       files['htaccess']   Site root htaccess file.
+#       files['htaccess']   Website root htaccess file.
 #   primary methods:
 #       install()
 #       uninstall()
 #       verify()
-class Site(object):
+class Website(object):
 
-    def __init__(self, domain, atts = { 'htdocs'     : None, 
-                                        'assets'     : None, 
-                                        'logs'       : None, 
-                                        'vhost_conf' : None, 
-                                        'htaccess'   : None, 
+    def __init__(self, domain, atts = { 'htdocs'     : None,
+                                        'assets'     : None,
+                                        'logs'       : None,
+                                        'vhost_conf' : None,
+                                        'htaccess'   : None,
                                        }):
-        """Initializes a new Site instance."""
+        """Initializes a new Website instance."""
 
-        print '[*] SSL not yet implemented in Site class.'
+        print '[*] SSL not yet implemented in Website class.'
 
-        self.domain = Site_Domain(domain)
+        self.domain = Website_Domain(domain)
         self.dirs = {}
         self.files = {}
 
-        self.files['vhost_conf'] = WW_Vhost({ 
+        self.files['vhost_conf'] = WW_Vhost({
             'path'  : '/etc/apache2/sites-available/' + self.domain + '.conf',
-            'perms' : 0644, 
-            'owner' : 'root', 
+            'perms' : 0644,
+            'owner' : 'root',
             'group' : 'root',
         } if not atts['vhost_conf'] else atts['vhost_conf'])
 
@@ -79,33 +79,33 @@ class Site(object):
 
 
         # Website htdocs directory
-        self.dirs['htdocs'] = WW_Dir({ 
+        self.dirs['htdocs'] = WW_Dir({
             'path'  : '/var/www/' + self.domain + '/htdocs/',
-            'perms' : 0775, 
-            'owner' : 'www-data', 
+            'perms' : 0775,
+            'owner' : 'www-data',
             'group' : 'www-data',
         } if not atts['htdocs'] else atts['htdocs'])
 
         # Website assets directory
-        self.dirs['assets'] = WW_Dir({ 
+        self.dirs['assets'] = WW_Dir({
             'path'  : '/var/www/' + self.domain + '/assets/',
-            'perms' : 0775, 
-            'owner' : 'root', 
+            'perms' : 0775,
+            'owner' : 'root',
             'group' : 'mm_admin', # TODO: Setup a user setting
         } if not atts['assets'] else atts['assets'])
 
-        # Site Log Directory
-        self.dirs['logs'] = WW_Dir({ 
+        # Website Log Directory
+        self.dirs['logs'] = WW_Dir({
             'path'  : '/var/www/' + self.domain + '/logs/',
-            'perms' : 0775, 
-            'owner' : 'root', 
+            'perms' : 0775,
+            'owner' : 'root',
             'group' : 'mm_admin',
         } if not atts['logs'] else atts['logs'])
 
         self.files['htaccess']  = WW_File({
             'path'  : self.dirs['htdocs'] + '.htaccess',
-            'perms' : 0664, 
-            'owner' : 'www-data', 
+            'perms' : 0664,
+            'owner' : 'www-data',
             'group' : 'www-data',
         } if not atts['htaccess'] else atts['htaccess'])
 
@@ -127,7 +127,7 @@ class Site(object):
     # Public Methods
 
     def install(self):
-        """Installs site to server"""
+        """Installs website to server"""
         # Check if domain is already installed
         if self.is_installed():
             print self.domain + ' is already installed.'
@@ -143,7 +143,7 @@ class Site(object):
         self.domain.set_ip()
 
     def uninstall(self):
-        """Removes site from server"""
+        """Removes website from server"""
         # Remove Files
         for file in self.files:
             file.remove()
@@ -155,7 +155,7 @@ class Site(object):
         self.domain.set_ip()
 
     def verify(self, repair = False):
-        """Verifies site's installation"""
+        """Verifies website's installation"""
         print self
 
         # Verify Domain
@@ -168,7 +168,7 @@ class Site(object):
         # Remove dirs
         for dir in self.dirs:
             result = result and dir.verify(repair)
-        #todo: check if site is enabled
+        #todo: check if website is enabled
         #todo: check if apache is started
         # Check for index.html or php
         return result

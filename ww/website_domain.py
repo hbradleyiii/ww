@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# name:             site_domain.py
+# name:             website_domain.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
 # created on:       11/03/2014
@@ -16,20 +16,20 @@ import requests
 import socket
 
 
-# Site_Domain(domain)
+# Website_Domain(domain)
 #   A class to describe and manage a domain name and corresponding ip address.
 #
 #   methods:
 #       verify()
 #       repair()
-class Site_Domain(Domain):
+class Website_Domain(Domain):
 
     def verify(self, repair = False):
         """Verifies that the domain is pointed at the server."""
         print 'Server IP: ' + self.server_ip
-        print 'Current site IP: ' + self.ip
+        print 'Current website IP: ' + self.ip
         if not self.server_ip == self.ip:
-            print '[!] Site IP is not the same as this server\'s ip'
+            print '[!] Website IP is not the same as this server\'s ip'
             print '[*] DNS API not yet implemented.'
             return False
         print 'Domain is correctly pointed at this server.'
