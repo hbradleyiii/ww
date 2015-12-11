@@ -34,7 +34,7 @@ class WP_Site(Site):
         super(WP_Site, self).__init__(domain)
 
         # Setup MySQL connection
-        self.mysql = MySQLdb.connect( 
+        self.mysql = MySQLdb.connect(
                 host   = mysql['host'],
                 user   = mysql['user'],
                 passwd = mysql['password']
@@ -119,8 +119,8 @@ class WP_Site(Site):
         # TODO: error handling
         os.system(
             'mysql ' +
-            '-u ' + self.mysql['user'] + 
-            ' -p' + self.mysql['password'] + ' ' + self.domain + 
+            '-u ' + self.mysql['user'] +
+            ' -p' + self.mysql['password'] + ' ' + self.domain +
             ' < ' + mysql_dump
             )
         print 'Import complete.'
@@ -158,7 +158,7 @@ class WP_Site(Site):
             tarball.close()
             print 'Extraction complete.'
         print 'Moving files to "' + self.htdocs + '"...'
-        move(WP_EXTRACTED + 'wordpress/', self.htdocs) 
+        move(WP_EXTRACTED + 'wordpress/', self.htdocs)
         rmtree(self.htdocs + 'wordpress') # Get rid of the 'wordpress' root directory
         os.system('chown -R www-data ' + self.htdocs)
         print 'Move complete.'

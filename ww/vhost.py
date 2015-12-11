@@ -9,6 +9,7 @@
 #
 #                   TODO: add SSL capabilities
 
+from ext_pylib.files import File
 import os
 import re
 import shutil
@@ -43,7 +44,7 @@ class Vhost(File):
         # ACTUALLY, remove this class. Create a replace() function in file
         # take the restart/apache stuff and move to site
         # hmmm... Im not convinced.
-    
+
     def create(self, atts):
         if self.exists():
             print self.name + ' already exists.'
