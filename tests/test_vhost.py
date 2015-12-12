@@ -16,20 +16,20 @@ init_args = [
     ({ 'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None, }, None),
 ]
 @pytest.mark.parametrize(("atts", "expected"), init_args)
-def test_create(atts, expected):
+def test_vhost_create(atts, expected):
     """Test initialize Vhost."""
     #vhost = Vhost(atts)
     #assert str(vhost) == expected
     pass
 
-def test_remove():
+def test_vhost_remove():
     """TODO:"""
     pass
 
-def test_verify():
+def test_vhost_verify():
     """TODO:"""
     pass
 
-def test_parse():
+def test_vhost_parse():
     """TODO:"""
     pass
