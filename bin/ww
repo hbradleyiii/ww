@@ -1,4 +1,8 @@
 #!/bin/bash
 
 BINPATH=`dirname $0`
-python "$BINPATH/../ww/main.py" $@
+if [[ -f "$BINPATH/../ww/main.py" ]] ; then # Try relative path
+    python "$BINPATH/../ww/main.py" $@
+else # Try a default location
+    python "/usr/local/lib/ww/ww/main.py" $@
+fi
