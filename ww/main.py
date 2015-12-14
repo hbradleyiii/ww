@@ -19,37 +19,9 @@ import sys
 from ww import Website, Website_Domain, Vhost, WP_Website
 
 
-## Exceptions ##
-class CommandNotFound(Exception): pass
-
-
-def new():
-    """Creates a new website."""
-    print 'Not yet implemented.'
-
-def remove():
-    """Removes an existing website."""
-    print 'Not yet implemented.'
-
-def pack():
-    """Packs a website."""
-    print 'Not yet implemented.'
-
-def unpack():
-    """Unpacks a previously packed website."""
-    print 'Not yet implemented.'
-
-def verify(repair = False):
-    """Verifies a website's installation."""
-    print 'Not yet implemented.'
-
-def repair():
-    """Repairs website."""
-    verify(True)
-
 def help():
     """Displays script help."""
-    print 'Not yet implemented.'
+    print 'Help not yet implemented.'
 
 def main():
     """Main entry point for the script."""
@@ -68,28 +40,23 @@ def main():
         help() # If no argmuments are given, run help
         return
 
+    if command not in ['install', 'uninstall', 'pack', 'unpack', 'verify', 'repair']:
+        print 'ERROR: Command "' + command + '" not understood.'
+        return 1
+
+    wp = False
+    if sys.argv and sys.argv[0] == 'wp':
+        sys.argv.pop(0)
+        wp = True
+
     domain = ''
     if sys.argv:
         domain = sys.argv.pop(0)
 
-    website = Website(domain)
+    website = WP_Website(domain) if wp else Website(domain)
 
-    try:
-        execute[command](website)
-    except KeyError:
-        raise CommandNotFound('ERROR: Command "' + command + '" not understood')
+    getattr(website, command)()
 
-
-# Command line arguments (MUST be declared after modules are defined)
-execute = {
-    'new'    : new,
-    'remove' : remove,
-    'pack'   : pack,
-    'unpack' : unpack,
-    'verify' : verify,
-    'repair' : repair,
-    'help'   : help,
-}
 
 if __name__ == '__main__':
     sys.exit(main())
