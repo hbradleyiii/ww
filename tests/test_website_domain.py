@@ -11,11 +11,5 @@
 from ww import Website_Domain
 import pytest
 
-
-def test_website_domain_verify():
-    """TODO:"""
-    pass
-
-def test_website_domain_repair():
-    """TODO:"""
-    pass
+# This is just a stub for now. There isn't much that can be unit tested in
+# this class.
