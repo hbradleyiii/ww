@@ -66,7 +66,7 @@ class Website(object):
             'perms' : 0644,
             'owner' : 'root',
             'group' : 'root',
-        } if not atts['vhost_conf'] else atts['vhost_conf'])
+        } if 'vhost_conf' not in atts or not atts['vhost_conf'] else atts['vhost_conf'])
 
         # If an apache vhost config already exists, try to parse it
         if self.files['vhost_conf'].exists():
@@ -87,7 +87,7 @@ class Website(object):
             'perms' : 0775,
             'owner' : 'www-data',
             'group' : 'www-data',
-        } if not atts['htdocs'] else atts['htdocs'])
+        } if 'htdocs' not in atts or not atts['htdocs'] else atts['htdocs'])
 
         # Website assets directory
         self.dirs['assets'] = Dir({
@@ -95,7 +95,7 @@ class Website(object):
             'perms' : 0775,
             'owner' : 'root',
             'group' : 'mm_admin', # TODO: Setup a user setting
-        } if not atts['assets'] else atts['assets'])
+        } if 'assets' not in atts or not atts['assets'] else atts['assets'])
 
         # Website Log Directory
         self.dirs['logs'] = Dir({
@@ -103,14 +103,14 @@ class Website(object):
             'perms' : 0775,
             'owner' : 'root',
             'group' : 'mm_admin',
-        } if not atts['logs'] else atts['logs'])
+        } if 'logs' not in atts or not atts['logs'] else atts['logs'])
 
         self.files['htaccess']  = File({
             'path'  : self.dirs['htdocs'] + '.htaccess',
             'perms' : 0664,
             'owner' : 'www-data',
             'group' : 'www-data',
-        } if not atts['htaccess'] else atts['htaccess'])
+        } if 'htaccess' not in atts or not atts['htaccess'] else atts['htaccess'])
 
 
     def __str__(self):
