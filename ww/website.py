@@ -9,6 +9,7 @@
 #
 
 
+from ext_pylib.files import Dir, File
 from ext_pylib.prompt import prompt, prompt_str, warn_prompt
 import os
 import re
@@ -60,7 +61,7 @@ class Website(object):
         self.dirs = {}
         self.files = {}
 
-        self.files['vhost_conf'] = WW_Vhost({
+        self.files['vhost_conf'] = Vhost({
             'path'  : '/etc/apache2/sites-available/' + self.domain + '.conf',
             'perms' : 0644,
             'owner' : 'root',
@@ -81,7 +82,7 @@ class Website(object):
 
 
         # Website htdocs directory
-        self.dirs['htdocs'] = WW_Dir({
+        self.dirs['htdocs'] = Dir({
             'path'  : '/var/www/' + self.domain + '/htdocs/',
             'perms' : 0775,
             'owner' : 'www-data',
@@ -89,7 +90,7 @@ class Website(object):
         } if not atts['htdocs'] else atts['htdocs'])
 
         # Website assets directory
-        self.dirs['assets'] = WW_Dir({
+        self.dirs['assets'] = Dir({
             'path'  : '/var/www/' + self.domain + '/assets/',
             'perms' : 0775,
             'owner' : 'root',
@@ -97,14 +98,14 @@ class Website(object):
         } if not atts['assets'] else atts['assets'])
 
         # Website Log Directory
-        self.dirs['logs'] = WW_Dir({
+        self.dirs['logs'] = Dir({
             'path'  : '/var/www/' + self.domain + '/logs/',
             'perms' : 0775,
             'owner' : 'root',
             'group' : 'mm_admin',
         } if not atts['logs'] else atts['logs'])
 
-        self.files['htaccess']  = WW_File({
+        self.files['htaccess']  = File({
             'path'  : self.dirs['htdocs'] + '.htaccess',
             'perms' : 0664,
             'owner' : 'www-data',
