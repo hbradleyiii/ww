@@ -15,6 +15,8 @@ import re
 import requests
 import tarfile
 import time
+from vhost import Vhost
+from website_domain import Website_Domain
 
 
 # localhost(function)
