@@ -123,7 +123,16 @@ class Website(object):
         return string
 
     def __repr__(self):
-        return self.__str__()
+        """Returns a python string that evaluates to the object instance."""
+        return "%s('%s', {'htdocs' : %s, 'assets' : %s, 'logs' : %s, 'htaccess' : %s, 'vhost_conf' : %s})" % (
+            self.__class__.__name__,
+            self.domain,
+            self.dirs['htdocs']._atts_(),
+            self.dirs['assets']._atts_(),
+            self.dirs['logs']._atts_(),
+            self.files['htaccess']._atts_(),
+            self.files['vhost_conf']._atts_()
+            )
 
 
     ################
