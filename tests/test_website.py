@@ -9,8 +9,25 @@
 #
 
 from ww import Website
+from ww.ww.website import merge_atts
 import pytest
 
+
+merge_atts_args = [
+    ({ 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' },
+     { 'htdocs' : { 'path' : '/new/path' } },
+     { 'htdocs' : { 'path' : '/new/path', 'perms' : 0700 }, 'other' : 'default_value' }),
+    ({ 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' },
+     { },
+     { 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' }),
+    ({ },
+     { 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' },
+     { 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' }),
+]
+@pytest.mark.parametrize(("atts", "new_atts", "expected"), merge_atts_args)
+def test_merge_atts(atts, new_atts, expected):
+    """Tests merge_atts function."""
+    assert merge_atts(atts, new_atts) == expected
 
 init_args = [
     ({ 'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None, }, None),

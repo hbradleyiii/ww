@@ -32,6 +32,18 @@ def localhost(function):
         os.system("sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts")
     return function_wrapper
 
+# merge_atts(atts, new_atts)
+#   Merges two dictionaries with the second overwriting the corresponding
+#   values of the first and returns the result.
+def merge_atts(atts, new_atts):
+    for k, v in new_atts.iteritems():
+        if (k in atts and isinstance(atts[k], dict)
+                and isinstance(new_atts[k], dict)):
+            atts[k] = merge_atts(atts[k], new_atts[k])
+        else:
+            atts[k] = new_atts[k]
+    return atts
+
 
 # Website(website)
 #   a class that describes a generic website with the following properties:
@@ -61,56 +73,64 @@ class Website(object):
         self.dirs = {}
         self.files = {}
 
-        self.files['vhost_conf'] = Vhost({
-            'path'  : '/etc/apache2/sites-available/' + self.domain + '.conf',
-            'perms' : 0644,
-            'owner' : 'root',
-            'group' : 'root',
-        } if 'vhost_conf' not in atts or not atts['vhost_conf'] else atts['vhost_conf'])
+        default_atts = {
+                'root' : {
+                    'path'  : '/var/www/' + self.domain,
+                    'perms' : 0775,
+                    'owner' : 'www-data',
+                    'group' : 'www-data',
+                },
+                'htdocs' : {
+                    'path'  : '/var/www/' + self.domain + '/htdocs/',
+                    'perms' : 0775,
+                    'owner' : 'www-data',
+                    'group' : 'www-data',
+                },
+                'assets' : {
+                    'path'  : '/var/www/' + self.domain + '/assets/',
+                    'perms' : 0775,
+                    'owner' : 'root',
+                    'group' : 'mm_admin', # TODO: Setup a user setting
+                },
+                'logs' : {
+                    'path'  : '/var/www/' + self.domain + '/logs/',
+                    'perms' : 0775,
+                    'owner' : 'root',
+                    'group' : 'mm_admin',
+                },
+                'vhost_conf' : {
+                    'path'  : '/etc/apache2/sites-available/' + self.domain + '.conf',
+                    'perms' : 0644,
+                    'owner' : 'root',
+                    'group' : 'root',
+                },
+                'htaccess' : {
+                    'perms' : 0664,
+                    'owner' : 'www-data',
+                    'group' : 'www-data',
+                },
+            }
+
+        atts = merge_atts(default_atts, atts)
+
+        self.files['vhost_conf'] = Vhost(atts['vhost_conf'])
 
         # If an apache vhost config already exists, try to parse it
         if self.files['vhost_conf'].exists():
             print self.files['vhost_conf'] + ' already exists. Parsing file...'
-            parsed_atts = self.files['vhost_conf'].parse()
-            if parsed_atts:
-                print 'Using parsed data.'
-                atts = parsed_atts
-
+            if prompt('Parse existing vhost configuration?'):
+                atts = merge_atts(atts, self.files['vhost_conf'].parse())
         # Convert...
         # or migrate?
 
+        self.root = Dir(atts['root'])
+        self.dirs['htdocs'] = Dir(atts['htdocs'])
+        self.dirs['assets'] = Dir(atts['assets'])
+        self.dirs['logs'] = Dir(atts['logs'])
 
-
-        # Website htdocs directory
-        self.dirs['htdocs'] = Dir({
-            'path'  : '/var/www/' + self.domain + '/htdocs/',
-            'perms' : 0775,
-            'owner' : 'www-data',
-            'group' : 'www-data',
-        } if 'htdocs' not in atts or not atts['htdocs'] else atts['htdocs'])
-
-        # Website assets directory
-        self.dirs['assets'] = Dir({
-            'path'  : '/var/www/' + self.domain + '/assets/',
-            'perms' : 0775,
-            'owner' : 'root',
-            'group' : 'mm_admin', # TODO: Setup a user setting
-        } if 'assets' not in atts or not atts['assets'] else atts['assets'])
-
-        # Website Log Directory
-        self.dirs['logs'] = Dir({
-            'path'  : '/var/www/' + self.domain + '/logs/',
-            'perms' : 0775,
-            'owner' : 'root',
-            'group' : 'mm_admin',
-        } if 'logs' not in atts or not atts['logs'] else atts['logs'])
-
-        self.files['htaccess']  = File({
-            'path'  : self.dirs['htdocs'] + '.htaccess',
-            'perms' : 0664,
-            'owner' : 'www-data',
-            'group' : 'www-data',
-        } if 'htaccess' not in atts or not atts['htaccess'] else atts['htaccess'])
+        # Set path of htaccess after htdocs has been set.
+        atts['htaccess']['path'] = self.dirs['htdocs'].path + '.htaccess'
+        self.files['htaccess']  = File(atts['htaccess']) # May need to re-orient htaccess to path...
 
 
     def __str__(self):
