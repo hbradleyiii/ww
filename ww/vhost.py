@@ -79,8 +79,10 @@ class Vhost(File):
                 os.remove(config_file)
 
     def verify(self, repair = False):
-        #run parent varify
+        # run parent verify
         # Check if domain is enabled
+        # Check for index.html or php
+        # todo: check if website is enabled
         pass
 
     def repair(self):
@@ -117,16 +119,7 @@ class Vhost(File):
             # Just continue
 
         # Reset
-        atts = { 'assets'   : { 'path' : None }, 'htaccess' : { 'path' : None } }
+        atts = {}
         atts['htdocs'] = { 'path' : htdocs }
         atts['logs'] = { 'path' : logs }
         return atts
-
-
-    def enable(self, ask = True):
-        if not ask or prompt('Enable domain in apache?'):
-            os.system(ENABLE_CONFIG + self.domain)
-
-    def disable(self, ask = True):
-        if not ask or prompt('Enable domain in apache?'):
-            os.system(ENABLE_CONFIG + self.domain)

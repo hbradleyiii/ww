@@ -32,6 +32,15 @@ def localhost(function):
         os.system("sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts")
     return function_wrapper
 
+# is_apache_running(start)
+#   A function that checks if apache is running. Takes a flag to attempt to
+#   start apache if it isn't running. Returns True if it is and False if not
+#   and the start flag is false, or if it is not started and cannot be started.
+def is_apache_running(start = False):
+    if not ask or prompt('Restart Apache?'):
+        os.system(RESTART_APACHE)
+    pass
+
 # merge_atts(atts, new_atts)
 #   Merges two dictionaries with the second overwriting the corresponding
 #   values of the first and returns the result.
@@ -158,7 +167,7 @@ class Website(object):
     ################
     # Public Methods
 
-    def install(self):
+    def new(self):
         """Installs website to server"""
         # Check if domain is already installed
         if self.is_installed():
@@ -172,10 +181,15 @@ class Website(object):
         for file in self.files:
             file.create()
 
+        # Restart apache
+        self.files['vhost'].enable()
+
         self.domain.set_ip()
 
-    def uninstall(self):
+    def remove(self):
         """Removes website from server"""
+        self.files['vhost'].disable()
+
         # Remove Files
         for file in self.files:
             file.remove()
@@ -200,9 +214,11 @@ class Website(object):
         # Remove dirs
         for dir in self.dirs:
             result = result and dir.verify(repair)
-        #todo: check if website is enabled
-        #todo: check if apache is started
-        # Check for index.html or php
+
+        result and self.root.verify()
+
+        result = result and is_apache_running(repair)
+
         return result
 
     def repair(self):
@@ -235,12 +251,8 @@ class Website(object):
 
     def enable(self, ask = True):
         if not ask or prompt('Enable ' + self.domain + ' in apache?'):
-            self.files['vhost_conf'].enable()
+            os.system(ENABLE_CONFIG + self.domain)
 
     def disable(self, ask = True):
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
-            self.files['vhost_conf'].disable()
-
-    def restart(self, ask = True):
-        if not ask or prompt('Restart Apache?'):
-            os.system(RESTART_APACHE)
+            os.system(DISABLE_CONFIG + self.domain)
