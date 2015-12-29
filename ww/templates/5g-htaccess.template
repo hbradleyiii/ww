@@ -1,3 +1,4 @@
+# BEGIN 5G BLACKLIST/FIREWALL
 # 5G BLACKLIST/FIREWALL (2013)
 # @ https://perishablepress.com/5g-blacklist-2013/
 
@@ -66,3 +67,4 @@
     # uncomment/edit/repeat next line to block IPs
     # Deny from 123.456.789
 </limit>
+# END 5G BLACKLIST/FIREWALL
