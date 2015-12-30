@@ -5,11 +5,11 @@
 
     ServerName #WEBSITE#
     ServerAdmin #EMAIL#
-    
+
     DocumentRoot "/var/www/#WEBSITE#/htdocs"
 
     DirectoryIndex index.php index.html
-    
+
     # gzip
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/html
@@ -60,9 +60,8 @@
     ExpiresByType image/svg+xml "now plus 20 days"
     ExpiresByType application/vnd.ms-fontobject "now plus 20 days"
 
-    # Yahoo says do this, so whatever... (on one server it shouldn't matter)
     FileETag none
-    
+
   <Directory "#HTDOCS#">
       Options -Indexes -Includes -ExecCGI
       AllowOverride All
@@ -77,7 +76,7 @@
 </VirtualHost>
 <VirtualHost *:80>
     ServerName www.#WEBSITE#
-    
+
     # redirect to #WEBSITE#
     RewriteEngine on
     RewriteRule ^(.*)$ http://#WEBSITE#$1 [L,R=301]
@@ -87,4 +86,3 @@
     ErrorLog "#ERROR_LOG#"
 
 </VirtualHost>
-# ::MM_Site::
