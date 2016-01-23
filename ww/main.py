@@ -9,7 +9,7 @@
 #
 
 __author__ = 'Harold Bradley III'
-__copyright__ = 'Copyright (c) 2015 Harold Bradley III'
+__copyright__ = 'Copyright (c) 2015-2016 Harold Bradley III'
 __license__ = 'MIT'
 
 
