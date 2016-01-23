@@ -38,7 +38,7 @@ class Vhost(Parsable, File):
 
     def __init__(self, domain, atts):
         self.domain = domain
-        self.template = VhostTemplate({'path' : s.VHOST_PATH})
+        self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
 
     def create(self, placeholders):

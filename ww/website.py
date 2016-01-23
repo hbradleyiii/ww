@@ -199,7 +199,6 @@ class Website(object):
         self.error_log.create()
         self.htaccess.create()
 
-        vhost_template = TemplateFile({'path' : s.VHOST_TEMPLATE})
         self.vhost.create({
                 '#WEBSITE#'    : self.domain,
                 '#HTDOCS#'     : self.htdocs.path,
