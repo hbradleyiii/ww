@@ -46,6 +46,7 @@ class Vhost(Parsable, File):
     def create(self, placeholders):
         data = self.template.apply_using(placeholders)
         super(Vhost, self).create(data)
+        self.enable()
 
     def parse(self):
         regexes = { 'htdocs'  : 'DocumentRoot ["]?([^"\n]*)',
@@ -70,6 +71,13 @@ class Vhost(Parsable, File):
             self.access_log = prompt_str('What is the access log path?')
         else:
             self.access_log = self.access_log[0]
+
+    def get_parsed(self):
+        self.parse()
+        return { 'htdocs' : { 'path' : self.htdocs },
+             'access_log' : { 'path' : self.access_log },
+              'error_log' : { 'path' : self.error_log },
+                   'logs' : { 'path' : self.access_log.rsplit('/', 1)[0] } }
 
     def verify(self, repair=False):
         if not super(Vhost, self).verify(repair):
