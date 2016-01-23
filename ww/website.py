@@ -39,14 +39,6 @@ def localhost(function):
         os.system("sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts")
     return function_wrapper
 
-# is_apache_running(start)
-#   A function that checks if apache is running. Takes a flag to attempt to
-#   start apache if it isn't running. Returns True if it is and False if not
-#   and the start flag is false, or if it is not started and cannot be started.
-def is_apache_running(start = False):
-    if not ask or prompt('Restart Apache?'):
-        os.system(RESTART_APACHE)
-    pass
 
 # merge_atts(atts, new_atts)
 #   Merges two dictionaries with the second overwriting the corresponding
@@ -75,12 +67,7 @@ def merge_atts(atts, new_atts):
 #       verify()
 class Website(object):
 
-    def __init__(self, domain, atts = { 'htdocs'     : None,
-                                        'assets'     : None,
-                                        'logs'       : None,
-                                        'vhost_conf' : None,
-                                        'htaccess'   : None,
-                                       }):
+    def __init__(self, domain, atts = {}):
         """Initializes a new Website instance."""
 
         print '[*] SSL not yet implemented in Website class.'
@@ -114,6 +101,18 @@ class Website(object):
                     'owner' : 'root',
                     'group' : 'mm_admin',
                 },
+                'access_log' : {
+                    'path'  : '/var/www/' + self.domain + '/logs/access_log',
+                    'perms' : 0775,
+                    'owner' : 'root',
+                    'group' : 'mm_admin',
+                },
+                'error_log' : {
+                    'path'  : '/var/www/' + self.domain + '/logs/error_log',
+                    'perms' : 0775,
+                    'owner' : 'root',
+                    'group' : 'mm_admin',
+                },
                 'vhost_conf' : {
                     'path'  : '/etc/apache2/sites-available/' + self.domain + '.conf',
                     'perms' : 0644,
@@ -122,7 +121,7 @@ class Website(object):
                 },
                 'htaccess' : {
                     'perms' : 0664,
-                    'owner' : 'www-data',
+                    'owner' : 'www-data', # TODO: Make this a setting
                     'group' : 'www-data',
                 },
             }
@@ -135,9 +134,8 @@ class Website(object):
         if self.vhost.exists():
             print self.files['vhost_conf'] + ' already exists.'
             if prompt('Parse existing vhost configuration?'):
-                atts = merge_atts(atts, self.vhost.parse())
-        # Convert...
-        # or migrate?
+                atts = merge_atts(atts, self.vhost.get_parsed())
+        # Convert...or migrate?
 
         self.root = Dir(atts['root'])
         self.dirs['htdocs'] = Dir(atts['htdocs'])
@@ -196,9 +194,6 @@ class Website(object):
                 '#ACCESS_LOG#' : self.log.path + SITE_ACCESS_LOG,
                 '#ERROR_LOG#'  : self.log.path + SITE_ERROR_LOG,
             })
-
-        self.vhost.enable()
-
 
         self.domain.set_ip()
 
