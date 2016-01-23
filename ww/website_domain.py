@@ -10,9 +10,17 @@
 #
 #                   TODO: add DNS API capabilities
 
-from ext_pylib.domain import Domain
+try:
+    from ext_pylib.domain import Domain
+except ImportError:
+    raise ImportError('ext_pylib must be installed to run ww')
+
+try:
+    import requests
+except ImportError:
+    raise ImportError('requests must be installed to run ww')
+
 import re
-import requests
 import socket
 
 

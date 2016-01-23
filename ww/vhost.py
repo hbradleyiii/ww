@@ -9,10 +9,15 @@
 #
 #                   TODO: add SSL capabilities
 
-from ext_pylib.files import File, Parsable, Template
-from ext_pylib.prompt import prompt, prompt_str
+try:
+    from ext_pylib.files import File, Parsable, Template
+    from ext_pylib.prompt import prompt, prompt_str
+except ImportError:
+    raise ImportError('ext_pylib must be installed to run ww')
+
 import os
 import shutil
+
 
 DEFAULT_VHOST_DIR = '/etc/apache2/sites-available/'
 VHOST_TEMPLATE = os.path.dirname(os.path.realpath(__file__)) + 'vhost.template'

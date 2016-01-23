@@ -8,14 +8,14 @@
 # description:      A class to manage websites
 #
 
+try:
+    from ext_pylib.files import Dir, File
+    from ext_pylib.prompt import prompt, prompt_str, warn_prompt
+except ImportError:
+    raise ImportError('ext_pylib must be installed to run ww')
 
-from ext_pylib.files import Dir, File
-from ext_pylib.prompt import prompt, prompt_str, warn_prompt
 import os
-import re
-import requests
 import tarfile
-import time
 from vhost import Vhost
 from website_domain import WebsiteDomain
 
@@ -24,7 +24,6 @@ from website_domain import WebsiteDomain
 SITE_ADMIN_EMAIL = 'hosting@mediamarketers.com'
 SITE_ERROR_LOG = 'error.log'
 SITE_ACCESS_LOG = 'access.log'
-
 
 
 # localhost(function)

@@ -7,17 +7,29 @@
 # description:      A class to manage WordPress websites; extends Website.
 #
 
+try:
+    from ext_pylib.prompt import prompt, prompt_str, warn_prompt
+    from ext_pylib.password import generate_pw
+except ImportError:
+    raise ImportError('Python module ext_pylib must be installed to run ww')
 
-from ext_pylib.prompt import prompt, prompt_str, warn_prompt
-from website import Website, localhost
-import MySQLdb
+try:
+    import MySQLdb
+except ImportError:
+    raise ImportError('Python module mysqldb must be installed to run ww')
+
+try:
+    import requests
+except ImportError:
+    raise ImportError('Python module requests must be installed to run ww')
+
 import os
-from ext_pylib.password import generate_pw
 import re
-import requests
 from shutil import *
 import tarfile
 import time
+from website import Website, localhost
+
 
 WP_LATEST      = 'http://wordpress.org/latest.tar.gz'
 WP_TARBALL     = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'

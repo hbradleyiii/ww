@@ -13,7 +13,11 @@ __copyright__ = 'Copyright (c) 2015-2016 Harold Bradley III'
 __license__ = 'MIT'
 
 
-from ext_pylib.prompt import prompt, prompt_str, warn_prompt
+try:
+    from ext_pylib.prompt import prompt, prompt_str, warn_prompt
+except ImportError:
+    raise ImportError('ext_pylib must be installed to run ww')
+
 import platform
 import sys
 from ww import Website, WebsiteDomain, Vhost, WPWebsite
