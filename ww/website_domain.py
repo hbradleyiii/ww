@@ -3,7 +3,7 @@
 # name:             website_domain.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
-# created on:       11/03/2014
+# created on:       11/03/2015
 #
 # description:      A class to describe and manage a domain name and
 #                   corresponding ip address.

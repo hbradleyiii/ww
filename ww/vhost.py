@@ -3,7 +3,7 @@
 # name:             vhost.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
-# created on:       11/03/2014
+# created on:       11/03/2015
 #
 # description:      A class to create Apache vhost configurations.
 #
@@ -101,7 +101,8 @@ class Vhost(Parsable, File):
         self.verify(True)
 
     def is_enabled(self):
-        apache_list = os.popen("apache2ctl -S | grep ' namevhost " + self.domain + " '").read()
+        apache_list = os.popen("apache2ctl -S | grep ' namevhost " + \
+                               self.domain + " '").read()
         if apache_list == '':
             return False
         return True

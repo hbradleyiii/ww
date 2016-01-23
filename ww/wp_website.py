@@ -62,7 +62,7 @@ class WPWebsite(Website):
             while True:
                 if self.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"):
                     print '[!] Database "' + name + '" already exists.'
-                    name = raw_input("Choose another MySQL database name: ")
+                    name = prompt_str('Choose another MySQL database name:')
                 else:
                     break
             self.db['name'] = name
@@ -73,7 +73,7 @@ class WPWebsite(Website):
             while True:
                 if self.query("SELECT user FROM mysql.user WHERE user = '" + user + "'"):
                     print '[!] MySQL user "' + user + '" already exists.'
-                    user = raw_input("Choose another MySQL username: ")
+                    user = prompt_str('Choose another MySQL username:')
                 else:
                     break
             self.db['user'] = user
@@ -112,7 +112,7 @@ class WPWebsite(Website):
         super(WPWebsite, self).uninstall()
 
     def verify(self):
-        """cle"""
+        """Verifies WordPress installation."""
         super(WPWebsite, self).verify()
 
     @localhost
