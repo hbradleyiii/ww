@@ -17,15 +17,8 @@ except ImportError:
 
 import os
 import shutil
+from ww import settings as s
 
-
-DEFAULT_VHOST_DIR = '/etc/apache2/sites-available/'
-VHOST_TEMPLATE = os.path.dirname(os.path.realpath(__file__)) + 'vhost.template'
-
-# OS commands
-RESTART_APACHE = 'sudo service apache2 restart'
-ENABLE_CONFIG = 'sudo a2ensite '
-DISABLE_CONFIG = 'sudo a2dissite '
 
 class VhostTemplate(Template, File): pass
 
@@ -45,7 +38,7 @@ class Vhost(Parsable, File):
 
     def __init__(self, domain, atts):
         self.domain = domain
-        self.template = VhostTemplate({'path' : VHOST_TEMPLATE})
+        self.template = VhostTemplate({'path' : s.VHOST_PATH})
         super(Vhost, self).__init__(atts)
 
     def create(self, placeholders):
@@ -110,11 +103,11 @@ class Vhost(Parsable, File):
     def enable(self, ask=True):
         if not ask or prompt('Enable ' + self.domain + ' in apache?'):
             print 'Enabling ' + self.domain + ' vhost...'
-            os.system(ENABLE_CONFIG + self.domain)
-            os.system(RESTART_APACHE)
+            os.system(s.CMD_ENABLE_CONFIG + self.domain)
+            os.system(s.CMD_RESTART_APACHE)
 
     def disable(self, ask=True):
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
             print 'Disabling ' + self.domain + ' vhost...'
-            os.system(DISABLE_CONFIG + self.domain)
-            os.system(RESTART_APACHE)
+            os.system(s.CMD_DISABLE_CONFIG + self.domain)
+            os.system(s.CMD_RESTART_APACHE)

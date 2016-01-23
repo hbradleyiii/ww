@@ -9,3 +9,4 @@ __license__ = 'MIT'
 __copyright__ = 'Copyright (c) 2015-2016 Harold Bradley III'
 
 from ww import Website, WebsiteDomain, Vhost, WPWebsite
+import settings

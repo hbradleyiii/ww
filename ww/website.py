@@ -18,12 +18,7 @@ import os
 import tarfile
 from vhost import Vhost
 from website_domain import WebsiteDomain
-
-
-# Defaults
-SITE_ADMIN_EMAIL = 'hosting@mediamarketers.com'
-SITE_ERROR_LOG = 'error.log'
-SITE_ACCESS_LOG = 'access.log'
+from ww import settings as s
 
 
 # localhost(function)
@@ -77,81 +72,88 @@ class Website(object):
 
         default_atts = {
                 'root' : {
-                    'path'  : '/var/www/' + self.domain,
+                    'path'  : s.WWW_DIR + self.domain,
                     'perms' : 0775,
-                    'owner' : 'www-data',
-                    'group' : 'www-data',
+                    'owner' : s.WWW_USR,
+                    'group' : s.WWW_USR,
                 },
                 'htdocs' : {
-                    'path'  : '/var/www/' + self.domain + '/htdocs/',
+                    'path'  : s.WWW_DIR + self.domain + '/htdocs/',
                     'perms' : 0775,
-                    'owner' : 'www-data',
-                    'group' : 'www-data',
+                    'owner' : s.WWW_USR,
+                    'group' : s.WWW_USR,
                 },
                 'assets' : {
-                    'path'  : '/var/www/' + self.domain + '/assets/',
+                    'path'  : s.WWW_DIR + self.domain + '/assets/',
                     'perms' : 0775,
                     'owner' : 'root',
-                    'group' : 'mm_admin', # TODO: Setup a user setting
+                    'group' : s.WWW_ADMIN,
                 },
                 'logs' : {
-                    'path'  : '/var/www/' + self.domain + '/logs/',
+                    'path'  : s.WWW_DIR + self.domain + '/log/',
                     'perms' : 0775,
                     'owner' : 'root',
-                    'group' : 'mm_admin',
+                    'group' : s.WWW_ADMIN,
                 },
                 'access_log' : {
-                    'path'  : '/var/www/' + self.domain + '/logs/access_log',
+                    'path'  : None,
                     'perms' : 0775,
                     'owner' : 'root',
-                    'group' : 'mm_admin',
+                    'group' : s.WWW_ADMIN,
                 },
                 'error_log' : {
-                    'path'  : '/var/www/' + self.domain + '/logs/error_log',
+                    'path'  : None,
                     'perms' : 0775,
                     'owner' : 'root',
-                    'group' : 'mm_admin',
+                    'group' : s.WWW_ADMIN,
                 },
-                'vhost_conf' : {
-                    'path'  : '/etc/apache2/sites-available/' + self.domain + '.conf',
+                'vhost' : {
+                    'path'  : s.VHOST_PATH + self.domain + '.conf',
                     'perms' : 0644,
                     'owner' : 'root',
                     'group' : 'root',
                 },
                 'htaccess' : {
+                    'path'  : None,
                     'perms' : 0664,
-                    'owner' : 'www-data', # TODO: Make this a setting
-                    'group' : 'www-data',
+                    'owner' : s.WWW_USR,
+                    'group' : s.WWW_USR,
                 },
             }
 
         atts = merge_atts(default_atts, atts)
 
-        self.vhost = Vhost(self.domain, atts['vhost_conf'])
+        self.vhost = Vhost(self.domain, atts['vhost'])
 
         # If an apache vhost config already exists, try to parse it
         if self.vhost.exists():
-            print self.files['vhost_conf'] + ' already exists.'
+            print self.files['vhost'] + ' already exists.'
             if prompt('Parse existing vhost configuration?'):
                 atts = merge_atts(atts, self.vhost.get_parsed())
-        # Convert...or migrate?
+        # TODO: Convert...or migrate?
 
         self.root   = Dir(atts['root'])
         self.htdocs = Dir(atts['htdocs'])
         self.assets = Dir(atts['assets'])
         self.logs   = Dir(atts['logs'])
+
+        # Set path of htaccess, access_log, and error_log after htdocs is set.
+        if not atts['htaccess']['path']:
+            atts['htaccess']['path'] = self.htdocs.path + '.htaccess'
+        if not atts['access_log']['path']:
+            atts['access_log']['path'] = self.logs.path + s.SITE_ACCESS_LOG
+        if not atts['error_log']['path']:
+            atts['error_log']['path'] = self.logs.path + s.SITE_ERROR_LOG
+
+        self.htaccess  = File(atts['htaccess'])
         self.access_log = File(atts['access_log'])
         self.error_log = File(atts['error_log'])
-
-        # Set path of htaccess after htdocs has been set.
-        atts['htaccess']['path'] = self.dirs['htdocs'].path + '.htaccess'
-        self.htaccess  = File(atts['htaccess']) # May need to re-orient htaccess to path...
 
 
     def __str__(self):
         """Returns a string with relevant instance information."""
         string =  '\n  domain:           ' + self.domain
-        string += '\n  vhost config:     ' + self.vhost_conf
+        string += '\n  vhost config:     ' + self.vhost
         string += '\n  htdocs directory: ' + self.htdocs
         string += '\n  assets:           ' + self.assets
         string += '\n  logs:             ' + self.logs
@@ -159,14 +161,17 @@ class Website(object):
 
     def __repr__(self):
         """Returns a python string that evaluates to the object instance."""
-        return "%s('%s', {'htdocs' : %s, 'assets' : %s, 'logs' : %s, 'htaccess' : %s, 'vhost_conf' : %s})" % (
+        return "%s('%s', {'htdocs' : %s, 'assets' : %s, 'logs' : %s, " + \
+               "'access_log' : %s, 'error_log' : %s, 'htaccess' : %s, 'vhost' : %s})" % (
             self.__class__.__name__,
             self.domain,
             self.dirs['htdocs']._atts_(),
             self.dirs['assets']._atts_(),
             self.dirs['logs']._atts_(),
+            self.dirs['access_log']._atts_(),
+            self.dirs['error_log']._atts_(),
             self.files['htaccess']._atts_(),
-            self.files['vhost_conf']._atts_()
+            self.files['vhost']._atts_()
             )
 
 
@@ -187,13 +192,13 @@ class Website(object):
         self.error_log.create()
         self.htaccess.create()
 
-        vhost_template = TemplateFile({'path' : '/template/path'})
+        vhost_template = TemplateFile({'path' : s.VHOST_TEMPLATE})
         self.vhost.create({
                 '#WEBSITE#'    : self.domain,
                 '#HTDOCS#'     : self.htdocs.path,
-                '#EMAIL#'      : SITE_ADMIN_EMAIL,
-                '#ACCESS_LOG#' : self.log.path + SITE_ACCESS_LOG,
-                '#ERROR_LOG#'  : self.log.path + SITE_ERROR_LOG,
+                '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
+                '#ACCESS_LOG#' : self.access_log.path,
+                '#ERROR_LOG#'  : self.error_log.path,
             })
 
         self.domain.set_ip()

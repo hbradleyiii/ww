@@ -25,17 +25,10 @@ except ImportError:
 
 import os
 import re
-from shutil import *
+import shutil
 import tarfile
-import time
 from website import Website, localhost
-
-
-WP_LATEST      = 'http://wordpress.org/latest.tar.gz'
-WP_TARBALL     = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
-WP_EXTRACTED   = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
-WP_SETUP_URL   = '/wp-admin/setup-config.php?step=2'
-WP_INSTALL_URL = '/wp-admin/install.php?step=2'
+from ww import settings as s
 
 
 class WPWebsite(Website):
@@ -153,24 +146,24 @@ class WPWebsite(Website):
 
     def download_wordpress(self):
         """Downloads a fresh WordPress tarball."""
-        if not os.path.exists(WP_TARBALL):
+        if not os.path.exists(s.WP_TARBALL):
             print 'Downloading Wordpress...'
-            with open(WP_TARBALL, 'wb') as tarball:
-                tarball.write(requests.get(WP_LATEST).content)
+            with open(s.WP_TARBALL, 'wb') as tarball:
+                tarball.write(requests.get(s.WP_LATEST).content)
             print 'Download Complete.'
         else:
             print 'Already downloaded wordpress today. Using existing tarball.'
 
     def untar_wordpress(self):
         """Untars WordPress to htdocs."""
-        if not os.path.exists(WP_EXTRACTED + 'wordpress/'):
+        if not os.path.exists(s.WP_EXTRACTED + 'wordpress/'):
             print 'Uncompressing files...'
-            tarball = tarfile.open(WP_TARBALL)
-            tarball.extractall(WP_EXTRACTED)
+            tarball = tarfile.open(s.WP_TARBALL)
+            tarball.extractall(s.WP_EXTRACTED)
             tarball.close()
             print 'Extraction complete.'
         print 'Moving files to "' + self.htdocs + '"...'
-        move(WP_EXTRACTED + 'wordpress/', self.htdocs)
+        move(s.WP_EXTRACTED + 'wordpress/', self.htdocs)
         rmtree(self.htdocs + 'wordpress') # Get rid of the 'wordpress' root directory
         os.system('chown -R www-data ' + self.htdocs)
         print 'Move complete.'
@@ -213,16 +206,19 @@ class WPWebsite(Website):
 
         # TODO: error handling
         print 'Running setup config...'
-        r = requests.post('http://' + self.domain + WP_SETUP_URL, data=payload)
+        r = requests.post('http://' + self.domain + s.WP_SETUP_URL, data=payload)
         print r.text
         print 'Config setup complete'
 
     def wordpress_install(self):
-        public = '1' if prompt("Allow search engines to index?") else '0'
-        user = prompt_str('What is the WordPress admin username?', 'admin')
-        password = prompt_str('What is the password for this account?', 'password123')
-        email = prompt_str('What is the email for this account?', 'email@google.com')
-        title = raw_input("What is the website's title? ")
+        public = '1' if prompt('Allow search engines to index?') else '0'
+        user = prompt_str('What is the WordPress admin username?', \
+                          s.WP_ADMIN_USER)
+        password = prompt_str('What is the password for this account?', \
+                             s.WP_ADMIN_PW)
+        email = prompt_str('What is the email for this account?', \
+                          s.WP_ADMIN_EMAIL)
+        title = prompt_sr('What is the website\'s title?')
 
         payload = {
                 'blog_public'     : public,
@@ -236,7 +232,7 @@ class WPWebsite(Website):
                 }
 
         print 'Running install...'
-        r = requests.post('http://' + self.domain + WP_INSTALL_URL, data=payload)
+        r = requests.post('http://' + self.domain + s.WP_INSTALL_URL, data=payload)
         print r.text
         print 'Installation complete'
 
