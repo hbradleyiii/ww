@@ -58,7 +58,7 @@ def merge_atts(atts, new_atts):
 #       vhost       Apache vhost config file
 #       htaccess    Website root htaccess file
 #   methods:
-#       new()  - installs a new website
+#       install()  - installs a new website
 #       remove()  - removes an existing website
 #       pack  - packs an existing website
 #       unpack  - unpacks an existing packed website into current server
@@ -185,7 +185,7 @@ class Website(object):
     ################
     # Public Methods
 
-    def new(self):
+    def install(self):
         """Installs website to server"""
         # Check if domain is already installed
         if self.is_installed():
@@ -200,14 +200,17 @@ class Website(object):
         self.htaccess.create()
 
         self.vhost.create({
-                '#WEBSITE#'    : self.domain,
+                '#WEBSITE#'    : self.domain.domain,
                 '#HTDOCS#'     : self.htdocs.path,
                 '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
                 '#ACCESS_LOG#' : self.access_log.path,
-                '#ERROR_LOG#'  : self.error_log.path,
+                '#ERROR_LOG#'  : self.error_log.path
             })
 
         self.domain.set_ip()
+
+        print str(self)
+        print 'Installation complete.'
 
     def remove(self, ask=True):
         """Removes website from server"""
@@ -259,3 +262,7 @@ class Website(object):
             print 'Repair completed successfully. [OK]'
         else:
             print 'Repair resulted in errors. [ERROR]'
+
+    def is_installed(self):
+        """Returns true if website is installed"""
+        return False
