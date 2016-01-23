@@ -20,6 +20,13 @@ from vhost import Vhost
 from website_domain import Website_Domain
 
 
+# Defaults
+SITE_ADMIN_EMAIL = 'hosting@mediamarketers.com'
+SITE_ERROR_LOG = 'error.log'
+SITE_ACCESS_LOG = 'access.log'
+
+
+
 # localhost(function)
 #   a python decorator that creates a temporary host entry before
 #   the function is called and removes it after it is completed.
@@ -122,13 +129,13 @@ class Website(object):
 
         atts = merge_atts(default_atts, atts)
 
-        self.files['vhost_conf'] = Vhost(atts['vhost_conf'])
+        self.vhost = Vhost(self.domain, atts['vhost_conf'])
 
         # If an apache vhost config already exists, try to parse it
-        if self.files['vhost_conf'].exists():
-            print self.files['vhost_conf'] + ' already exists. Parsing file...'
+        if self.vhost.exists():
+            print self.files['vhost_conf'] + ' already exists.'
             if prompt('Parse existing vhost configuration?'):
-                atts = merge_atts(atts, self.files['vhost_conf'].parse())
+                atts = merge_atts(atts, self.vhost.parse())
         # Convert...
         # or migrate?
 
@@ -181,8 +188,17 @@ class Website(object):
         for file in self.files:
             file.create()
 
-        # Restart apache
-        self.files['vhost'].enable()
+        vhost_template = TemplateFile({'path' : '/template/path'})
+        self.vhost.create({
+                '#WEBSITE#'    : self.domain,
+                '#HTDOCS#'     : self.htdocs.path,
+                '#EMAIL#'      : SITE_ADMIN_EMAIL,
+                '#ACCESS_LOG#' : self.log.path + SITE_ACCESS_LOG,
+                '#ERROR_LOG#'  : self.log.path + SITE_ERROR_LOG,
+            })
+
+        self.vhost.enable()
+
 
         self.domain.set_ip()
 
@@ -242,17 +258,3 @@ class Website(object):
         # this overwrites vhostconf...
         # for dirs and files in old copy
         # this includes vhost...
-
-    def is_installed(self):
-        apache_list = os.popen("apache2ctl -S | grep ' namevhost " + self.domain + " '").read()
-        if apache_list == '':
-            return false
-        return true
-
-    def enable(self, ask = True):
-        if not ask or prompt('Enable ' + self.domain + ' in apache?'):
-            os.system(ENABLE_CONFIG + self.domain)
-
-    def disable(self, ask = True):
-        if not ask or prompt('Disable ' + self.domain + ' in apache?'):
-            os.system(DISABLE_CONFIG + self.domain)
