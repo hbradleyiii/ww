@@ -24,7 +24,7 @@ CustomLog "/the/access/log"
 
 def test_vhost_parse():
     """Test vhost parse method."""
-    vhost = Vhost({'path' : '/tmp/path'})
+    vhost = Vhost('domain.com', {'path' : '/tmp/path'})
     vhost.read = read
     vhost.parse()
     assert vhost.htdocs == '/the/root/dir'
