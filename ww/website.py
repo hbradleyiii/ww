@@ -49,16 +49,23 @@ def merge_atts(atts, new_atts):
 
 # Website(website)
 #   a class that describes a generic website with the following properties:
-#       domain              Website domain
-#       dirs['htdocs']      Website root directory
-#       dirs['assets']      Website assets directory
-#       dirs['logs']        Website log directory
-#       files['vhost_conf'] Apache vhost config file.
-#       files['htaccess']   Website root htaccess file.
-#   primary methods:
-#       install()
-#       uninstall()
-#       verify()
+#       domain      Website domain
+#       htdocs      Website root directory
+#       assets      Website assets directory
+#       logs        Website log directory
+#       access_log  Website access log file
+#       error_log   Website error log file
+#       vhost       Apache vhost config file
+#       htaccess    Website root htaccess file
+#   methods:
+#       new()  - installs a new website
+#       remove()  - removes an existing website
+#       pack  - packs an existing website
+#       unpack  - unpacks an existing packed website into current server
+#       migrate  - migrates a website from existing settings to default
+#                  settings
+#       verify()  - verifies a website installation
+#       repair()  - verifies website forcing repairs
 class Website(object):
 
     def __init__(self, domain, atts = {}):
@@ -218,26 +225,6 @@ class Website(object):
 
         self.domain.set_ip()
 
-    def verify(self, repair = False):
-        """Verifies website's installation"""
-        print self
-        return self.domain.verify() and \
-               self.vhost.verify(repair) and \
-               self.access_log.verify(repair) and \
-               self.error_log.verify(repair) and \
-               self.htaccess.verify(repair) and \
-               self.logs.verify(repair) and \
-               self.htdocs.verify(repair) and \
-               self.assets.verify(repair) and \
-               self.root.verify(repair)
-
-    def repair(self):
-        print 'Repairing ' + self.domain + '...'
-        if self.verify(True):
-            print 'Repair completed successfully. [OK]'
-        else:
-            print 'Repair resulted in errors. [ERROR]'
-
     def pack(self):
         pass
 
@@ -252,3 +239,24 @@ class Website(object):
         # this overwrites vhostconf...
         # for dirs and files in old copy
         # this includes vhost...
+
+    def verify(self, repair = False):
+        """Verifies website installation"""
+        print self
+        return self.domain.verify() and \
+               self.vhost.verify(repair) and \
+               self.access_log.verify(repair) and \
+               self.error_log.verify(repair) and \
+               self.htaccess.verify(repair) and \
+               self.logs.verify(repair) and \
+               self.htdocs.verify(repair) and \
+               self.assets.verify(repair) and \
+               self.root.verify(repair)
+
+    def repair(self):
+        """Repairs website installation"""
+        print 'Repairing ' + self.domain + '...'
+        if self.verify(True):
+            print 'Repair completed successfully. [OK]'
+        else:
+            print 'Repair resulted in errors. [ERROR]'
