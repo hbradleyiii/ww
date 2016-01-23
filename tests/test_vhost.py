@@ -5,31 +5,28 @@
 # email:            harold@bradleystudio.net
 # created on:       12/11/2015
 #
-# description:      A unit test for ww module's Vhost class and methods.
+# description:      Unit tests for ww module's Vhost methods.
+#                   Most of Vhost's methods are difficult to unit test because
+#                   they are tightly coupled to an apache system.
 #
 
 from ww import Vhost
 import pytest
 
 
-init_args = [
-    ({ 'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None, }, None),
-]
-@pytest.mark.parametrize(("atts", "expected"), init_args)
-def test_vhost_create(atts, expected):
-    """Test initialize Vhost."""
-    #vhost = Vhost(atts)
-    #assert str(vhost) == expected
-    pass
-
-def test_vhost_remove():
-    """TODO:"""
-    pass
-
-def test_vhost_verify():
-    """TODO:"""
-    pass
+# Monkey Patch function for read() method
+def read():
+    return """This is a sample vhost file.
+DocumentRoot /the/root/dir
+ErrorLog "/the/error/log"
+CustomLog "/the/access/log"
+"""
 
 def test_vhost_parse():
-    """TODO:"""
-    pass
+    """Test vhost parse method."""
+    vhost = Vhost({'path' : '/tmp/path'})
+    vhost.read = read
+    vhost.parse()
+    assert vhost.htdocs == '/the/root/dir'
+    assert vhost.access_log == '/the/access/log'
+    assert vhost.error_log == '/the/error/log'
