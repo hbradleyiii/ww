@@ -137,23 +137,25 @@ class Website(object):
                 atts = merge_atts(atts, self.vhost.get_parsed())
         # Convert...or migrate?
 
-        self.root = Dir(atts['root'])
-        self.dirs['htdocs'] = Dir(atts['htdocs'])
-        self.dirs['assets'] = Dir(atts['assets'])
-        self.dirs['logs'] = Dir(atts['logs'])
+        self.root   = Dir(atts['root'])
+        self.htdocs = Dir(atts['htdocs'])
+        self.assets = Dir(atts['assets'])
+        self.logs   = Dir(atts['logs'])
+        self.access_log = File(atts['access_log'])
+        self.error_log = File(atts['error_log'])
 
         # Set path of htaccess after htdocs has been set.
         atts['htaccess']['path'] = self.dirs['htdocs'].path + '.htaccess'
-        self.files['htaccess']  = File(atts['htaccess']) # May need to re-orient htaccess to path...
+        self.htaccess  = File(atts['htaccess']) # May need to re-orient htaccess to path...
 
 
     def __str__(self):
         """Returns a string with relevant instance information."""
         string =  '\n  domain:           ' + self.domain
-        string += '\n  vhost config:     ' + self.files['vhost_conf']
-        string += '\n  htdocs directory: ' + self.dirs['htdocs']
-        string += '\n  assets:           ' + self.dirs['assets']
-        string += '\n  logs:             ' + self.dirs['logs']
+        string += '\n  vhost config:     ' + self.vhost_conf
+        string += '\n  htdocs directory: ' + self.htdocs
+        string += '\n  assets:           ' + self.assets
+        string += '\n  logs:             ' + self.logs
         return string
 
     def __repr__(self):
@@ -178,13 +180,13 @@ class Website(object):
         if self.is_installed():
             print self.domain + ' is already installed.'
 
-        # Create dirs
-        for dir in self.dirs:
-            dir.create()
-
-        # Create Files
-        for file in self.files:
-            file.create()
+        self.root.create()
+        self.htdocs.create()
+        self.assets.create()
+        self.logs.create()
+        self.access_log.create()
+        self.error_log.create()
+        self.htaccess.create()
 
         vhost_template = TemplateFile({'path' : '/template/path'})
         self.vhost.create({
@@ -197,40 +199,33 @@ class Website(object):
 
         self.domain.set_ip()
 
-    def remove(self):
+    def remove(self, ask=True):
         """Removes website from server"""
-        self.files['vhost'].disable()
+        self.vhost.disable(ask)
 
-        # Remove Files
-        for file in self.files:
-            file.remove()
-
-        # Remove dirs
-        for dir in self.dirs:
-            dir.remove()
+        self.vhost.remove(ask)
+        self.access_log.remove(ask)
+        self.error_log.remove(ask)
+        self.htaccess.remove(ask)
+        self.logs.remove(ask)
+        self.htdocs.remove(ask)
+        self.assets.remove(ask)
+        self.root.remove(ask)
 
         self.domain.set_ip()
 
     def verify(self, repair = False):
         """Verifies website's installation"""
         print self
-
-        # Verify Domain
-        result = self.domain.verify()
-
-        # Verify Files
-        for file in self.files:
-            result = result and file.verify(repair)
-
-        # Remove dirs
-        for dir in self.dirs:
-            result = result and dir.verify(repair)
-
-        result and self.root.verify()
-
-        result = result and is_apache_running(repair)
-
-        return result
+        return self.domain.verify() and \
+               self.vhost.verify(repair) and \
+               self.access_log.verify(repair) and \
+               self.error_log.verify(repair) and \
+               self.htaccess.verify(repair) and \
+               self.logs.verify(repair) and \
+               self.htdocs.verify(repair) and \
+               self.assets.verify(repair) and \
+               self.root.verify(repair)
 
     def repair(self):
         print 'Repairing ' + self.domain + '...'
