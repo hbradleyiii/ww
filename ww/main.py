@@ -16,7 +16,7 @@ __license__ = 'MIT'
 from ext_pylib.prompt import prompt, prompt_str, warn_prompt
 import platform
 import sys
-from ww import Website, Website_Domain, Vhost, WP_Website
+from ww import Website, WebsiteDomain, Vhost, WPWebsite
 
 
 def help():
@@ -53,7 +53,7 @@ def main():
     if sys.argv:
         domain = sys.argv.pop(0)
 
-    website = WP_Website(domain) if wp else Website(domain)
+    website = WPWebsite(domain) if wp else Website(domain)
 
     getattr(website, command)()
 

@@ -1,5 +1,4 @@
 from website import Website
-from website_domain import Website_Domain
+from website_domain import WebsiteDomain
 from vhost import Vhost
-from wp_website import WP_Website
-
+from wp_website import WPWebsite

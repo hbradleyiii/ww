@@ -26,12 +26,12 @@ WP_SETUP_URL   = '/wp-admin/setup-config.php?step=2'
 WP_INSTALL_URL = '/wp-admin/install.php?step=2'
 
 
-class WP_Website(Website):
+class WPWebsite(Website):
 
     def __init__(self, domain, htdocs, mysql={}, is_new_website=False):
-        """Initializes a new WP_Website instance."""
+        """Initializes a new WPWebsite instance."""
 
-        super(WP_Website, self).__init__(domain)
+        super(WPWebsite, self).__init__(domain)
 
         # Setup MySQL connection
         self.mysql = MySQLdb.connect(
@@ -74,7 +74,7 @@ class WP_Website(Website):
         """Returns a string with relevant instance information."""
         string = '\n----------------------------------------------------------'
         string += '\n                   - Wordpress Website -'
-        string += super(WP_Website, self).__str__()
+        string += super(WPWebsite, self).__str__()
         string += '\n  Database:         ' + self.db['name']
         string += '\n  MySQL User:       ' + self.db['user']
         string += '\n  MySQL Password:   ' + self.db['password']
@@ -86,7 +86,7 @@ class WP_Website(Website):
 
     def install(self):
         """Copies WordPress to htdocs, sets up a new database, then runs the 5 min setup."""
-        super(WP_Website, self).install()
+        super(WPWebsite, self).install()
         self.download_wordpress()
         self.untar_wordpress()
         self.create_wordpress_db()
@@ -97,11 +97,11 @@ class WP_Website(Website):
             self.remove_wordpress_db()
         if no_prompt or prompt('Remove WordPress website directory "' + self.htdocs + '"?'):
             self.remove_wordpress_files()
-        super(WP_Website, self).uninstall()
+        super(WPWebsite, self).uninstall()
 
     def verify(self):
         """cle"""
-        super(WP_Website, self).verify()
+        super(WPWebsite, self).verify()
 
     @localhost
     def setup_wordpress(self):

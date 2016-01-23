@@ -16,13 +16,13 @@ import requests
 import socket
 
 
-# Website_Domain(domain)
+# WebsiteDomain(domain)
 #   A class to describe and manage a domain name and corresponding ip address.
 #
 #   methods:
 #       verify()
 #       repair()
-class Website_Domain(Domain):
+class WebsiteDomain(Domain):
 
     def verify(self, repair = False):
         """Verifies that the domain is pointed at the server."""

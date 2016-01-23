@@ -17,7 +17,7 @@ import requests
 import tarfile
 import time
 from vhost import Vhost
-from website_domain import Website_Domain
+from website_domain import WebsiteDomain
 
 
 # Defaults
@@ -72,7 +72,7 @@ class Website(object):
 
         print '[*] SSL not yet implemented in Website class.'
 
-        self.domain = Website_Domain(domain)
+        self.domain = WebsiteDomain(domain)
         self.dirs = {}
         self.files = {}
 
