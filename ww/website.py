@@ -14,6 +14,7 @@ try:
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
+from htaccess import Htaccess
 import os
 import tarfile
 from vhost import Vhost
@@ -125,6 +126,7 @@ class Website(object):
                     'perms' : 0664,
                     'owner' : s.WWW_USR,
                     'group' : s.WWW_USR,
+                    'h5g'   : True,
                 },
             }
 
@@ -152,7 +154,7 @@ class Website(object):
         if not atts['error_log']['path']:
             atts['error_log']['path'] = self.logs.path + s.SITE_ERROR_LOG
 
-        self.htaccess  = File(atts['htaccess'])
+        self.htaccess  = Htaccess(atts['htaccess'])
         self.access_log = File(atts['access_log'])
         self.error_log = File(atts['error_log'])
 
