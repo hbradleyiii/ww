@@ -170,11 +170,15 @@ class Website(object):
 
     def __str__(self):
         """Returns a string with relevant instance information."""
-        string =  '\n  domain:           ' + self.domain
+        string =  '\n\n----------------------------------------------------------'
+        string += '\n                        - Website -'
+        string += '\n----------------------------------------------------------'
+        string += '\n  domain:           ' + self.domain
         string += '\n  vhost config:     ' + self.vhost
         string += '\n  htdocs directory: ' + self.htdocs
         string += '\n  assets:           ' + self.assets
         string += '\n  logs:             ' + self.logs
+        string += '\n----------------------------------------------------------\n\n'
         return string
 
     def __repr__(self):
