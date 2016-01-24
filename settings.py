@@ -59,3 +59,10 @@ WP_ADMIN_PW    = 'password123' # Please change this.
 CMD_RESTART_APACHE = 'sudo service apache2 restart'
 CMD_ENABLE_CONFIG  = 'sudo a2ensite '  # run as: {command} domain
 CMD_DISABLE_CONFIG = 'sudo a2dissite ' # run as: {command} domain
+
+
+# Try to import local settings. This is a temporary work-around for now.
+try:
+    from settings_local import *
+except ImportError:
+    pass
