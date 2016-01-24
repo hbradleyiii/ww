@@ -250,15 +250,15 @@ class Website(object):
     def verify(self, repair = False):
         """Verifies website installation"""
         print self
-        return self.domain.verify() and \
-               self.vhost.verify(repair) and \
-               self.access_log.verify(repair) and \
-               self.error_log.verify(repair) and \
-               self.htaccess.verify(repair) and \
-               self.logs.verify(repair) and \
-               self.htdocs.verify(repair) and \
-               self.assets.verify(repair) and \
-               self.root.verify(repair)
+        return all([self.domain.verify(),
+                self.vhost.verify(repair),
+                self.access_log.verify(repair),
+                self.error_log.verify(repair),
+                self.htaccess.verify(repair),
+                self.logs.verify(repair),
+                self.htdocs.verify(repair),
+                self.assets.verify(repair),
+                self.root.verify(repair)])
 
     def repair(self):
         """Repairs website installation"""
