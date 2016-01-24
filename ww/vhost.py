@@ -35,13 +35,15 @@ class VhostTemplate(Template, File): pass
 #       disable(ask)
 class Vhost(Parsable, File):
 
-    def __init__(self, domain, atts):
+    def __init__(self, domain, atts, placeholders=None):
         self.domain = domain
+        self.placeholders = placeholders
         self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
 
-    def create(self, placeholders):
-        data = self.template.apply_using(placeholders)
+    def create(self, data=''):
+        if self.placeholders:
+            data = self.template.apply_using(self.placeholders)
         super(Vhost, self).create(data)
         self.enable()
 

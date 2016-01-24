@@ -158,6 +158,15 @@ class Website(object):
         self.access_log = File(atts['access_log'])
         self.error_log = File(atts['error_log'])
 
+        # Setup vhost placeholders after attributes have been defined
+        self.vhost.placeholders = {
+                '#WEBSITE#'    : self.domain.domain,
+                '#HTDOCS#'     : self.htdocs.path,
+                '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
+                '#ACCESS_LOG#' : self.access_log.path,
+                '#ERROR_LOG#'  : self.error_log.path
+            }
+
 
     def __str__(self):
         """Returns a string with relevant instance information."""
@@ -201,13 +210,7 @@ class Website(object):
         self.error_log.create()
         self.htaccess.create()
 
-        self.vhost.create({
-                '#WEBSITE#'    : self.domain.domain,
-                '#HTDOCS#'     : self.htdocs.path,
-                '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
-                '#ACCESS_LOG#' : self.access_log.path,
-                '#ERROR_LOG#'  : self.error_log.path
-            })
+        self.vhost.create()
 
         self.domain.set_ip()
 
