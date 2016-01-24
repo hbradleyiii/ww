@@ -57,7 +57,7 @@ def test_website_install():
     """TODO:"""
     pass
 
-def test_website_unintstall():
+def test_website_remove():
     """TODO:"""
     pass
 
@@ -78,9 +78,5 @@ def test_website_unpack():
     pass
 
 def test_website_migrate():
-    """TODO:"""
-    pass
-
-def test_website_isinstalled():
     """TODO:"""
     pass

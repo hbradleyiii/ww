@@ -14,6 +14,14 @@ from ww import Vhost
 import pytest
 
 
+def test_vhost_init():
+    """TODO: Test vhost init method."""
+    pass
+
+def test_vhost_create():
+    """TODO: Test vhost create method."""
+    pass
+
 # Monkey Patch function for read() method
 def read():
     return """This is a sample vhost file.
@@ -30,3 +38,15 @@ def test_vhost_parse():
     assert vhost.htdocs == '/the/root/dir'
     assert vhost.access_log == '/the/access/log'
     assert vhost.error_log == '/the/error/log'
+
+def test_vhost_get_parsed():
+    """TODO: Test vhost get_parsed method."""
+    pass
+
+def test_vhost_verify():
+    """TODO: Test vhost get_parsed method."""
+    pass
+
+def test_vhost_repair():
+    """TODO: Test vhost get_parsed method."""
+    pass
