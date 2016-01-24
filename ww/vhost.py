@@ -16,7 +16,6 @@ except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
 import os
-import shutil
 from ww import settings as s
 
 
@@ -78,8 +77,7 @@ class Vhost(Parsable, File):
                    'logs' : { 'path' : self.access_log.rsplit('/', 1)[0] } }
 
     def verify(self, repair=False):
-        if not super(Vhost, self).verify(repair):
-            return False
+        result = super(Vhost, self).verify(repair)
         if not self.is_enabled():
             print 'Vhost configuration file for ' + self.domain + \
                     ' is not enabled.'
@@ -88,7 +86,7 @@ class Vhost(Parsable, File):
             else:
                 self.enable(False)
         print 'Vhost for ' + self.domain + ' is enabled.'
-        return True
+        return result
 
     def repair(self):
         self.verify(True)

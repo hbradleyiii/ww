@@ -136,7 +136,7 @@ class Website(object):
 
         # If an apache vhost config already exists, try to parse it
         if self.vhost.exists():
-            print self.files['vhost'] + ' already exists.'
+            print str(self.vhost) + ' already exists.'
             if prompt('Parse existing vhost configuration?'):
                 atts = merge_atts(atts, self.vhost.get_parsed())
         # TODO: Convert...or migrate?
@@ -174,13 +174,13 @@ class Website(object):
                "'access_log' : %s, 'error_log' : %s, 'htaccess' : %s, 'vhost' : %s})" % (
             self.__class__.__name__,
             self.domain,
-            self.dirs['htdocs']._atts_(),
-            self.dirs['assets']._atts_(),
-            self.dirs['logs']._atts_(),
-            self.dirs['access_log']._atts_(),
-            self.dirs['error_log']._atts_(),
-            self.files['htaccess']._atts_(),
-            self.files['vhost']._atts_()
+            self.htdocs._atts_(),
+            self.assets._atts_(),
+            self.logs._atts_(),
+            self.access_log._atts_(),
+            self.error_log._atts_(),
+            self.htaccess._atts_(),
+            self.vhost._atts_()
             )
 
 
@@ -266,5 +266,5 @@ class Website(object):
             print 'Repair resulted in errors. [ERROR]'
 
     def is_installed(self):
-        """Returns true if website is installed"""
-        return False
+        """Returns true if vhost is enabled"""
+        return self.vhost.is_enabled()
