@@ -99,19 +99,19 @@ class Website(object):
                 },
                 'logs' : {
                     'path'  : s.WWW_DIR + self.domain + '/log/',
-                    'perms' : 0775,
+                    'perms' : 0770,
                     'owner' : 'root',
                     'group' : s.WWW_ADMIN,
                 },
                 'access_log' : {
                     'path'  : None,
-                    'perms' : 0775,
+                    'perms' : 0750,
                     'owner' : 'root',
                     'group' : s.WWW_ADMIN,
                 },
                 'error_log' : {
                     'path'  : None,
-                    'perms' : 0775,
+                    'perms' : 0750,
                     'owner' : 'root',
                     'group' : s.WWW_ADMIN,
                 },
