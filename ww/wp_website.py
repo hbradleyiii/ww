@@ -77,7 +77,7 @@ class WPWebsite(Website):
 
     def __str__(self):
         """Returns a string with relevant instance information."""
-        string = '\n----------------------------------------------------------'
+        string = '\n\n----------------------------------------------------------'
         string += '\n                   - Wordpress Website -'
         string += super(WPWebsite, self).__str__()
         string += '\n  Database:         ' + self.db['name']
