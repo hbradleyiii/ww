@@ -33,7 +33,7 @@ from ww import settings as s
 
 class WPWebsite(Website):
 
-    def __init__(self, domain, htdocs, mysql={}, is_new_website=False):
+    def __init__(self, domain, atts, mysql=s.MYSQL, is_new_website=False):
         """Initializes a new WPWebsite instance."""
 
         super(WPWebsite, self).__init__(domain)

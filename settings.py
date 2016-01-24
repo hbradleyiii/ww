@@ -34,6 +34,12 @@ VHOST_PATH = '/etc/apache2/sites-available/'
 VHOST_TEMPLATE = TEMPLATE_PATH + 'vhost.template'
 VHOST_SSL_TEMPLATE = TEMPLATE_PATH + 'vhost-ssl.template'
 
+MYSQL = {
+    'host'     : 'localhost',
+    'user'     : 'username',
+    'password' : 'password123',
+}
+
 # WordPress Settings
 WP_LATEST      = 'http://wordpress.org/latest.tar.gz'
 WP_TARBALL     = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
