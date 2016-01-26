@@ -44,7 +44,7 @@ def main():
         help() # If no argmuments are given, run help
         return
 
-    if command not in ['install', 'uninstall', 'pack', 'unpack', 'verify', 'repair']:
+    if command not in ['install', 'remove', 'pack', 'unpack', 'verify', 'repair']:
         print 'ERROR: Command "' + command + '" not understood.'
         return 1
 
