@@ -51,7 +51,7 @@ class WPWebsite(Website):
         if is_new_website:
 
             # Initialize Wordpress database vars
-            name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + domain)
+            name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
             while True:
                 if self.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"):
                     print '[!] Database "' + name + '" already exists.'

@@ -132,7 +132,7 @@ class Website(object):
 
         atts = merge_atts(default_atts, atts)
 
-        self.vhost = Vhost(self.domain, atts['vhost'])
+        self.vhost = Vhost(self.domain.name, atts['vhost'])
 
         # If an apache vhost config already exists, try to parse it
         if self.vhost.exists():
@@ -160,7 +160,7 @@ class Website(object):
 
         # Setup vhost placeholders after attributes have been defined
         self.vhost.placeholders = {
-                '#WEBSITE#'    : self.domain.domain,
+                '#WEBSITE#'    : self.domain.name,
                 '#HTDOCS#'     : self.htdocs.path,
                 '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
                 '#ACCESS_LOG#' : self.access_log.path,
@@ -253,16 +253,17 @@ class Website(object):
 
     def verify(self, repair = False):
         """Verifies website installation"""
+        result = all([self.vhost.verify(repair),
+                      self.access_log.verify(repair),
+                      self.error_log.verify(repair),
+                      self.htaccess.verify(repair),
+                      self.logs.verify(repair),
+                      self.htdocs.verify(repair),
+                      self.assets.verify(repair),
+                      self.root.verify(repair),
+                      self.domain.verify(repair)])
         print self
-        return all([self.domain.verify(),
-                self.vhost.verify(repair),
-                self.access_log.verify(repair),
-                self.error_log.verify(repair),
-                self.htaccess.verify(repair),
-                self.logs.verify(repair),
-                self.htdocs.verify(repair),
-                self.assets.verify(repair),
-                self.root.verify(repair)])
+        return result
 
     def repair(self):
         """Repairs website installation"""
