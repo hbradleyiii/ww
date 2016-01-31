@@ -31,49 +31,60 @@ from website import Website, localhost
 from ww import settings as s
 
 
+def get_database(name):
+    return "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"
+
+def get_user(name):
+    return "SELECT user FROM mysql.user WHERE user = '" + user + "'"
+
 class WPWebsite(Website):
 
-    def __init__(self, domain, atts, mysql=s.MYSQL, is_new_website=False):
+    def __init__(self, domain, atts, mysql=s.MYSQL):
         """Initializes a new WPWebsite instance."""
 
         super(WPWebsite, self).__init__(domain)
 
         # Setup MySQL connection
-        self.mysql = MySQLdb.connect(
+        # self.mysql = MySQLdb.connect(
+        #         host   = mysql['host'],
+        #         user   = mysql['user'],
+        #         passwd = mysql['password']
+        #         ).cursor().execute
+        # self.cur = self.mysql.cursor()
+        # self.query = self.cur.execute # Used for SQL queries
+
+        self.query = MySQLdb.connect(
                 host   = mysql['host'],
                 user   = mysql['user'],
                 passwd = mysql['password']
-                )
-        self.cur = self.mysql.cursor()
-        self.query = self.cur.execute # Used for SQL queries
+            ).cursor().execute
 
         self.db = {'name' : '', 'user' : '', 'password' : ''}
-        if is_new_website:
+        if self.config.exists() and prompt('Parse existing wp_config.php?'):
+            self.config.parse()
 
+        else:
             # Initialize Wordpress database vars
             name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
             while True:
-                if self.query("SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"):
+                if self.query(get_database(name)):
                     print '[!] Database "' + name + '" already exists.'
                     name = prompt_str('Choose another MySQL database name:')
                 else:
                     break
             self.db['name'] = name
 
-            user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + domain)
+            user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain)
             if len(user) > 10:
                 user = user[:10]
             while True:
-                if self.query("SELECT user FROM mysql.user WHERE user = '" + user + "'"):
+                if self.query(get_user(user)):
                     print '[!] MySQL user "' + user + '" already exists.'
                     user = prompt_str('Choose another MySQL username:')
                 else:
                     break
             self.db['user'] = user
             self.db['password'] = generate_pw()
-
-        else: # Current website; use wp_config
-            self.parse_wp_config()
 
     def __str__(self):
         """Returns a string with relevant instance information."""
@@ -92,11 +103,11 @@ class WPWebsite(Website):
     def install(self):
         """Copies WordPress to htdocs, sets up a new database, then runs the 5 min setup."""
         super(WPWebsite, self).install()
-        self.download_wordpress()
-        self.untar_wordpress()
-        self.create_wordpress_db()
+        self.htdocs.fill(self.untar(self.download()))
+        self.create_database()
+        self.setup()
 
-    def uninstall(self, no_prompt=False):
+    def remove(self, no_prompt=False):
         """Uninstalls WordPress."""
         if no_prompt or prompt('Remove WordPress website database "' + self.db['name'] + '"?'):
             self.remove_wordpress_db()
@@ -109,7 +120,7 @@ class WPWebsite(Website):
         super(WPWebsite, self).verify()
 
     @localhost
-    def setup_wordpress(self):
+    def setup(self):
         """Runs the WordPress 5 min setup."""
         wordpress_config_setup()
         wordpress_install()
@@ -144,38 +155,32 @@ class WPWebsite(Website):
     ###################
     # Private Methods
 
-    def download_wordpress(self):
-        """Downloads a fresh WordPress tarball."""
-        if not os.path.exists(s.WP_TARBALL):
+    def download(self):
+        """Downloads a fresh WordPress tarball, returns path of download"""
+        wp_tarball = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
+        if not os.path.exists(wp_tarball):
             print 'Downloading Wordpress...'
-            with open(s.WP_TARBALL, 'wb') as tarball:
+            with open(wp_tarball, 'wb') as tarball:
                 tarball.write(requests.get(s.WP_LATEST).content)
             print 'Download Complete.'
         else:
             print 'Already downloaded wordpress today. Using existing tarball.'
+        return wp_tarball  # Return path to wordpress
 
-    def untar_wordpress(self):
-        """Untars WordPress to htdocs."""
-        if not os.path.exists(s.WP_EXTRACTED + 'wordpress/'):
+    def untar(self, tarball):
+        """Untars WordPress to tmp dir, returns path of extracted files."""
+        wp_extract_dir = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
+        wp_extracted = wp_extract_dir + 'wordpress/'
+        if not os.path.exists(wp_extracted):
             print 'Uncompressing files...'
-            tarball = tarfile.open(s.WP_TARBALL)
-            tarball.extractall(s.WP_EXTRACTED)
-            tarball.close()
+            wp_tarfile = tarfile.open(tarball)
+            wp_tarfile.extractall(wp_extract_dir)
+            wp_tarfile.close()
             print 'Extraction complete.'
-        print 'Moving files to "' + self.htdocs + '"...'
-        move(s.WP_EXTRACTED + 'wordpress/', self.htdocs)
-        rmtree(self.htdocs + 'wordpress') # Get rid of the 'wordpress' root directory
-        os.system('chown -R www-data ' + self.htdocs)
-        print 'Move complete.'
+        return wp_extracted  # Return path to extracted files
 
-    def remove_wordpress_files(self):
-        """Removes WordPress website files."""
-        print 'Removing Wordpress website files...'
-        # TODO: error handling
-        rmtree(self.htdocs)
-        print 'Website files removed.'
 
-    def create_wordpress_db(self):
+    def create_database(self):
         """Creates WordPress MySQL database."""
         print 'Setting up WordPress database "' + self.db['name'] + '"...'
         # TODO: error handling
@@ -185,7 +190,7 @@ class WPWebsite(Website):
         self.query("FLUSH PRIVILEGES")
         print 'Database ready.'
 
-    def remove_wordpress_db(self):
+    def remove_database(self):
         """Removes WordPress MySQL database."""
         print 'Removing Wordpress database "' + self.db['name'] + '"...'
         # TODO: error handling
@@ -235,7 +240,6 @@ class WPWebsite(Website):
         r = requests.post('http://' + self.domain + s.WP_INSTALL_URL, data=payload)
         print r.text
         print 'Installation complete'
-
 
     def parse_wp_config(self):
         self.db['user'] = user

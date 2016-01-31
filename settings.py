@@ -42,8 +42,6 @@ MYSQL = {
 
 # WordPress Settings
 WP_LATEST      = 'http://wordpress.org/latest.tar.gz'
-WP_TARBALL     = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
-WP_EXTRACTED   = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
 WP_SETUP_URL   = '/wp-admin/setup-config.php?step=2'
 WP_INSTALL_URL = '/wp-admin/install.php?step=2'
 
@@ -54,6 +52,8 @@ WP_CONFIG_TEMPLATE = TEMPLATE_PATH + 'wp-config.php.template'
 WP_ADMIN_USER  = 'admin'
 WP_ADMIN_EMAIL = 'admin@wp.com'
 WP_ADMIN_PW    = 'password123' # Please change this.
+
+WP_SALT_URL = 'https://api.wordpress.org/secret-key/1.1/salt/'
 
 # Apache commands
 CMD_RESTART_APACHE = 'sudo service apache2 restart'
