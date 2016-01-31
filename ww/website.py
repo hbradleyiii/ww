@@ -138,7 +138,7 @@ class Website(object):
         if self.vhost.exists():
             print str(self.vhost) + ' already exists.'
             if prompt('Parse existing vhost configuration?'):
-                atts = merge_atts(atts, self.vhost.get_parsed())
+                atts = merge_atts(atts, self.vhost.parse())
         # TODO: Convert...or migrate?
 
         self.root   = Dir(atts['root'])

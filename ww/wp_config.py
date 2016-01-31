@@ -37,6 +37,7 @@ class WPSalt(Section, Parsable):
             'logged_in_salt'   : "define('LOGGED_IN_SALT',[ ]*'([^']*)'\);",
             'nonce_salt'       : "define('NONCE_SALT',[ ]*'([^']*)'\);",
         }
+        self.setup_parsing()
 
     def read(self):
         try:
@@ -46,7 +47,6 @@ class WPSalt(Section, Parsable):
         return self.data
 
     def get_secrets(self):
-        self.parse()
         secrets = {}
         for key, regex in self.regexes.iteritems():
             secrets[key] = getattr(self, key)

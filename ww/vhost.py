@@ -40,6 +40,10 @@ class Vhost(Parsable, File):
         self.placeholders = placeholders
         self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
+        self.regexes = { 'htdocs'  : 'DocumentRoot ["]?([^"\n]*)',
+                       'error_log' :     'ErrorLog ["]?([^"\n]*)',
+                      'access_log' :    'CustomLog ["]?([^"\n]*)', }
+        self.setup_parsing()
 
     def create(self, data=''):
         if self.placeholders:
@@ -48,11 +52,6 @@ class Vhost(Parsable, File):
         self.enable()
 
     def parse(self):
-        regexes = { 'htdocs'  : 'DocumentRoot ["]?([^"\n]*)',
-                  'error_log' :     'ErrorLog ["]?([^"\n]*)',
-                 'access_log' :    'CustomLog ["]?([^"\n]*)', }
-        super(Vhost, self).parse(regexes)
-
         if self.htdocs == []:
             print 'Could not parse htdocs.'
             self.htdocs = prompt_str('What is the htdocs path?')
@@ -71,8 +70,6 @@ class Vhost(Parsable, File):
         else:
             self.access_log = self.access_log[0]
 
-    def get_parsed(self):
-        self.parse()
         return { 'htdocs' : { 'path' : self.htdocs },
              'access_log' : { 'path' : self.access_log },
               'error_log' : { 'path' : self.error_log },
