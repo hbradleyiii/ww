@@ -30,16 +30,9 @@ class Htaccess(File):
 
     def __init__(self, atts):
         super(Htaccess, self).__init__(atts)
-        try:
-            self.h5g
+        if getattr(self, 'h5g', None):
             self.h5g = HtaccessSection({'path' : s.HTA_5G_TEMPLATE})
-        except NameError:
-            self.h5g = False
-
-    def create(self, data=''):
-        if self.h5g: # Use 5g htaccess template?
-            data = self.h5g.apply_to(data)
-        super(Htaccess, self).create(data)
+            self.data = self.h5g.apply_to(self.read())
 
     def verify(self, repair):
         result = super(Htaccess, self).verify(repair)

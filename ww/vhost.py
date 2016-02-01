@@ -35,9 +35,8 @@ class VhostTemplate(Template, File): pass
 #       disable(ask)
 class Vhost(Parsable, File):
 
-    def __init__(self, domain, atts, placeholders=None):
+    def __init__(self, domain, atts):
         self.domain = domain
-        self.placeholders = placeholders
         self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
         self.regexes = { 'htdocs'  : 'DocumentRoot ["]?([^"\n]*)',
@@ -106,5 +105,6 @@ class Vhost(Parsable, File):
     def disable(self, ask=True):
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
             print 'Disabling ' + self.domain + ' vhost...'
+            # TODO: Change to subprocess
             os.system(s.CMD_DISABLE_CONFIG + self.domain)
             os.system(s.CMD_RESTART_APACHE)

@@ -27,73 +27,66 @@ import os
 import re
 import shutil
 import tarfile
-from website import Website, localhost
+from website import Website, localhost, merge_atts
+from wp_config import WPConfig
+from wp_htaccess import WPHtaccess
 from ww import settings as s
 
 
-def get_database(name):
+def select_database(name):
     return "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"
 
-def get_user(name):
+def select_user(name):
     return "SELECT user FROM mysql.user WHERE user = '" + user + "'"
+
 
 class WPWebsite(Website):
 
     def __init__(self, domain, atts, mysql=s.MYSQL):
         """Initializes a new WPWebsite instance."""
 
-        super(WPWebsite, self).__init__(domain)
+        super(WPWebsite, self).__init__(domain, atts)
 
         # Setup MySQL connection
-        # self.mysql = MySQLdb.connect(
-        #         host   = mysql['host'],
-        #         user   = mysql['user'],
-        #         passwd = mysql['password']
-        #         ).cursor().execute
-        # self.cur = self.mysql.cursor()
-        # self.query = self.cur.execute # Used for SQL queries
-
         self.query = MySQLdb.connect(
                 host   = mysql['host'],
                 user   = mysql['user'],
                 passwd = mysql['password']
             ).cursor().execute
 
-        self.db = {'name' : '', 'user' : '', 'password' : ''}
-        if self.config.exists() and prompt('Parse existing wp_config.php?'):
-            self.config.parse()
+        # TODO: create prompts
+        db_name= re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
+        db_user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain)
+        if len(db_user) > 10:
+            db_user = db_user[:10]
+        debug = 'true'
 
-        else:
-            # Initialize Wordpress database vars
-            name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
-            while True:
-                if self.query(get_database(name)):
-                    print '[!] Database "' + name + '" already exists.'
-                    name = prompt_str('Choose another MySQL database name:')
-                else:
-                    break
-            self.db['name'] = name
+        default_atts = {
+                'wp_config' : {
+                    'path'  : self.htdocs.path + 'wp-config.php',
+                    'perms' : 0775,
+                    'owner' : s.WWW_USR,
+                    'group' : s.WWW_USR,
+                    'wp'    : {
+                        'table_prefix' : 'wp_',
+                        'debug'        : debug,
+                        'db_name'      : db_name,
+                        'db_user'      : db_user,
+                        'db_password'  : generate_pw(),
+                        'db_hostname'  : 'localhost', } } }
 
-            user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain)
-            if len(user) > 10:
-                user = user[:10]
-            while True:
-                if self.query(get_user(user)):
-                    print '[!] MySQL user "' + user + '" already exists.'
-                    user = prompt_str('Choose another MySQL username:')
-                else:
-                    break
-            self.db['user'] = user
-            self.db['password'] = generate_pw()
+        atts = merge_atts(default_atts, atts)
+
+        self.config = WPConfig(atts['wp_config'])
 
     def __str__(self):
         """Returns a string with relevant instance information."""
         string = '\n\n----------------------------------------------------------'
         string += '\n                   - Wordpress Website -'
         string += super(WPWebsite, self).__str__()
-        string += '\n  Database:         ' + self.db['name']
-        string += '\n  MySQL User:       ' + self.db['user']
-        string += '\n  MySQL Password:   ' + self.db['password']
+        string += '\n  Database:         ' + self.config.db_name
+        string += '\n  MySQL User:       ' + self.config.db_user
+        string += '\n  MySQL Password:   ' + self.config.db_password
         string += '\n----------------------------------------------------------\n\n'
         return string
 
@@ -104,6 +97,8 @@ class WPWebsite(Website):
         """Copies WordPress to htdocs, sets up a new database, then runs the 5 min setup."""
         super(WPWebsite, self).install()
         self.htdocs.fill(self.untar(self.download()))
+        self.htaccess.create()
+        self.config.create()
         self.create_database()
         self.setup()
 
@@ -179,13 +174,28 @@ class WPWebsite(Website):
             print 'Extraction complete.'
         return wp_extracted  # Return path to extracted files
 
-
     def create_database(self):
         """Creates WordPress MySQL database."""
         print 'Setting up WordPress database "' + self.db['name'] + '"...'
         # TODO: error handling
+        while True:
+            if self.query(select_user(user)):
+                print '[!] MySQL user "' + user + '" already exists.'
+                user = prompt_str('Choose another MySQL username:')
+            else:
+                break
+        self.config.db_username
         self.query("CREATE DATABASE " + self.db['name'])
+
+        while True:
+            if self.query(select_database(name)):
+                print '[!] Database "' + name + '" already exists.'
+                name = prompt_str('Choose another MySQL database name:')
+            else:
+                break
+        self.config.db_name = name
         self.query("CREATE USER " + self.db['user'] + "@localhost IDENTIFIED BY '" + self.db['password']  + "'")
+
         self.query("GRANT ALL PRIVILEGES ON " + self.db['name'] + ".* TO " + self.db['user'] + "@localhost")
         self.query("FLUSH PRIVILEGES")
         print 'Database ready.'
@@ -199,21 +209,6 @@ class WPWebsite(Website):
         self.query("DROP USER " + self.db['user'] + "@localhost")
         self.query("FLUSH PRIVILEGES")
         print 'Database removed.'
-
-    def wordpress_config_setup(self):
-        payload = {
-                'dbname' : self.db['name'],
-                'uname'  : self.db['user'],
-                'pwd'    : self.db['password'],
-                'dbhost' : 'localhost',
-                'prefix' : 'wp_'
-                }
-
-        # TODO: error handling
-        print 'Running setup config...'
-        r = requests.post('http://' + self.domain + s.WP_SETUP_URL, data=payload)
-        print r.text
-        print 'Config setup complete'
 
     def wordpress_install(self):
         public = '1' if prompt('Allow search engines to index?') else '0'
@@ -240,8 +235,3 @@ class WPWebsite(Website):
         r = requests.post('http://' + self.domain + s.WP_INSTALL_URL, data=payload)
         print r.text
         print 'Installation complete'
-
-    def parse_wp_config(self):
-        self.db['user'] = user
-        self.db['password'] = generate_pw()
-        self.db['name'] = ''
