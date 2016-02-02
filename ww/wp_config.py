@@ -171,14 +171,14 @@ class WPConfig(Parsable, WWFile):
             self.read()  # At least make sure contents are already read into
                          # memory.
 
-        return { 'debug'        : self.debug,
-                 'table_prefix' : self.table_prefix,
-                 'db_name'      : self.db_name,
-                 'db_user'      : self.db_user,
-                 'db_password'  : self.db_password,
-                 'db_host'      : self.db_host,
-                 'disallow_edit': self.disallow_edit,
-                 'fs_method'    : self.fs_method, }
+        return { 'debug'         : self.debug,
+                 'table_prefix'  : self.table_prefix,
+                 'db_name'       : self.db_name,
+                 'db_user'       : self.db_user,
+                 'db_password'   : self.db_password,
+                 'db_host'       : self.db_host,
+                 'disallow_edit' : self.disallow_edit,
+                 'fs_method'     : self.fs_method, }
 
     def verify(self, repair=False):
         """This assumes the in-memory values are the correct values."""
@@ -189,77 +189,29 @@ class WPConfig(Parsable, WWFile):
                                        # for comparison and/or repair)
         self.read(True)  # Read values in from disk
 
-        if not self.debug == correct_values['debug']:
-            print '[!] Debug is incorrectly set to: ' + self.debug
-            if repair:
-                print 'Setting debug to: ' + correct_values['debug']
-                self.debug = correct_values['debug']
-                save = True
-            else:
-                result = False
+        verify_items = {
+            'debug'         : '[!] Debug is incorrectly set to: ',
+            'table_prefix'  : '[!] WordPress table prefix is incorrectly set to: ',
+            'db_name'       : '[!] WordPress database name is incorrectly set to: ',
+            'db_user'       : '[!] WordPress database username is incorrectly set to: ',
+            'db_password'   : '[!] WordPress database password is incorrectly set to: ',
+            'db_host'       : '[!] Databse hostname is incorrectly set to: ',
+            'disallow_edit' : '[!] DISALLOW_EDIT is incorrectly set to: ',
+            'fs_method'     : '[!] FS_METHOD is incorrectly set to: ',
+        }
 
-        if not self.table_prefix == correct_values['table_prefix']:
-            print '[!] WordPress table prefix is incorrectly set to: ' + self.table_prefix
-            if repair:
-                print 'Setting table prefix to: ' + correct_values['table_prefix']
-                self.table_prefix = correct_values['table_prefix']
-                save = True
-            else:
-                result = False
-
-        if not self.db_name == correct_values['db_name']:
-            print '[!] WordPress database is incorrectly set to: ' + self.db_name
-            if repair:
-                print 'Setting database name to: ' + correct_values['db_name']
-                self.db_name = correct_values['db_name']
-                save = True
-            else:
-                result = False
-
-        if not self.db_user == correct_values['db_user']:
-            print '[!] WordPress database username is incorrectly set to: ' + self.db_user
-            if repair:
-                print 'Setting database user to: ' + correct_values['db_user']
-                self.db_user = correct_values['db_user']
-                save = True
-            else:
-                result = False
-
-        if not self.db_password == correct_values['db_password']:
-            print '[!] WordPress database password is incorrectly set to: ' + self.db_password
-            if repair:
-                print 'Setting database password to: ' + correct_values['db_password']
-                self.db_password = correct_values['db_password']
-                save = True
-            else:
-                result = False
-
-        if not self.db_host == correct_values['db_host']:
-            print '[!] Databse hostname is incorrectly set to: ' + self.db_host
-            if repair:
-                print 'Setting database host to: ' + correct_values['db_host']
-                self.db_host = correct_values['db_host']
-                save = True
-            else:
-                result = False
-
-        if not self.disallow_edit == correct_values['disallow_edit']:
-            print '[!] DISALLOW_EDIT is incorrectly set to: ' + self.disallow_edit
-            if repair:
-                print 'Setting disallow_edit to: ' + correct_values['disallow_edit']
-                self.disallow_edit = correct_values['disallow_edit']
-                save = True
-            else:
-                result = False
-
-        if not self.fs_method == correct_values['fs_method']:
-            print '[!] FS_METHOD is incorrectly set to: ' + self.fs_method
-            if repair:
-                print 'Setting fs_method to: ' + correct_values['fs_method']
-                self.fs_method = correct_values['fs_method']
-                save = True
-            else:
-                result = False
+        for attribute, error_message in verify_items.iteritems():
+            correct_value = correct_values[attribute]
+            current_value = getattr(self, attribute)
+            if not current_value == correct_value:
+                print error_message + str(current_value)
+                if repair:
+                    print 'Setting "' + attribute + '" to: "' + \
+                        correct_value + '"...'
+                    setattr(self, attribute, correct_value)
+                    save = True
+                else:
+                    result = False
 
         if repair and save:
             self.write(append=False)
