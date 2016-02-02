@@ -8,8 +8,8 @@
 # description:      A unit test for ww module's WPWebsite class and methods.
 #
 
-from ww import WPWebsite
 import pytest
+from ww import WPWebsite
 
 
 init_args = [

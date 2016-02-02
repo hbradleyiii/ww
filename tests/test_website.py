@@ -8,9 +8,9 @@
 # description:      A unit test for ww module's Website class and methods.
 #
 
+import pytest
 from ww import Website
 from ww.ww.website import merge_atts
-import pytest
 
 
 merge_atts_args = [

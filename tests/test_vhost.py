@@ -10,8 +10,8 @@
 #                   they are tightly coupled to an apache system.
 #
 
-from ww import Vhost
 import pytest
+from ww.ww import Vhost
 
 
 def test_vhost_init():
