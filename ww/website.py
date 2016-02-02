@@ -173,12 +173,12 @@ class Website(object):
         string =  '\n\n----------------------------------------------------------'
         string += '\n                        - Website -'
         string += '\n----------------------------------------------------------'
-        string += '\n  domain:           ' + self.domain
-        string += '\n  vhost config:     ' + self.vhost
-        string += '\n  htdocs directory: ' + self.htdocs
-        string += '\n  assets:           ' + self.assets
-        string += '\n  logs:             ' + self.logs
-        string += '\n----------------------------------------------------------\n\n'
+        string += '\n  domain:           ' + str(self.domain)
+        string += '\n  vhost config:     ' + str(self.vhost)
+        string += '\n  htdocs directory: ' + str(self.htdocs)
+        string += '\n  assets:           ' + str(self.assets)
+        string += '\n  logs:             ' + str(self.logs)
+        string += '\n----------------------------------------------------------\n'
         return string
 
     def __repr__(self):

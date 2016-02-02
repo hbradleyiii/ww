@@ -84,10 +84,10 @@ class WPWebsite(Website):
         string = '\n\n----------------------------------------------------------'
         string += '\n                   - Wordpress Website -'
         string += super(WPWebsite, self).__str__()
-        string += '\n  Database:         ' + self.config.db_name
-        string += '\n  MySQL User:       ' + self.config.db_user
-        string += '\n  MySQL Password:   ' + self.config.db_password
-        string += '\n----------------------------------------------------------\n\n'
+        string += '  Database:         ' + str(self.config.db_name)
+        string += '\n  MySQL User:       ' + str(self.config.db_user)
+        string += '\n  MySQL Password:   ' + str(self.config.db_password)
+        string += '\n----------------------------------------------------------\n'
         return string
 
     ################
