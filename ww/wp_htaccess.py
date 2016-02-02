@@ -8,12 +8,6 @@
 # description:      A class to create Apache htaccess files.
 #
 
-try:
-    from ext_pylib.files import File, Section
-    from ext_pylib.prompt import prompt, prompt_str
-except ImportError:
-    raise ImportError('ext_pylib must be installed to run ww')
-
 from htaccess import Htaccess, HtaccessSection
 from ww import settings as s
 

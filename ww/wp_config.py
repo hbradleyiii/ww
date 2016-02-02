@@ -9,7 +9,7 @@
 #
 
 try:
-    from ext_pylib.files import File, Parsable, Section, Template
+    from ext_pylib.files import Parsable, Section, Template
     from ext_pylib.prompt import prompt, prompt_str
 except ImportError:
     raise ImportError('Python module ext_pylib must be installed to run ww')
@@ -20,6 +20,7 @@ except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
 from ww import settings as s
+from ww_file import WWFile
 
 
 SALT_REGEXES = {
@@ -57,7 +58,7 @@ WP_CONF_REGEXES = dict(SALT_REGEXES, **{
 })
 
 
-class WPConfigTemplate(Template, File): pass
+class WPConfigTemplate(Template, WWFile): pass
 
 class WPSalt(Section, Parsable):
     regexes = SALT_REGEXES
@@ -83,7 +84,7 @@ class WPSalt(Section, Parsable):
 #   methods:
 #       create()
 #       verify()
-class WPConfig(Parsable, File):
+class WPConfig(Parsable, WWFile):
     regexes = WP_CONF_REGEXES
 
     def __init__(self, atts):

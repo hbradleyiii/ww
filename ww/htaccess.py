@@ -9,15 +9,16 @@
 #
 
 try:
-    from ext_pylib.files import File, Section
+    from ext_pylib.files import Section
     from ext_pylib.prompt import prompt, prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
 from ww import settings as s
+from ww_file import WWFile
 
 
-class HtaccessSection(Section, File): pass
+class HtaccessSection(Section, WWFile): pass
 
 # Htaccess()
 #   A class that describes an Apache htaccess file.
@@ -26,7 +27,7 @@ class HtaccessSection(Section, File): pass
 #   methods:
 #       create()
 #       verify()
-class Htaccess(File):
+class Htaccess(WWFile):
 
     def __init__(self, atts):
         super(Htaccess, self).__init__(atts)

@@ -10,16 +10,17 @@
 #                   TODO: add SSL capabilities
 
 try:
-    from ext_pylib.files import File, Parsable, Template
+    from ext_pylib.files import Parsable, Template
     from ext_pylib.prompt import prompt, prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
 import os
 from ww import settings as s
+from ww_file import WWFile
 
 
-class VhostTemplate(Template, File): pass
+class VhostTemplate(Template, WWFile): pass
 
 # Vhost()
 #   A class that describes an Apache vhost configuration.
@@ -33,7 +34,7 @@ class VhostTemplate(Template, File): pass
 #       is_enabled()
 #       enable(ask)
 #       disable(ask)
-class Vhost(Parsable, File):
+class Vhost(Parsable, WWFile):
 
     def __init__(self, domain, atts):
         self.domain = domain
@@ -85,9 +86,6 @@ class Vhost(Parsable, File):
                 self.enable(False)
         print 'Vhost for ' + self.domain + ' is enabled.'
         return result
-
-    def repair(self):
-        self.verify(True)
 
     def is_enabled(self):
         apache_list = os.popen("apache2ctl -S | grep ' namevhost " + \
