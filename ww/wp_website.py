@@ -73,7 +73,7 @@ class WPWebsite(Website):
                         'db_name'      : db_name,
                         'db_user'      : db_user,
                         'db_password'  : generate_pw(),
-                        'db_hostname'  : 'localhost', } } }
+                        'db_host'      : 'localhost', } } }
 
         atts = merge_atts(default_atts, atts)
 
