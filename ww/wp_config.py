@@ -116,7 +116,7 @@ class WPConfig(Parsable, WWFile):
 
     def parse(self):
         """This does not return the salts. They will be changed every time."""
-        if self.debug == []:
+        if not self.debug:
             print 'Could not parse debug mode.'
             if prompt('Turn debug mode on?'):
                 self.debug = 'true'
@@ -125,31 +125,31 @@ class WPConfig(Parsable, WWFile):
         else:
             self.debug = self.debug[0]
 
-        if self.table_prefix == []:
+        if not self.table_prefix:
             print 'Could not parse WordPress database table_prefix.'
             self.table_prefix = prompt_str('What is the WordPress database table_prefix?')
         else:
             self.table_prefix = self.table_prefix[0]
 
-        if self.db_name == []:
+        if not self.db_name:
             print 'Could not parse WordPress database name.'
             self.db_name = prompt_str('What is the WordPress database name?')
         else:
             self.db_name = self.db_name[0]
 
-        if self.db_user == []:
+        if not self.db_user:
             print 'Could not parse WordPress database user.'
             self.db_user = prompt_str('What is the WordPress database user?')
         else:
             self.db_user = self.db_user[0]
 
-        if self.db_password == []:
+        if not self.db_password:
             print 'Could not parse WordPress database password.'
             self.db_password = prompt_str('What is the WordPress database password?')
         else:
             self.db_password = self.db_password[0]
 
-        if self.db_hostname == []:
+        if not self.db_hostname:
             print 'Could not parse WordPress database hostname.'
             self.db_hostname = prompt_str('What is the WordPress database hostname?')
         else:
