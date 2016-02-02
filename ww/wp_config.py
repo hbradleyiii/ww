@@ -175,6 +175,7 @@ class WPConfig(Parsable, WWFile):
     def verify(self, repair=False):
         """This assumes the in-memory values are the correct values."""
         result = True  # Assume the best :)
+        save = False
 
         correct_values = self.parse()  # Retrieve values in memory (and hold
                                        # for comparison and/or repair)
@@ -185,6 +186,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting debug to: ' + correct_values['debug']
                 self.debug = correct_values['debug']
+                save = True
             else:
                 result = False
 
@@ -193,6 +195,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting table prefix to: ' + correct_values['table_prefix']
                 self.table_prefix = correct_values['table_prefix']
+                save = True
             else:
                 result = False
 
@@ -201,6 +204,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting database name to: ' + correct_values['db_name']
                 self.db_name = correct_values['db_name']
+                save = True
             else:
                 result = False
 
@@ -209,6 +213,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting database user to: ' + correct_values['db_user']
                 self.db_user = correct_values['db_user']
+                save = True
             else:
                 result = False
 
@@ -217,6 +222,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting database password to: ' + correct_values['db_password']
                 self.db_password = correct_values['db_password']
+                save = True
             else:
                 result = False
 
@@ -225,6 +231,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting database host to: ' + correct_values['db_host']
                 self.db_host = correct_values['db_host']
+                save = True
             else:
                 result = False
 
@@ -233,6 +240,7 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting disallow_edit to: ' + correct_values['disallow_edit']
                 self.disallow_edit = correct_values['disallow_edit']
+                save = True
             else:
                 result = False
 
@@ -241,14 +249,18 @@ class WPConfig(Parsable, WWFile):
             if repair:
                 print 'Setting fs_method to: ' + correct_values['fs_method']
                 self.fs_method = correct_values['fs_method']
+                save = True
             else:
                 result = False
 
+        if repair and save:
+            self.write(append=False)
+
         if self.debug == 'true':
-            print '-------------------------------------'
-            print '[WARN] WordPress Debug mode is on.'
-            print '       Be sure to turn this off in'
-            print '       a production environement!'
-            print '-------------------------------------'
+            print '\n    -------------------------------------'
+            print '    [WARN] WordPress Debug mode is on.'
+            print '           Be sure to turn this off in'
+            print '           a production environement!'
+            print '    -------------------------------------\n'
 
         return result

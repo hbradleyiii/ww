@@ -122,5 +122,22 @@ def test_wpconfig_parse():
     assert config_2.parse() == result_on_disk
 
 def test_wpconfig_verify():
-    """TODO:"""
-    pass
+    """Test wpconfig verify() and repair."""
+    with mock.patch('__builtin__.raw_input', return_value='y'):
+        config = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
+
+    assert config.verify()
+
+    config.debug = 'true'
+    assert not config.verify()
+
+    config.debug = 'false'
+    assert config.verify()
+
+    config.db_name = 'new_value'
+    assert config.verify(True)
+    assert config.db_name == 'new_value'
+
+    config.db_name = 'db_name'
+    assert config.verify(True)
+    assert config.db_name == 'db_name'
