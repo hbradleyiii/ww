@@ -129,15 +129,15 @@ def test_wpconfig_verify():
     assert config.verify()
 
     config.debug = 'true'
-    assert not config.verify()
+    assert not config.verify()  # Debug should not be set to true
 
     config.debug = 'false'
-    assert config.verify()
+    assert config.verify()  # Debug should be set to false
 
     config.db_name = 'new_value'
-    assert config.verify(True)
+    assert config.verify(True)  # Change db_name in memory and repair
     assert config.db_name == 'new_value'
 
-    config.db_name = 'db_name'
-    assert config.verify(True)
+    config.db_name = 'db_name'  # Change db_name back
+    assert config.verify(True)  # by doing a repair
     assert config.db_name == 'db_name'
