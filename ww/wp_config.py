@@ -25,36 +25,40 @@ from ww_file import WWFile
 
 SALT_REGEXES = {
     'auth_key'         : ("define\('AUTH_KEY',[ ]*'([^']*)'\);",
-                            "define\('AUTH_KEY',[ ]*'{}'\);"),
+                            "define('AUTH_KEY', '{}');"),
     'secure_auth_key'  : ("define\('SECURE_AUTH_KEY',[ ]*'([^']*)'\);",
-                            "define\('SECURE_AUTH_KEY',[ ]*'{}'\);"),
+                            "define('SECURE_AUTH_KEY', '{}');"),
     'logged_in_key'    : ("define\('LOGGED_IN_KEY',[ ]*'([^']*)'\);",
-                            "define\('LOGGED_IN_KEY',[ ]*'{}'\);"),
+                            "define('LOGGED_IN_KEY', '{}');"),
     'nonce_key'        : ("define\('NONCE_KEY',[ ]*'([^']*)'\);",
-                            "define\('NONCE_KEY',[ ]*'{}'\);"),
+                            "define('NONCE_KEY', '{}');"),
     'auth_salt'        : ("define\('AUTH_SALT',[ ]*'([^']*)'\);",
-                            "define\('AUTH_SALT',[ ]*'{}'\);"),
+                            "define('AUTH_SALT', '{}');"),
     'secure_auth_salt' : ("define\('SECURE_AUTH_SALT',[ ]*'([^']*)'\);",
-                            "define\('SECURE_AUTH_SALT',[ ]*'{}'\);"),
+                            "define('SECURE_AUTH_SALT', '{}');"),
     'logged_in_salt'   : ("define\('LOGGED_IN_SALT',[ ]*'([^']*)'\);",
-                            "define\('LOGGED_IN_SALT',[ ]*'{}'\);"),
+                            "define('LOGGED_IN_SALT', '{}');"),
     'nonce_salt'       : ("define\('NONCE_SALT',[ ]*'([^']*)'\);",
-                            "define\('NONCE_SALT',[ ]*'{}'\);"),
+                            "define('NONCE_SALT', '{}');"),
 }
 
 WP_CONF_REGEXES = dict(SALT_REGEXES, **{
-    'debug'        : ("define\('WP_DEBUG', (.*)\);",
-                      "define\('WP_DEBUG', {}\);"),
-    'db_name'      : ("define\('DB_NAME', '(.*)'\);",
-                      "define\('DB_NAME', '{}'\);"),
+    'debug'        : ("define\('WP_DEBUG', ([^ \n]*)\);",
+                      "define('WP_DEBUG', {});"),
+    'db_name'      : ("define\('DB_NAME', '([^ \n]*)'\);",
+                      "define('DB_NAME', '{}');"),
     'db_user'      : ("define\('DB_USER', '(.*)'\);",
-                      "define\('DB_USER', '{}'\);"),
+                      "define('DB_USER', '{}');"),
     'db_password'  : ("define\('DB_PASSWORD', '(.*)'\);",
-                      "define\('DB_PASSWORD', '{}'\);"),
+                      "define('DB_PASSWORD', '{}');"),
     'db_hostname'  : ("define\('DB_HOSTNAME', '(.*)'\);",
-                      "define\('DB_HOSTNAME', '{}'\);"),
-    'table_prefix' : ("$table_prefix[ ]*=[ ]*['\"](.*)['\"];",
+                      "define('DB_HOSTNAME', '{}');"),
+    'table_prefix' : ("\$table_prefix[ ]*=[ ]*['\"](.*)['\"];",
                       "$table_prefix = '{}';"),
+    'disallow_edit': ("define\('DISALLOW_FILE_EDIT', (.*)\);",
+                      "define('DISALLOW_FILE_EDIT', {});"),
+    'fs_method'    : ("define\('FS_METHOD', '(.*)'\);",
+                      "define('FS_METHOD', '{}');"),
 })
 
 
@@ -106,6 +110,9 @@ class WPConfig(Parsable, WWFile):
         self.db_user = atts['wp']['db_user']
         self.db_password = atts['wp']['db_password']
         self.db_hostname = atts['wp']['db_hostname']
+
+        self.disallow_edit = 'true'
+        self.fs_method = 'direct'
 
     def parse(self):
         """This does not return the salts. They will be changed every time."""
