@@ -64,6 +64,13 @@ WP_CONF_REGEXES = dict(SALT_REGEXES, **{
 
 class WPConfigTemplate(Template, WWFile): pass
 
+# WPSalt()
+#   A class that describes a WordPress wp_config.php Salt section.
+#
+#   methods:
+#       read() - overrides the original, merely returning self.data. The data
+#                is set in __init__. This prevents excessive network calls.
+#       secrets() - a generator that yeilds a tuple of key and salt value.
 class WPSalt(Section, Parsable):
     regexes = SALT_REGEXES
 
@@ -86,10 +93,11 @@ class WPSalt(Section, Parsable):
 #   This is primarily a wrapper for wp_config managment.
 #
 #   methods:
-#       create()
-#       verify()
+#       parse() - returns a dict of attributes (but not the salts)
+#       verify() - tests that the attributes on disk matches what is in memory
 class WPConfig(Parsable, WWFile):
-    regexes = WP_CONF_REGEXES
+    regexes = WP_CONF_REGEXES  # The regexes guarantee that the class will have
+                               # necessary attributes, even if set to None.
 
     def __init__(self, atts):
         self.setup_parsing()  # Do this first, before initializing attributes
