@@ -103,15 +103,15 @@ class WPConfig(Parsable, WWFile):
         self.setup_parsing()  # Do this first, before initializing attributes
 
         super(WPConfig, self).__init__(atts)
+        self.atts = atts
+
         if self.exists() and prompt('Parse existing wp_config.php?'):
-            atts['wp'] = self.parse(True)
+            self.atts['wp'] = self.parse(True)
         else:  # Otherwise, apply the template
             self.template = WPConfigTemplate({'path' : s.WP_CONFIG_TEMPLATE}).read()
             self.data = self.template
-
-        self.salt = WPSalt()
-        for key, value in self.salt.secrets():
-            setattr(self, key, value)
+            for key, value in WPSalt().secrets():
+                setattr(self, key, value)
 
         if 'wp' in atts:
             for att, value in atts['wp'].iteritems():
@@ -119,8 +119,7 @@ class WPConfig(Parsable, WWFile):
 
 
     def parse(self, parse_from_disk=False):
-        """Returns a dict of attributes.  This does not return the salts. They
-           will be changed every time.  Passing in True as an arguement will
+        """Returns a dict of attributes. Passing in True as an arguement will
            force reading from disk."""
 
         if parse_from_disk:
@@ -167,18 +166,38 @@ class WPConfig(Parsable, WWFile):
                 print 'Could not parse fs_method.'
                 self.fs_method = prompt_str('What should we set fs_method?', 'direct')
 
+            if not self.auth_key or \
+               not self.secure_auth_key or \
+               not self.logged_in_key or \
+               not self.nonce_key or \
+               not self.auth_salt or \
+               not self.secure_auth_salt or \
+               not self.logged_in_salt or \
+               not self.nonce_salt:
+                print 'Salts not parsable. Recreating new salts...'
+                for key, value in WPSalt().secrets():
+                    setattr(self, key, value)
+
         else:
             self.read()  # At least make sure contents are already read into
                          # memory.
 
-        return { 'debug'         : self.debug,
-                 'table_prefix'  : self.table_prefix,
-                 'db_name'       : self.db_name,
-                 'db_user'       : self.db_user,
-                 'db_password'   : self.db_password,
-                 'db_host'       : self.db_host,
-                 'disallow_edit' : self.disallow_edit,
-                 'fs_method'     : self.fs_method, }
+        return { 'debug'            : self.debug,
+                 'table_prefix'     : self.table_prefix,
+                 'db_name'          : self.db_name,
+                 'db_user'          : self.db_user,
+                 'db_password'      : self.db_password,
+                 'db_host'          : self.db_host,
+                 'disallow_edit'    : self.disallow_edit,
+                 'fs_method'        : self.fs_method,
+                 'auth_key'         : self.auth_key,
+                 'secure_auth_key'  : self.secure_auth_key,
+                 'logged_in_key'    : self.logged_in_key,
+                 'nonce_key'        : self.nonce_key,
+                 'auth_salt'        : self.auth_salt,
+                 'secure_auth_salt' : self.secure_auth_salt,
+                 'logged_in_salt'   : self.logged_in_salt,
+                 'nonce_salt'       : self.nonce_salt }
 
     def verify(self, repair=False):
         """This assumes the in-memory values are the correct values."""

@@ -24,7 +24,7 @@ define('LOGGED_IN_SALT',   'i~O~sCX+V4;|d6gUw)M8-]Mpj!|f#ypD5ZFos4|XJbrnQddaVe+[
 define('NONCE_SALT',       '1S`>!Q@b2A+vpU-a:A=fqvKbv!*>d+AL|;&QcR!lsR+DO@L)fE;Qh>gz!~>vy5EK');
 """
 
-def xtest_wpsalt_chars():
+def test_wpsalt_chars():
     """Tests wpsalt for correct length of chars."""
     salt = WPSalt()
     assert len(salt.secure_auth_key) == 64
@@ -35,7 +35,7 @@ def xtest_wpsalt_chars():
     assert len(salt.logged_in_salt) == 64
     assert len(salt.nonce_salt) == 64
 
-def xtest_wpsalt_assignment():
+def test_wpsalt_assignment():
     """Tests wpsalt for assignment using multiple salts."""
     original_salt = WPSalt()
     static_salt = WPSalt()
@@ -85,37 +85,61 @@ def test_wpconfig_parse():
         config = WPConfig({
             'path' : s.WP_CONFIG_TEMPLATE,
             'wp' : {
-                'debug'        : 'true',
-                'table_prefix' : 'xyz',
-                'db_name'      : 'the_dbname',
-                'db_user'      : 'the_user',
-                'db_password'  : 'the_password',
-                'db_host'      : 'the_host',
-                'disallow_edit': 'false',
-                'fs_method'    : 'whatever', } } )
+                'debug'            : 'true',
+                'table_prefix'     : 'xyz',
+                'db_name'          : 'the_dbname',
+                'db_user'          : 'the_user',
+                'db_password'      : 'the_password',
+                'db_host'          : 'the_host',
+                'disallow_edit'    : 'false',
+                'fs_method'        : 'whatever',
+                'auth_key'         : 'salt overwritten',
+                'secure_auth_key'  : 'salt overwritten',
+                'logged_in_key'    : 'salt overwritten',
+                'nonce_key'        : 'salt overwritten',
+                'auth_salt'        : 'salt overwritten',
+                'secure_auth_salt' : 'salt overwritten',
+                'logged_in_salt'   : 'salt overwritten',
+                'nonce_salt'       : 'salt overwritten', } } )
 
     with mock.patch('__builtin__.raw_input', return_value='y'):
         config_2 = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
 
     result_in_memory = {
-        'debug'        : 'true',
-        'table_prefix' : 'xyz',
-        'db_name'      : 'the_dbname',
-        'db_user'      : 'the_user',
-        'db_password'  : 'the_password',
-        'db_host'      : 'the_host',
-        'disallow_edit': 'false',
-        'fs_method'    : 'whatever', }
+        'debug'            : 'true',
+        'table_prefix'     : 'xyz',
+        'db_name'          : 'the_dbname',
+        'db_user'          : 'the_user',
+        'db_password'      : 'the_password',
+        'db_host'          : 'the_host',
+        'disallow_edit'    : 'false',
+        'fs_method'        : 'whatever',
+        'auth_key'         : 'salt overwritten',
+        'secure_auth_key'  : 'salt overwritten',
+        'logged_in_key'    : 'salt overwritten',
+        'nonce_key'        : 'salt overwritten',
+        'auth_salt'        : 'salt overwritten',
+        'secure_auth_salt' : 'salt overwritten',
+        'logged_in_salt'   : 'salt overwritten',
+        'nonce_salt'       : 'salt overwritten', }
 
     result_on_disk = {
-        'debug'        : 'false',
-        'table_prefix' : 'wp_',
-        'db_name'      : 'db_name',
-        'db_user'      : 'db_user',
-        'db_password'  : 'db_password',
-        'db_host'      : 'localhost',
-        'disallow_edit': 'true',
-        'fs_method'    : 'direct', }
+        'debug'            : 'false',
+        'table_prefix'     : 'wp_',
+        'db_name'          : 'db_name',
+        'db_user'          : 'db_user',
+        'db_password'      : 'db_password',
+        'db_host'          : 'localhost',
+        'disallow_edit'    : 'true',
+        'fs_method'        : 'direct',
+        'auth_key'         : 'put your unique phrase here',
+        'secure_auth_key'  : 'put your unique phrase here',
+        'logged_in_key'    : 'put your unique phrase here',
+        'nonce_key'        : 'put your unique phrase here',
+        'auth_salt'        : 'put your unique phrase here',
+        'secure_auth_salt' : 'put your unique phrase here',
+        'logged_in_salt'   : 'put your unique phrase here',
+        'nonce_salt'       : 'put your unique phrase here', }
 
     assert config.parse() == result_in_memory
     assert config.parse(True) == result_on_disk
