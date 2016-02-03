@@ -18,33 +18,49 @@ from ww import settings as s
 from ww_file import WWFile
 
 
-class HtaccessSection(Section, WWFile): pass
+class HtaccessSection(Section, WWFile):
+    def __str__(self):
+        pass
+
 
 # Htaccess()
 #   A class that describes an Apache htaccess file.
 #   This is primarily a wrapper for htaccess managment.
 #
 #   methods:
-#       create()
 #       verify()
 class Htaccess(WWFile):
 
     def __init__(self, atts):
+        """TODO:"""
         super(Htaccess, self).__init__(atts)
-        if getattr(self, 'h5g', None):
-            self.h5g = HtaccessSection({'path' : s.HTA_5G_TEMPLATE})
-            self.data = self.h5g.apply_to(self.read())
+        self.sections = []
+        if 'hta' in atts:
+            for hta in atts['hta']:
+                htaccess = HtaccessSection(hta)
+                self.data = htaccess.apply_to(self.read())
+                self.sections.append(htaccess)
 
     def verify(self, repair):
+        """TODO:"""
         result = super(Htaccess, self).verify(repair)
-        if self.exists() and self.h5g: # Use 5g htaccess template?
-            print 'Checking htaccess for 5g section...',
-            if not self.h5g.has_section(self.read()):
-                # TODO: do the repair if repair
-                print '[FAIL]'
-                return false
+        save = False
+
+        for htaccess in self.sections:
+            print 'Checking htaccess for ' + str(htaccess) + ' section...',
+            if not htaccess.has_section(self.read()):
+                if repair:
+                    self.data = htaccess.apply_to(self.read())
+                    save = True
+                else:
+                    print '[FAIL]'
+                    return false
             print '[OK]'
-            if not self.h5g.is_applied(self.read()):
+            if not htaccess.is_applied(self.read()):
                 print '[!] htaccess has 5g section, but it is an old' + \
                         'version, or it has been altered.'
+
+        if repair and save:
+            result = result and self.write()
+
         return result
