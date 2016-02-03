@@ -23,7 +23,7 @@ import sys
 from ww import Website, WebsiteDomain, Vhost, WPWebsite
 
 
-def help():
+def display_help():
     """Displays script help."""
     print 'Help not yet implemented.'
 
@@ -41,7 +41,7 @@ def main():
     try:
         command = sys.argv.pop(0)
     except IndexError: # No arguments given
-        help() # If no argmuments are given, run help
+        display_help() # If no argmuments are given, display help
         return
 
     if command not in ['install', 'remove', 'pack', 'unpack', 'verify', 'repair']:
