@@ -69,8 +69,9 @@ def merge_atts(atts, new_atts):
 #       repair()  - verifies website forcing repairs
 class Website(object):
 
-    def __init__(self, domain, atts = {}):
+    def __init__(self, domain, atts = None):
         """Initializes a new Website instance."""
+        atts = atts or {}
 
         print '[*] SSL not yet implemented in Website class.'
 
