@@ -66,4 +66,3 @@ try:
     from settings_local import *
 except ImportError:
     print "Can't find settings_local. Using default settings."
-    pass
