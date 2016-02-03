@@ -187,13 +187,13 @@ class Website(object):
                "'access_log' : %s, 'error_log' : %s, 'htaccess' : %s, 'vhost' : %s})" % (
             self.__class__.__name__,
             self.domain,
-            self.htdocs._atts_(),
-            self.assets._atts_(),
-            self.logs._atts_(),
-            self.access_log._atts_(),
-            self.error_log._atts_(),
-            self.htaccess._atts_(),
-            self.vhost._atts_()
+            self.htdocs.get_atts(),
+            self.assets.get_atts(),
+            self.logs.get_atts(),
+            self.access_log.get_atts(),
+            self.error_log.get_atts(),
+            self.htaccess.get_atts(),
+            self.vhost.get_atts()
             )
 
 
