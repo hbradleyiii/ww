@@ -233,6 +233,10 @@ class WPConfig(Parsable, WWFile):
                     result = False
 
         if repair and save:
+            if prompt('Create new salts?'):
+                print 'Creating new salts...'
+                for key, value in WPSalt().secrets():
+                    setattr(self, key, value)
             self.write(append=False)
 
         if self.debug == 'true':

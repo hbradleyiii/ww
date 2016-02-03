@@ -159,9 +159,11 @@ def test_wpconfig_verify():
     assert config.verify()  # Debug should be set to false
 
     config.db_name = 'new_value'
-    assert config.verify(True)  # Change db_name in memory and repair
+    with mock.patch('__builtin__.raw_input', return_value='n'):
+        assert config.verify(True)  # Change db_name in memory and repair
     assert config.db_name == 'new_value'
 
     config.db_name = 'db_name'  # Change db_name back
-    assert config.verify(True)  # by doing a repair
+    with mock.patch('__builtin__.raw_input', return_value='n'):
+        assert config.verify(True)  # by doing a repair
     assert config.db_name == 'db_name'
