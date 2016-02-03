@@ -249,7 +249,7 @@ class WPConfig(Parsable, WWFile):
             print '\n    -------------------------------------'
             print '    [WARN] WordPress Debug mode is on.'
             print '           Be sure to turn this off in'
-            print '           a production environement!'
+            print '           a production environment!'
             print '    -------------------------------------\n'
 
         return result
