@@ -65,4 +65,5 @@ CMD_DISABLE_CONFIG = 'sudo a2dissite ' # run as: {command} domain
 try:
     from settings_local import *
 except ImportError:
+    print "Can't find settings_local. Using default settings."
     pass
