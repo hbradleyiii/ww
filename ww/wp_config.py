@@ -25,21 +25,21 @@ from ww_file import WWFile
 
 SALT_REGEXES = {
     'auth_key'         : ("define\('AUTH_KEY',[ ]*'([^']*)'\);",
-                            "define('AUTH_KEY', '{}');"),
+                            "define('AUTH_KEY',         '{}');"),
     'secure_auth_key'  : ("define\('SECURE_AUTH_KEY',[ ]*'([^']*)'\);",
-                            "define('SECURE_AUTH_KEY', '{}');"),
+                            "define('SECURE_AUTH_KEY',  '{}');"),
     'logged_in_key'    : ("define\('LOGGED_IN_KEY',[ ]*'([^']*)'\);",
-                            "define('LOGGED_IN_KEY', '{}');"),
+                            "define('LOGGED_IN_KEY',    '{}');"),
     'nonce_key'        : ("define\('NONCE_KEY',[ ]*'([^']*)'\);",
-                            "define('NONCE_KEY', '{}');"),
+                            "define('NONCE_KEY',        '{}');"),
     'auth_salt'        : ("define\('AUTH_SALT',[ ]*'([^']*)'\);",
-                            "define('AUTH_SALT', '{}');"),
+                            "define('AUTH_SALT',        '{}');"),
     'secure_auth_salt' : ("define\('SECURE_AUTH_SALT',[ ]*'([^']*)'\);",
                             "define('SECURE_AUTH_SALT', '{}');"),
     'logged_in_salt'   : ("define\('LOGGED_IN_SALT',[ ]*'([^']*)'\);",
-                            "define('LOGGED_IN_SALT', '{}');"),
+                            "define('LOGGED_IN_SALT',   '{}');"),
     'nonce_salt'       : ("define\('NONCE_SALT',[ ]*'([^']*)'\);",
-                            "define('NONCE_SALT', '{}');"),
+                            "define('NONCE_SALT',       '{}');"),
 }
 
 WP_CONF_REGEXES = dict(SALT_REGEXES, **{
