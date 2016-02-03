@@ -103,11 +103,11 @@ class WPConfig(Parsable, WWFile):
         self.setup_parsing()  # Do this first, before initializing attributes
 
         super(WPConfig, self).__init__(atts)
-        self.atts = atts
+        self.default_atts = atts
 
         if self.exists() and prompt('Parse existing wp_config.php?'):
-            self.atts['wp'] = self.parse(True)
-        else:  # Otherwise, apply the template
+            atts['wp'] = self.parse(True)
+        else:  # Otherwise, apply the template and create salts
             self.template = WPConfigTemplate({'path' : s.WP_CONFIG_TEMPLATE}).read()
             self.data = self.template
             for key, value in WPSalt().secrets():
@@ -199,14 +199,20 @@ class WPConfig(Parsable, WWFile):
                  'logged_in_salt'   : self.logged_in_salt,
                  'nonce_salt'       : self.nonce_salt }
 
-    def verify(self, repair=False):
-        """This assumes the in-memory values are the correct values."""
+    def verify(self, repair=False, use_default_atts=False):
+        """Verifies the attributes of WPConfig instance. Unless you pass in
+           use_default_atts as True, this assumes the in-memory values are the
+           correct values."""
         result = True  # Assume the best :)
         save = False
 
-        correct_values = self.parse()  # Retrieve values in memory (and hold
-                                       # for comparison and/or repair)
-        self.read(True)  # Read values in from disk
+        if use_default_atts:
+            correct_values = self.default_atts
+        else:
+            correct_values = self.parse()  # Retrieve values in memory (and hold
+                                           # for comparison and/or repair)
+
+        self.read(True)  # Force reading values in from disk
 
         verify_items = {
             'debug'         : '[!] Debug is incorrectly set to: ',
