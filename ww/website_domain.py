@@ -37,8 +37,11 @@ class WebsiteDomain(Domain):
         print 'Server IP: ' + SERVER_IP
         print 'Current website IP: ' + self.ip
         if not SERVER_IP == self.ip:
-            print '[!] Website IP is not the same as this server\'s ip'
-            print '[*] DNS API not yet implemented.'
+            print '\n    -----------------------------------------------------------'
+            print '    [WARN] Website IP is not the same as this server\'s ip!'
+            print '           DNS API not yet implemented.'
+            print '           Please remember to change DNS settings manually.'
+            print '    -----------------------------------------------------------\n'
             return False
         print 'Domain is correctly pointed at this server.'
         return True
