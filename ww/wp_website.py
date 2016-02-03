@@ -36,7 +36,7 @@ from ww import settings as s
 def select_database(name):
     return "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"
 
-def select_user(name):
+def select_user(user):
     return "SELECT user FROM mysql.user WHERE user = '" + user + "'"
 
 def download(self):
