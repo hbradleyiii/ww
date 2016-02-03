@@ -39,6 +39,30 @@ def select_database(name):
 def select_user(name):
     return "SELECT user FROM mysql.user WHERE user = '" + user + "'"
 
+def download(self):
+    """Downloads a fresh WordPress tarball, returns path of download"""
+    wp_tarball = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
+    if not os.path.exists(wp_tarball):
+        print 'Downloading Wordpress...'
+        with open(wp_tarball, 'wb') as tarball:
+            tarball.write(requests.get(s.WP_LATEST).content)
+        print 'Download Complete.'
+    else:
+        print 'Already downloaded wordpress today. Using existing tarball.'
+    return wp_tarball  # Return path to wordpress
+
+def untar(self, tarball):
+    """Untars WordPress to tmp dir, returns path of extracted files."""
+    wp_extract_dir = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
+    wp_extracted = wp_extract_dir + 'wordpress/'
+    if not os.path.exists(wp_extracted):
+        print 'Uncompressing files...'
+        wp_tarfile = tarfile.open(tarball)
+        wp_tarfile.extractall(wp_extract_dir)
+        wp_tarfile.close()
+        print 'Extraction complete.'
+    return wp_extracted  # Return path to extracted files
+
 
 class WPWebsite(Website):
 
@@ -96,7 +120,7 @@ class WPWebsite(Website):
     def install(self):
         """Copies WordPress to htdocs, sets up a new database, then runs the 5 min setup."""
         super(WPWebsite, self).install()
-        self.htdocs.fill(self.untar(self.download()))
+        self.htdocs.fill(untar(download()))
         self.htaccess.create()
         self.config.create()
         self.create_database()
@@ -117,6 +141,7 @@ class WPWebsite(Website):
     @localhost
     def setup(self):
         """Runs the WordPress 5 min setup."""
+        self.domain
         wordpress_config_setup()
         wordpress_install()
 
@@ -149,30 +174,6 @@ class WPWebsite(Website):
 
     ###################
     # Private Methods
-
-    def download(self):
-        """Downloads a fresh WordPress tarball, returns path of download"""
-        wp_tarball = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
-        if not os.path.exists(wp_tarball):
-            print 'Downloading Wordpress...'
-            with open(wp_tarball, 'wb') as tarball:
-                tarball.write(requests.get(s.WP_LATEST).content)
-            print 'Download Complete.'
-        else:
-            print 'Already downloaded wordpress today. Using existing tarball.'
-        return wp_tarball  # Return path to wordpress
-
-    def untar(self, tarball):
-        """Untars WordPress to tmp dir, returns path of extracted files."""
-        wp_extract_dir = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
-        wp_extracted = wp_extract_dir + 'wordpress/'
-        if not os.path.exists(wp_extracted):
-            print 'Uncompressing files...'
-            wp_tarfile = tarfile.open(tarball)
-            wp_tarfile.extractall(wp_extract_dir)
-            wp_tarfile.close()
-            print 'Extraction complete.'
-        return wp_extracted  # Return path to extracted files
 
     def create_database(self):
         """Creates WordPress MySQL database."""
