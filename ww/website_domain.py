@@ -11,7 +11,7 @@
 #                   TODO: add DNS API capabilities
 
 try:
-    from ext_pylib.domain import Domain, SERVER_IP
+    from ext_pylib.domain import Domain, get_server_ip
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
@@ -34,9 +34,10 @@ class WebsiteDomain(Domain):
 
     def verify(self, repair = False):
         """Verifies that the domain is pointed at the server."""
-        print 'Server IP: ' + SERVER_IP
+        server_ip == get_server_ip()
+        print 'Server IP: ' + server_ip
         print 'Current website IP: ' + self.ip
-        if not SERVER_IP == self.ip:
+        if not server_ip == self.ip:
             print '\n    -----------------------------------------------------------'
             print '    [WARN] Website IP is not the same as this server\'s ip!'
             print '           DNS API not yet implemented.'
