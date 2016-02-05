@@ -35,9 +35,11 @@ from ww import settings as s
 
 
 def select_database(name):
+    """Selects a specific mysql database and returns true if it exists."""
     return "SELECT schema_name FROM information_schema.schemata WHERE schema_name = '" + name + "'"
 
 def select_user(user):
+    """Selects a specific mysql user and returns true if it exists."""
     return "SELECT user FROM mysql.user WHERE user = '" + user + "'"
 
 def download(self):
@@ -66,6 +68,7 @@ def untar(self, tarball):
 
 
 class WPWebsite(Website):
+    """A WordPress website class and its associated attributes and methods."""
 
     def __init__(self, domain, atts, mysql=s.MYSQL):
         """Initializes a new WPWebsite instance."""
@@ -213,6 +216,7 @@ class WPWebsite(Website):
         print 'Database removed.'
 
     def wordpress_install(self):
+        """TODO:"""
         public = '1' if prompt('Allow search engines to index?') else '0'
         user = prompt_str('What is the WordPress admin username?', \
                           s.WP_ADMIN_USER)

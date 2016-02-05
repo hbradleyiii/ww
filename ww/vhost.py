@@ -21,23 +21,16 @@ from ww import settings as s
 from ww_file import WWFile
 
 
-class VhostTemplate(Template, WWFile): pass
+class VhostTemplate(Template, WWFile):
+    """A Vhost template File."""
 
-# Vhost()
-#   A class that describes an Apache vhost configuration.
-#   This is primarily a wrapper for vhost managment.
-#
-#   methods:
-#       create()
-#       parse()
-#       verify()
-#       repair()
-#       is_enabled()
-#       enable(ask)
-#       disable(ask)
 class Vhost(Parsable, WWFile):
+    """A class that describes an Apache vhost configuration.
+    This is primarily a wrapper for vhost managment.
+    """
 
     def __init__(self, domain, atts):
+        """TODO:"""
         self.domain = domain
         self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
@@ -47,12 +40,14 @@ class Vhost(Parsable, WWFile):
         self.setup_parsing()
 
     def create(self, data=''):
+        """TODO:"""
         if self.placeholders:
             data = self.template.apply_using(self.placeholders)
         super(Vhost, self).create(data)
         self.enable()
 
     def parse(self):
+        """TODO:"""
         if self.htdocs == []:
             print 'Could not parse htdocs.'
             self.htdocs = prompt_str('What is the htdocs path?')
@@ -77,6 +72,7 @@ class Vhost(Parsable, WWFile):
                    'logs' : { 'path' : self.access_log.rsplit('/', 1)[0] } }
 
     def verify(self, repair=False):
+        """TODO:"""
         result = super(Vhost, self).verify(repair)
         if not self.is_enabled():
             print 'Vhost configuration file for ' + self.domain + \
@@ -89,6 +85,7 @@ class Vhost(Parsable, WWFile):
         return result
 
     def is_enabled(self):
+        """TODO:"""
         apache_list = os.popen("apache2ctl -S | grep ' namevhost " + \
                                self.domain + " '").read()
         if apache_list == '':
@@ -96,12 +93,14 @@ class Vhost(Parsable, WWFile):
         return True
 
     def enable(self, ask=True):
+        """TODO:"""
         if not ask or prompt('Enable ' + self.domain + ' in apache?'):
             print 'Enabling ' + self.domain + ' vhost...'
             os.system(s.CMD_ENABLE_CONFIG + self.domain)
             os.system(s.CMD_RESTART_APACHE)
 
     def disable(self, ask=True):
+        """TODO:"""
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
             print 'Disabling ' + self.domain + ' vhost...'
             # TODO: Change to subprocess

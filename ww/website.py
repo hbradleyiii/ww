@@ -23,11 +23,11 @@ from website_domain import WebsiteDomain
 from ww import settings as s
 
 
-# localhost(function)
-#   a python decorator that creates a temporary host entry before
-#   the function is called and removes it after it is completed.
 def localhost(function):
+    """A python decorator that creates a temporary host entry before
+    the function is called and removes it after it is completed."""
     def function_wrapper(self, *args, **kwargs):
+        """Adds a hostentry for self.domain to resolve to localhost."""
         print 'Adding temporary host entry.'
         os.system("echo '127.0.0.1 " + self.domain + "' | cat >> /etc/hosts")
         function(self, *args, **kwargs)
@@ -36,10 +36,9 @@ def localhost(function):
     return function_wrapper
 
 
-# merge_atts(atts, new_atts)
-#   Merges two dictionaries with the second overwriting the corresponding
-#   values of the first and returns the result.
 def merge_atts(atts, new_atts):
+    """Merges two dictionaries with the second overwriting the corresponding
+    values of the first and returns the result."""
     for k, v in new_atts.iteritems():
         if (k in atts and isinstance(atts[k], dict)
                 and isinstance(new_atts[k], dict)):
@@ -59,26 +58,17 @@ class WWFile(File):
         self.verify(True)
 
 
-# Website(website)
-#   a class that describes a generic website with the following properties:
-#       domain      Website domain
-#       htdocs      Website root directory
-#       assets      Website assets directory
-#       logs        Website log directory
-#       access_log  Website access log file
-#       error_log   Website error log file
-#       vhost       Apache vhost config file
-#       htaccess    Website root htaccess file
-#   methods:
-#       install()  - installs a new website
-#       remove()  - removes an existing website
-#       pack  - packs an existing website
-#       unpack  - unpacks an existing packed website into current server
-#       migrate  - migrates a website from existing settings to default
-#                  settings
-#       verify()  - verifies a website installation
-#       repair()  - verifies website forcing repairs
 class Website(object):
+    """A class that describes a generic website with the following properties:
+        domain      Website domain
+        htdocs      Website root directory
+        assets      Website assets directory
+        logs        Website log directory
+        access_log  Website access log file
+        error_log   Website error log file
+        vhost       Apache vhost config file
+        htaccess    Website root htaccess file
+    """
 
     def __init__(self, domain, atts = None):
         """Initializes a new Website instance."""
@@ -209,10 +199,6 @@ class Website(object):
                     self.vhost.get_atts()
                )
 
-
-    ################
-    # Public Methods
-
     def install(self):
         """Installs website to server"""
         # Check if domain is already installed
@@ -250,12 +236,15 @@ class Website(object):
         self.domain.set_ip()
 
     def pack(self):
+        """Todo:"""
         pass
 
     def unpack(self):
+        """Todo:"""
         pass
 
     def migrate(self, old_website = None):
+        """Todo:"""
         if not old_website:
             old_website = self.existing
         # make sure there's nothing conflicting

@@ -27,7 +27,6 @@ import socket
 
 def create_domain(name=None):
     """Factory function for Website Domain.
-
     Accepts nameLoops on invalid entry."""
     while True:
         try:
@@ -38,13 +37,8 @@ def create_domain(name=None):
             print msg
 
 
-# WebsiteDomain(domain)
-#   A class to describe and manage a domain name and corresponding ip address.
-#
-#   methods:
-#       verify()
-#       repair()
 class WebsiteDomain(Domain):
+    """A class to describe and manage a domain name and corresponding ip address."""
 
     def verify(self, repair = False):
         """Verifies that the domain is pointed at the server."""

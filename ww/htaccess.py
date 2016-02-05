@@ -20,17 +20,19 @@ from ww_file import WWFile
 
 
 class HtaccessSection(Section, WWFile):
+    """Htaccess section file."""
     def __str__(self):
-        pass
+        """TODO:"""
 
 
 # Htaccess()
-#   A class that describes an Apache htaccess file.
-#   This is primarily a wrapper for htaccess managment.
 #
 #   methods:
 #       verify()
 class Htaccess(WWFile):
+    """A class that describes an Apache htaccess file.
+    This is primarily a wrapper for htaccess managment.
+    """
 
     def __init__(self, atts):
         """TODO:"""

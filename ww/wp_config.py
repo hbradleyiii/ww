@@ -63,23 +63,23 @@ WP_CONF_REGEXES = dict(SALT_REGEXES, **{
 })
 
 
-class WPConfigTemplate(Template, WWFile): pass
+class WPConfigTemplate(Template, WWFile):
+    """A WordPress configuration template file."""
 
-# WPSalt()
-#   A class that describes a WordPress wp_config.php Salt section.
-#
-#   methods:
-#       read() - overrides the original, merely returning self.data. The data
-#                is set in __init__. This prevents excessive network calls.
-#       secrets() - a generator that yeilds a tuple of key and salt value.
+
 class WPSalt(Section, Parsable):
+    """A class that describes a WordPress wp_config.php Salt section."""
+
     regexes = SALT_REGEXES
 
     def __init__(self):
+        """WPSalt init."""
         self.data = requests.get(s.WP_SALT_URL).text
         self.setup_parsing()
 
     def read(self):
+        """Overrides the parent method, merely returning self.data.
+        The data is set in __init__. This prevents excessive network calls."""
         return self.data
 
     def secrets(self):
@@ -89,18 +89,16 @@ class WPSalt(Section, Parsable):
             yield (key, getattr(self, key))
 
 
-# WPConfig()
-#   A class that describes a WordPress wp_config.php file.
-#   This is primarily a wrapper for wp_config managment.
-#
-#   methods:
-#       parse() - returns a dict of attributes (but not the salts)
-#       verify() - tests that the attributes on disk matches what is in memory
 class WPConfig(Parsable, WWFile):
+    """A class that describes a WordPress wp_config.php file.
+    This is primarily a wrapper for wp_config managment.
+    """
+
     regexes = WP_CONF_REGEXES  # The regexes guarantee that the class will have
                                # necessary attributes, even if set to None.
 
     def __init__(self, atts):
+        """Initializes WPConfig."""
         self.setup_parsing()  # Do this first, before initializing attributes
 
         super(WPConfig, self).__init__(atts)
