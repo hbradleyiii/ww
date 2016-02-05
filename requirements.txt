@@ -1,0 +1,4 @@
+ext_pylib
+mysqldb
+pytest
+requests
