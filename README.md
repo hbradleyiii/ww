@@ -1,4 +1,6 @@
 # ww
+[![Code Issues](https://www.quantifiedcode.com/api/v1/project/5e43e90cc7344452b49c16c19666789f/badge.svg)](https://www.quantifiedcode.com/app/project/5e43e90cc7344452b49c16c19666789f)
+---
 A virtual host website deployment and management tool for Apache and WordPress
 ## Installation and Usage
 TODO
