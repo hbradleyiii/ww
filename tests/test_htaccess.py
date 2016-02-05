@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # name:             test_htaccess.py
 # author:           Harold Bradley III

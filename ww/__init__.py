@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from htaccess import Htaccess
 from vhost import Vhost
 from website import Website

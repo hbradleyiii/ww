@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # name:             wp_config.py
 # author:           Harold Bradley III
