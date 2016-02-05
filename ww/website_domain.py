@@ -24,6 +24,19 @@ import re
 import socket
 
 
+def create_domain(name=None):
+    """Factory function for Website Domain.
+
+    Accepts nameLoops on invalid entry."""
+    while True:
+        try:
+            if not name:
+                name = prompt_str("What is the site name?", "example.com")
+            return WebsiteDomain(name)
+        except ValueError as msg:
+            print msg
+
+
 # WebsiteDomain(domain)
 #   A class to describe and manage a domain name and corresponding ip address.
 #
