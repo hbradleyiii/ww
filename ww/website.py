@@ -49,6 +49,16 @@ def merge_atts(atts, new_atts):
     return atts
 
 
+class WWFile(File):
+    """An abstract class intended to be exteneded by ww File classes.
+    This is primarily a wrapper for preventing code duplication and
+    consistency.
+    """
+    def repair(self):
+        """Repair runs verify with a repair set to true."""
+        self.verify(True)
+
+
 # Website(website)
 #   a class that describes a generic website with the following properties:
 #       domain      Website domain
