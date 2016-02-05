@@ -23,13 +23,13 @@ try:
 except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
+from htaccess import Htaccess
 import os
 import re
 import shutil
 import tarfile
 from website import Website, localhost, merge_atts
 from wp_config import WPConfig
-from wp_htaccess import WPHtaccess
 from ww import settings as s
 
 
