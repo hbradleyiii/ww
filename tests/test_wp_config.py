@@ -15,6 +15,8 @@ from ww import WPConfig, WPSalt
 from ww import settings as s
 
 
+_INPUT = 'ext_pylib.input.prompts.INPUT'
+
 SALTS = """define('AUTH_KEY',         'm`-Di%CcLS>E(V^KUtN?HIq)+GDQ{RpbJ4N~k =Hw[%-{Zt+oHO>JdO!uW-_5,v^');
 define('SECURE_AUTH_KEY',  '5c 8cG8kfJ&0!e$x:GE ,jkB/U+tdND[Y`|MjgVA+qQI%.x/qu9)~cfQmb<>H~SU');
 define('LOGGED_IN_KEY',    '3Surb*jDad=4(cVPNPM=PJl]&2BnU AJXU4p^EVG,cci%mHxq|MF s1@![=4 ajh');
@@ -82,7 +84,7 @@ def test_wpconfig_init():
 
 def test_wpconfig_parse():
     """Test wpconfig parse()."""
-    with mock.patch('__builtin__.raw_input', return_value='n'):
+    with mock.patch(_INPUT, return_value='n'):
         config = WPConfig({
             'path' : s.WP_CONFIG_TEMPLATE,
             'wp' : {
@@ -103,7 +105,7 @@ def test_wpconfig_parse():
                 'logged_in_salt'   : 'salt overwritten',
                 'nonce_salt'       : 'salt overwritten', } } )
 
-    with mock.patch('__builtin__.raw_input', return_value='y'):
+    with mock.patch(_INPUT, return_value='y'):
         config_2 = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
 
     result_in_memory = {
@@ -148,7 +150,7 @@ def test_wpconfig_parse():
 
 def test_wpconfig_verify():
     """Test wpconfig verify() and repair."""
-    with mock.patch('__builtin__.raw_input', return_value='y'):
+    with mock.patch(_INPUT, return_value='y'):
         config = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
 
     assert config.verify()
@@ -160,11 +162,11 @@ def test_wpconfig_verify():
     assert config.verify()  # Debug should be set to false
 
     config.db_name = 'new_value'
-    with mock.patch('__builtin__.raw_input', return_value='n'):
+    with mock.patch(_INPUT, return_value='n'):
         assert config.verify(True)  # Change db_name in memory and repair
     assert config.db_name == 'new_value'
 
     config.db_name = 'db_name'  # Change db_name back
-    with mock.patch('__builtin__.raw_input', return_value='n'):
+    with mock.patch(_INPUT, return_value='n'):
         assert config.verify(True)  # by doing a repair
     assert config.db_name == 'db_name'
