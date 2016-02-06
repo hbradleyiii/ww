@@ -9,8 +9,8 @@
 # description:      Integration tests for ww module.
 #
 
-from ww.ww import Vhost
 import pytest
+from ww import Vhost
 
 
 def test__():

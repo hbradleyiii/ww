@@ -19,14 +19,13 @@ import tarfile
 
 try:
     from ext_pylib.files import Dir, File
-    from ext_pylib.prompt import prompt, prompt_str, warn_prompt
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
-from htaccess import Htaccess
-from vhost import Vhost
-from website_domain import WebsiteDomain
-from ww import settings as s
+from . import settings as s
+from .htaccess import Htaccess
+from .vhost import Vhost
+from .website_domain import WebsiteDomain
 
 
 def localhost(function):
@@ -52,16 +51,6 @@ def merge_atts(atts, new_atts):
         else:
             atts[k] = new_atts[k]
     return atts
-
-
-class WWFile(File):
-    """An abstract class intended to be exteneded by ww File classes.
-    This is primarily a wrapper for preventing code duplication and
-    consistency.
-    """
-    def repair(self):
-        """Repair runs verify with a repair set to true."""
-        self.verify(True)
 
 
 class Website(object):

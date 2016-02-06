@@ -12,7 +12,7 @@
 #
 
 import pytest
-from ww.ww import Vhost
+from ww import Vhost
 
 VHOST_DATA = """This is a sample vhost file.
 DocumentRoot /the/root/dir

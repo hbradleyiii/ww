@@ -14,19 +14,20 @@ ww.wp_config
 A class to create WordPress wp_config.php files.
 Extends WWFile.
 """
-try:
-    from ext_pylib.files import Parsable, Section, Template
-    from ext_pylib.prompt import prompt, prompt_str
-except ImportError:
-    raise ImportError('Python module ext_pylib must be installed to run ww')
 
 try:
     import requests
 except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
-from ww import settings as s
-from ww_file import WWFile
+try:
+    from ext_pylib.files import Parsable, Section, Template
+    from ext_pylib.input import prompt, prompt_str
+except ImportError:
+    raise ImportError('Python module ext_pylib must be installed to run ww')
+
+from . import settings as s
+from .ww_file import WWFile
 
 
 SALT_REGEXES = {

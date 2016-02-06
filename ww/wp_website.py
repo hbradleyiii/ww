@@ -15,11 +15,10 @@ A class to manage WordPress websites
 Extends Website.
 """
 
-try:
-    from ext_pylib.prompt import prompt, prompt_str, warn_prompt
-    from ext_pylib.password import generate_pw
-except ImportError:
-    raise ImportError('Python module ext_pylib must be installed to run ww')
+import os
+import re
+import shutil
+import tarfile
 
 try:
     import MySQLdb
@@ -31,14 +30,15 @@ try:
 except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
-from htaccess import Htaccess
-import os
-import re
-import shutil
-import tarfile
-from website import Website, localhost, merge_atts
-from wp_config import WPConfig
-from ww import settings as s
+try:
+    from ext_pylib.password import generate_pw
+except ImportError:
+    raise ImportError('Python module ext_pylib must be installed to run ww')
+
+from . import settings as s
+from .htaccess import Htaccess
+from .website import Website, localhost, merge_atts
+from .wp_config import WPConfig
 
 
 def select_database(name):

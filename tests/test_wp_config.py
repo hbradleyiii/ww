@@ -11,7 +11,7 @@
 
 import mock
 import pytest
-from ww.ww import WPConfig, WPSalt
+from ww import WPConfig, WPSalt
 from ww import settings as s
 
 

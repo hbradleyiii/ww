@@ -10,7 +10,7 @@
 #
 
 import pytest
-from ww.ww import WebsiteDomain
+from ww import WebsiteDomain
 
 # This is just a stub for now. There isn't much that can be unit tested in
 # this class.

@@ -13,7 +13,7 @@ import os
 import time
 
 
-TEMPLATE_PATH = os.path.dirname(os.path.realpath(__file__)) + '/templates/'
+TEMPLATE_PATH = os.path.dirname(os.path.realpath(__file__)) + '/../templates/'
 
 
 ## Change these settings to your hearts content ##
@@ -64,6 +64,6 @@ CMD_DISABLE_CONFIG = 'sudo a2dissite ' # run as: {command} domain
 
 # Try to import local settings. This is a temporary work-around for now.
 try:
-    from settings_local import *
+    from .settings_local import *
 except ImportError:
     print "Can't find settings_local. Using default settings."

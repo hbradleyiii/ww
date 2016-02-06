@@ -18,16 +18,9 @@ Extends ext_pylib.domain.Domain
 
 try:
     from ext_pylib.domain import Domain, get_server_ip
+    from ext_pylib.input import prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
-
-try:
-    import requests
-except ImportError:
-    raise ImportError('requests must be installed to run ww')
-
-import re
-import socket
 
 
 def create_domain(name=None):

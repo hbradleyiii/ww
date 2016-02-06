@@ -17,12 +17,10 @@ It extends WWFile.
 
 try:
     from ext_pylib.files import Section
-    from ext_pylib.prompt import prompt, prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
-from ww import settings as s
-from ww_file import WWFile
+from .ww_file import WWFile
 
 
 class HtaccessSection(Section, WWFile):

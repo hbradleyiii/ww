@@ -11,7 +11,7 @@
 
 import pytest
 from ww import Website
-from ww.ww.website import merge_atts
+from ww.website import merge_atts
 
 
 merge_atts_args = [

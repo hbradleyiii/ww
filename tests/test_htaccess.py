@@ -10,7 +10,7 @@
 #
 
 import pytest
-from ww.ww import Htaccess
+from ww import Htaccess
 
 HTACCESS_DATA = """This is a sample htaccess file.
 DocumentRoot /the/root/dir

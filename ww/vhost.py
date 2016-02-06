@@ -25,7 +25,7 @@ except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
 from . import settings as s
-from .website import WWFile
+from .ww_file import WWFile
 
 
 class VhostTemplate(Template, WWFile):
