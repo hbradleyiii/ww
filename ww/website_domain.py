@@ -6,10 +6,15 @@
 # email:            harold@bradleystudio.net
 # created on:       11/03/2015
 #
-# description:      A class to describe and manage a domain name and
-#                   corresponding ip address.
-#
 #                   TODO: add DNS API capabilities
+
+"""
+ww.website_domain
+~~~~~~~~~~~~~~~~~
+
+A class to describe and manage a domain name and corresponding ip address.
+Extends ext_pylib.domain.Domain
+"""
 
 try:
     from ext_pylib.domain import Domain, get_server_ip

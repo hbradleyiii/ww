@@ -1,6 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+    #############################
+    #                           #
+    #  ##      ##   ##      ##  #
+    #   ## ## ##     ## ## ##   #
+    #    ## ##        ## ##     #
+    #                           #
+    #############################
+
+"""
+ww
+~~
+
+Website deployment tool.
+"""
+
 from htaccess import Htaccess
 from vhost import Vhost
 from website import Website

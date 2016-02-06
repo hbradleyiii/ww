@@ -6,8 +6,16 @@
 # email:            harold@bradleystudio.net
 # date:             11/11/2015
 #
-# description:      A class to manage websites
-#
+
+"""
+ww.website
+~~~~~~~~~~
+
+A class to manage websites
+"""
+
+import os
+import tarfile
 
 try:
     from ext_pylib.files import Dir, File
@@ -16,8 +24,6 @@ except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
 from htaccess import Htaccess
-import os
-import tarfile
 from vhost import Vhost
 from website_domain import WebsiteDomain
 from ww import settings as s

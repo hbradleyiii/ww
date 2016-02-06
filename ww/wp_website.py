@@ -4,9 +4,16 @@
 # name:             wp_website.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
+# created on:       01/23/2016
 #
-# description:      A class to manage WordPress websites; extends Website.
-#
+
+"""
+ww.wp_website
+~~~~~~~~~~~~~
+
+A class to manage WordPress websites
+Extends Website.
+"""
 
 try:
     from ext_pylib.prompt import prompt, prompt_str, warn_prompt

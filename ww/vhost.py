@@ -6,23 +6,31 @@
 # email:            harold@bradleystudio.net
 # created on:       11/03/2015
 #
-# description:      A class to create Apache vhost configurations.
-#
 #                   TODO: add SSL capabilities
+
+"""
+ww.vhost
+~~~~~~~~
+
+A class to create Apache vhost configurations.
+It extends WWFile.
+"""
+
+import os
 
 try:
     from ext_pylib.files import Parsable, Template
-    from ext_pylib.prompt import prompt, prompt_str
+    from ext_pylib.input import prompt, prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
-import os
-from ww import settings as s
-from ww_file import WWFile
+from . import settings as s
+from .website import WWFile
 
 
 class VhostTemplate(Template, WWFile):
     """A Vhost template File."""
+
 
 class Vhost(Parsable, WWFile):
     """A class that describes an Apache vhost configuration.
@@ -34,9 +42,9 @@ class Vhost(Parsable, WWFile):
         self.domain = domain
         self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
-        self.regexes = { 'htdocs'  : 'DocumentRoot ["]?([^"\n]*)',
-                       'error_log' :     'ErrorLog ["]?([^"\n]*)',
-                      'access_log' :    'CustomLog ["]?([^"\n]*)', }
+        self.regexes = {'htdocs'     : 'DocumentRoot ["]?([^"\n]*)',
+                        'error_log'  :     'ErrorLog ["]?([^"\n]*)',
+                        'access_log' :    'CustomLog ["]?([^"\n]*)', }
         self.setup_parsing()
 
     def create(self, data=''):

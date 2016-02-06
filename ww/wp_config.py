@@ -6,9 +6,14 @@
 # email:            harold@bradleystudio.net
 # created on:       01/23/2016
 #
-# description:      A class to create WordPress wp_config.php files.
-#
 
+"""
+ww.wp_config
+~~~~~~~~~~~~
+
+A class to create WordPress wp_config.php files.
+Extends WWFile.
+"""
 try:
     from ext_pylib.files import Parsable, Section, Template
     from ext_pylib.prompt import prompt, prompt_str

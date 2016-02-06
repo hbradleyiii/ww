@@ -6,8 +6,14 @@
 # email:            harold@bradleystudio.net
 # created on:       01/23/2016
 #
-# description:      A class to create Apache htaccess files.
-#
+
+"""
+ww.htaccess
+~~~~~~~~~~~
+
+A class to create Apache htaccess files.
+It extends WWFile.
+"""
 
 try:
     from ext_pylib.files import Section
