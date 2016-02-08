@@ -15,6 +15,8 @@ A class to create WordPress wp_config.php files.
 Extends WWFile.
 """
 
+from __future__ import absolute_import, print_function
+
 try:
     import requests
 except ImportError:
@@ -31,40 +33,40 @@ from .ww_file import WWFile
 
 
 SALT_REGEXES = {
-    'auth_key'         : ("define\('AUTH_KEY',[ ]*'([^']*)'\);",
-                            "define('AUTH_KEY',         '{0}');"),
-    'secure_auth_key'  : ("define\('SECURE_AUTH_KEY',[ ]*'([^']*)'\);",
-                            "define('SECURE_AUTH_KEY',  '{0}');"),
-    'logged_in_key'    : ("define\('LOGGED_IN_KEY',[ ]*'([^']*)'\);",
-                            "define('LOGGED_IN_KEY',    '{0}');"),
-    'nonce_key'        : ("define\('NONCE_KEY',[ ]*'([^']*)'\);",
-                            "define('NONCE_KEY',        '{0}');"),
-    'auth_salt'        : ("define\('AUTH_SALT',[ ]*'([^']*)'\);",
-                            "define('AUTH_SALT',        '{0}');"),
-    'secure_auth_salt' : ("define\('SECURE_AUTH_SALT',[ ]*'([^']*)'\);",
-                            "define('SECURE_AUTH_SALT', '{0}');"),
-    'logged_in_salt'   : ("define\('LOGGED_IN_SALT',[ ]*'([^']*)'\);",
-                            "define('LOGGED_IN_SALT',   '{0}');"),
-    'nonce_salt'       : ("define\('NONCE_SALT',[ ]*'([^']*)'\);",
-                            "define('NONCE_SALT',       '{0}');"),
+    'auth_key'         : (r"define\('AUTH_KEY',[ ]*'([^']*)'\);",
+                          "define('AUTH_KEY',         '{0}');"),
+    'secure_auth_key'  : (r"define\('SECURE_AUTH_KEY',[ ]*'([^']*)'\);",
+                          "define('SECURE_AUTH_KEY',  '{0}');"),
+    'logged_in_key'    : (r"define\('LOGGED_IN_KEY',[ ]*'([^']*)'\);",
+                          "define('LOGGED_IN_KEY',    '{0}');"),
+    'nonce_key'        : (r"define\('NONCE_KEY',[ ]*'([^']*)'\);",
+                          "define('NONCE_KEY',        '{0}');"),
+    'auth_salt'        : (r"define\('AUTH_SALT',[ ]*'([^']*)'\);",
+                          "define('AUTH_SALT',        '{0}');"),
+    'secure_auth_salt' : (r"define\('SECURE_AUTH_SALT',[ ]*'([^']*)'\);",
+                          "define('SECURE_AUTH_SALT', '{0}');"),
+    'logged_in_salt'   : (r"define\('LOGGED_IN_SALT',[ ]*'([^']*)'\);",
+                          "define('LOGGED_IN_SALT',   '{0}');"),
+    'nonce_salt'       : (r"define\('NONCE_SALT',[ ]*'([^']*)'\);",
+                          "define('NONCE_SALT',       '{0}');"),
 }
 
 WP_CONF_REGEXES = dict(SALT_REGEXES, **{
-    'debug'        : ("define\('WP_DEBUG', ([^ \n]*)\);",
+    'debug'        : (r"define\('WP_DEBUG', ([^ \n]*)\);",
                       "define('WP_DEBUG', {0});"),
-    'db_name'      : ("define\('DB_NAME', '([^ \n]*)'\);",
+    'db_name'      : (r"define\('DB_NAME', '([^ \n]*)'\);",
                       "define('DB_NAME', '{0}');"),
-    'db_user'      : ("define\('DB_USER', '(.*)'\);",
+    'db_user'      : (r"define\('DB_USER', '(.*)'\);",
                       "define('DB_USER', '{0}');"),
-    'db_password'  : ("define\('DB_PASSWORD', '(.*)'\);",
+    'db_password'  : (r"define\('DB_PASSWORD', '(.*)'\);",
                       "define('DB_PASSWORD', '{0}');"),
-    'db_host'      : ("define\('DB_HOST', '(.*)'\);",
+    'db_host'      : (r"define\('DB_HOST', '(.*)'\);",
                       "define('DB_HOST', '{0}');"),
-    'table_prefix' : ("\$table_prefix[ ]*=[ ]*['\"](.*)['\"];",
+    'table_prefix' : (r"\$table_prefix[ ]*=[ ]*['\"](.*)['\"];",
                       "$table_prefix = '{0}';"),
-    'disallow_edit': ("define\('DISALLOW_FILE_EDIT', (.*)\);",
+    'disallow_edit': (r"define\('DISALLOW_FILE_EDIT', (.*)\);",
                       "define('DISALLOW_FILE_EDIT', {0});"),
-    'fs_method'    : ("define\('FS_METHOD', '(.*)'\);",
+    'fs_method'    : (r"define\('FS_METHOD', '(.*)'\);",
                       "define('FS_METHOD', '{0}');"),
 })
 
@@ -75,7 +77,6 @@ class WPConfigTemplate(Template, WWFile):
 
 class WPSalt(Section, Parsable):
     """A class that describes a WordPress wp_config.php Salt section."""
-
     regexes = SALT_REGEXES
 
     def __init__(self):
@@ -90,8 +91,7 @@ class WPSalt(Section, Parsable):
 
     def secrets(self):
         """A generator that yields a tuple of key and salt value."""
-        secrets = {}
-        for key, regex in self.regexes.iteritems():
+        for key, _ in self.regexes.iteritems():
             yield (key, getattr(self, key))
 
 
@@ -99,7 +99,7 @@ class WPConfig(Parsable, WWFile):
     """A class that describes a WordPress wp_config.php file.
     This is primarily a wrapper for wp_config managment.
     """
-
+    # pylint: disable=too-many-instance-attributes
     regexes = WP_CONF_REGEXES  # The regexes guarantee that the class will have
                                # necessary attributes, even if set to None.
 
@@ -123,91 +123,63 @@ class WPConfig(Parsable, WWFile):
                 setattr(self, att, value)
 
 
-    def parse(self, parse_from_disk=False):
+    def parse(self, flush_memory=False):
         """Returns a dict of attributes. Passing in True as an arguement will
-           force reading from disk."""
+        force reading from disk."""
 
-        if parse_from_disk:
-            """Prompting is necessary (but hopefully unusual) if file on disk
-               cannot be parsed."""
+        # Make sure contents are already read into memory.
+        self.read(flush_memory)
 
-            self.read(True)  # Force read() clearing memory
+        # Prompting is necessary (but hopefully unusual) if file on disk
+        # cannot be parsed.
 
-            if not self.debug:
-                print 'Could not parse debug mode.'
-                if prompt('Turn debug mode on?'):
-                    self.debug = 'true'
-                else:
-                    self.debug = 'false'
+        for attribute in ['debug', 'disallow_edit']:
+            if not getattr(self, attribute, None):
+                print('Could not parse WordPress attribute ' + attribute + '.')
+                self.debug = prompt('Set ' + attribute + ' to True?')
 
-            if not self.table_prefix:
-                print 'Could not parse WordPress database table_prefix.'
-                self.table_prefix = prompt_str('What is the WordPress database table_prefix?')
+        for attribute in ['table_prefix', 'db_name', 'db_user',
+                          'db_password', 'db_host',]:
+            if not getattr(self, attribute, None):
+                print('Could not parse WordPress ' + attribute + '.')
+                setattr(self, attribute,
+                        prompt_str('What is the WordPress database table_prefix?'))
 
-            if not self.db_name:
-                print 'Could not parse WordPress database name.'
-                self.db_name = prompt_str('What is the WordPress database name?')
+        if not getattr(self, 'fs_method', None):
+            print('Could not parse fs_method.')
+            self.fs_method = prompt_str('What should we set fs_method?', 'direct')
 
-            if not self.db_user:
-                print 'Could not parse WordPress database user.'
-                self.db_user = prompt_str('What is the WordPress database user?')
-
-            if not self.db_password:
-                print 'Could not parse WordPress database password.'
-                self.db_password = prompt_str('What is the WordPress database password?')
-
-            if not self.db_host:
-                print 'Could not parse WordPress database hostname.'
-                self.db_host = prompt_str('What is the WordPress database hostname?')
-
-            if not self.disallow_edit:
-                print 'Could not parse DISALLOW_EDIT.'
-                if prompt('Set DISALLOW_EDIT to "true"?'):
-                    self.disallow_edit = 'true'
-                else:
-                    self.disallow_edit = 'false'
-
-            if not self.fs_method:
-                print 'Could not parse fs_method.'
-                self.fs_method = prompt_str('What should we set fs_method?', 'direct')
-
-            if not self.auth_key or \
-               not self.secure_auth_key or \
-               not self.logged_in_key or \
-               not self.nonce_key or \
-               not self.auth_salt or \
-               not self.secure_auth_salt or \
-               not self.logged_in_salt or \
-               not self.nonce_salt:
-                print 'Salts not parsable. Recreating new salts...'
+        for salt in ['auth_key', 'secure_auth_key', 'logged_in_key',
+                     'nonce_key', 'auth_salt', 'secure_auth_salt',
+                     'logged_in_salt', 'nonce_salt']:
+            if not getattr(self, salt, None):
+                print('Salts not parsable. Recreating new salts...')
                 for key, value in WPSalt().secrets():
                     setattr(self, key, value)
+                break
 
-        else:
-            self.read()  # At least make sure contents are already read into
-                         # memory.
-
-        return { 'debug'            : self.debug,
-                 'table_prefix'     : self.table_prefix,
-                 'db_name'          : self.db_name,
-                 'db_user'          : self.db_user,
-                 'db_password'      : self.db_password,
-                 'db_host'          : self.db_host,
-                 'disallow_edit'    : self.disallow_edit,
-                 'fs_method'        : self.fs_method,
-                 'auth_key'         : self.auth_key,
-                 'secure_auth_key'  : self.secure_auth_key,
-                 'logged_in_key'    : self.logged_in_key,
-                 'nonce_key'        : self.nonce_key,
-                 'auth_salt'        : self.auth_salt,
-                 'secure_auth_salt' : self.secure_auth_salt,
-                 'logged_in_salt'   : self.logged_in_salt,
-                 'nonce_salt'       : self.nonce_salt }
+        return {'debug'            : getattr(self, 'debug', None),
+                'table_prefix'     : getattr(self, 'table_prefix', None),
+                'db_name'          : getattr(self, 'db_name', None),
+                'db_user'          : getattr(self, 'db_user', None),
+                'db_password'      : getattr(self, 'db_password', None),
+                'db_host'          : getattr(self, 'db_host', None),
+                'disallow_edit'    : getattr(self, 'disallow_edit', None),
+                'fs_method'        : getattr(self, 'fs_method', None),
+                'auth_key'         : getattr(self, 'auth_key', None),
+                'secure_auth_key'  : getattr(self, 'secure_auth_key', None),
+                'logged_in_key'    : getattr(self, 'logged_in_key', None),
+                'nonce_key'        : getattr(self, 'nonce_key', None),
+                'auth_salt'        : getattr(self, 'auth_salt', None),
+                'secure_auth_salt' : getattr(self, 'secure_auth_salt', None),
+                'logged_in_salt'   : getattr(self, 'logged_in_salt', None),
+                'nonce_salt'       : getattr(self, 'nonce_salt', None)}
 
     def verify(self, repair=False, use_default_atts=False):
         """Verifies the attributes of WPConfig instance. Unless you pass in
            use_default_atts as True, this assumes the in-memory values are the
            correct values."""
+        # pylint: disable=arguments-differ
         result = True  # Assume the best :)
         save = False
 
@@ -234,10 +206,10 @@ class WPConfig(Parsable, WWFile):
             correct_value = correct_values[attribute]
             current_value = getattr(self, attribute)
             if not current_value == correct_value:
-                print error_message + str(current_value)
+                print(error_message + str(current_value))
                 if repair:
-                    print 'Setting "' + attribute + '" to: "' + \
-                        correct_value + '"...'
+                    print('Setting "' + attribute + '" to: "' + \
+                        correct_value + '"...')
                     setattr(self, attribute, correct_value)
                     save = True
                 else:
@@ -245,16 +217,16 @@ class WPConfig(Parsable, WWFile):
 
         if repair and save:
             if prompt('Create new salts?'):
-                print 'Creating new salts...'
+                print('Creating new salts...')
                 for key, value in WPSalt().secrets():
                     setattr(self, key, value)
             self.write(append=False)
 
         if self.debug == 'true':
-            print '\n    -------------------------------------'
-            print '    [WARN] WordPress Debug mode is on.'
-            print '           Be sure to turn this off in'
-            print '           a production environment!'
-            print '    -------------------------------------\n'
+            print('\n    -------------------------------------')
+            print('    [WARN] WordPress Debug mode is on.')
+            print('           Be sure to turn this off in')
+            print('           a production environment!')
+            print('    -------------------------------------\n')
 
         return result
