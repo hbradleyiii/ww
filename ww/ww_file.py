@@ -9,7 +9,7 @@
 
 """
 ww.ww_file
-~~~~~~~~~~~~
+~~~~~~~~~~
 
 An abstract class from which to inherit for ww files.
 Extends ext_pylib.files.File.
@@ -28,4 +28,4 @@ class WWFile(File):
     """
     def repair(self):
         """Repair runs verify with a repair set to true."""
-        self.verify(True)
+        return self.verify(True)
