@@ -17,6 +17,7 @@ It extends WWFile.
 
 try:
     from ext_pylib.files import Section
+    from ext_pylib.input import prompt
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
@@ -26,7 +27,7 @@ from .ww_file import WWFile
 class HtaccessSection(Section, WWFile):
     """Htaccess section file."""
     def __str__(self):
-        """TODO:"""
+        return self.name
 
 
 # Htaccess()
@@ -39,33 +40,42 @@ class Htaccess(WWFile):
     """
 
     def __init__(self, atts):
-        """TODO:"""
+        """Initialize an Htaccess class."""
         super(Htaccess, self).__init__(atts)
-        self.sections = []
-        if 'hta' in atts:
-            for hta in atts['hta']:
-                htaccess = HtaccessSection(hta)
-                self.data = htaccess.apply_to(self.read())
-                self.sections.append(htaccess)
 
-    def verify(self, repair):
-        """TODO:"""
+        self.sections = []
+        if 'section' in atts:
+            for sfile in atts['section']:
+                section = HtaccessSection(sfile)
+                self.sections.append(section)
+
+        if not self.exists() or not prompt('Use existing htaccess file?'):
+            for section in self.sections:
+                self.data = section.apply_to(self.read())
+
+    def verify(self, repair=False):
+        """Verifies the htaccess file and contents.
+        This checks to make sure sections exist. It does"""
         result = super(Htaccess, self).verify(repair)
         save = False
 
-        for htaccess in self.sections:
-            print 'Checking htaccess for ' + str(htaccess) + ' section...',
-            if not htaccess.has_section(self.read()):
+        for section in self.sections:
+            print('Checking htaccess for ' + section.name + ' section...'),
+            if not section.has_section(self.read()):
                 if repair:
-                    self.data = htaccess.apply_to(self.read())
+                    self.data = section.apply_to(self.read())
                     save = True
                 else:
                     print '[FAIL]'
-                    return false
-            print '[OK]'
-            if not htaccess.is_applied(self.read()):
-                print '[!] htaccess has 5g section, but it is an old' + \
-                        'version, or it has been altered.'
+                    return False
+            print('[OK]')
+
+            if not section.is_applied(self.read()):
+                print('[!] htaccess has 5g section, but it is an old' + \
+                        'version, or it has been altered.')
+                if repair and prompt('Apply template to old/altered version?'):
+                    self.data = section.apply_to(self.read(), overwrite=True)
+                    save = True
 
         if repair and save:
             result = result and self.write()
