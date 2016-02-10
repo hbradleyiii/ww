@@ -61,7 +61,7 @@ class Htaccess(WWFile):
 
         for section in self.sections:
             print('Checking htaccess for ' + section.name + ' section...'),
-            if not section.has_section(self.read()):
+            if not section.is_in(self.read()):
                 if repair:
                     self.data = section.apply_to(self.read())
                     save = True
@@ -71,7 +71,7 @@ class Htaccess(WWFile):
             print('[OK]')
 
             if not section.is_applied(self.read()):
-                print('[!] htaccess has 5g section, but it is an old' + \
+                print('[!] htaccess has ' + section.name + ' section, but it is an old' + \
                         'version, or it has been altered.')
                 if repair and prompt('Apply template to old/altered version?'):
                     self.data = section.apply_to(self.read(), overwrite=True)
