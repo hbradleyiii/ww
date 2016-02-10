@@ -44,7 +44,7 @@ def localhost(function):
 def merge_atts(atts, new_atts):
     """Merges two dictionaries with the second overwriting the corresponding
     values of the first and returns the result."""
-    for k, v in new_atts.iteritems():
+    for k, _ in new_atts.iteritems():
         if (k in atts and isinstance(atts[k], dict)
                 and isinstance(new_atts[k], dict)):
             atts[k] = merge_atts(atts[k], new_atts[k])
@@ -123,7 +123,9 @@ class Website(object):
                     'perms' : 0664,
                     'owner' : s.WWW_USR,
                     'group' : s.WWW_USR,
-                    'h5g'   : True,
+                    'sections' : [
+                        {'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE},
+                    ]
                 },
             }
 
