@@ -16,7 +16,9 @@ A class to create Apache vhost configurations.
 It extends WWFile.
 """
 
-import os
+from __future__ import absolute_import, print_function
+
+from subprocess import call, check_output, CalledProcessError
 
 try:
     from ext_pylib.files import Parsable, Template
@@ -81,13 +83,12 @@ class Vhost(Parsable, WWFile):
         """TODO:"""
         result = super(Vhost, self).verify(repair)
         if not self.is_enabled():
-            print 'Vhost configuration file for ' + self.domain + \
-                    ' is not enabled.'
+            print('Vhost configuration file for ' + self.domain + ' is not enabled.')
             if not repair:
                 return False
             else:
                 self.enable(False)
-        print 'Vhost for ' + self.domain + ' is enabled.'
+        print('Vhost for ' + self.domain + ' is enabled.')
         return result
 
     def is_enabled(self):

@@ -15,6 +15,8 @@ A class to create Apache htaccess files.
 It extends WWFile.
 """
 
+from __future__ import absolute_import, print_function
+
 try:
     from ext_pylib.files import Section
     from ext_pylib.input import prompt
@@ -56,13 +58,13 @@ class Htaccess(WWFile):
         save = False
 
         for section in self.sections:
-            print('Checking htaccess for ' + section.name + ' section...'),
+            print('Checking htaccess for ' + section.name + ' section...', end='')
             if not section.is_in(self.read()):
                 if repair:
                     self.data = section.apply_to(self.read())
                     save = True
                 else:
-                    print '[FAIL]'
+                    print('[FAIL]')
                     return False
             print('[OK]')
 
