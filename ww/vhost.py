@@ -44,40 +44,27 @@ class Vhost(Parsable, WWFile):
         super(Vhost, self).__init__(atts)
         self.regexes = {'htdocs'     : 'DocumentRoot ["]?([^"\n]*)',
                         'error_log'  :     'ErrorLog ["]?([^"\n]*)',
-                        'access_log' :    'CustomLog ["]?([^"\n]*)', }
+                        'access_log' :    'CustomLog ["]?([^"\n]*)',}
         self.setup_parsing()
 
     def create(self, data=''):
         """TODO:"""
-        if self.placeholders:
-            data = self.template.apply_using(self.placeholders)
+        if getattr(self, 'placeholders', None):
+            data = self.template.apply_using(self.placeholders)  # pylint: disable=no-member
         super(Vhost, self).create(data)
         self.enable()
 
     def parse(self):
         """TODO:"""
-        if self.htdocs == []:
-            print 'Could not parse htdocs.'
-            self.htdocs = prompt_str('What is the htdocs path?')
-        else:
-            self.htdocs = self.htdocs[0]
+        for attribute in ['htdocs', 'error_log', 'access_log']:
+            if not getattr(self, attribute, None):
+                print('Could not parse "' + attribute + '".')
+                setattr(self, attribute, prompt_str('What is the htdocs path?'))
 
-        if self.error_log == []:
-            print 'Could not parse path for error log.'
-            self.error_log = prompt_str('What is the error log path?')
-        else:
-            self.error_log = self.error_log[0]
-
-        if self.access_log == []:
-            print 'Could not parse path for access log.'
-            self.access_log = prompt_str('What is the access log path?')
-        else:
-            self.access_log = self.access_log[0]
-
-        return { 'htdocs' : { 'path' : self.htdocs },
-             'access_log' : { 'path' : self.access_log },
-              'error_log' : { 'path' : self.error_log },
-                   'logs' : { 'path' : self.access_log.rsplit('/', 1)[0] } }
+        return {'htdocs'     : {'path' : getattr(self, 'htdocs')},
+                'access_log' : {'path' : getattr(self, 'access_log')},
+                'error_log'  : {'path' : getattr(self, 'error_log')},
+                'log'        : {'path' : getattr(self, 'access_log').rsplit('/', 1)[0]}}
 
     def verify(self, repair=False):
         """TODO:"""

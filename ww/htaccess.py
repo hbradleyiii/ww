@@ -27,13 +27,9 @@ from .ww_file import WWFile
 class HtaccessSection(Section, WWFile):
     """Htaccess section file."""
     def __str__(self):
-        return self.name
+        return getattr(self, 'name', None)
 
 
-# Htaccess()
-#
-#   methods:
-#       verify()
 class Htaccess(WWFile):
     """A class that describes an Apache htaccess file.
     This is primarily a wrapper for htaccess managment.
