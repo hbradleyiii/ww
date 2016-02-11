@@ -31,6 +31,17 @@ from .ww_file import WWFile
 class VhostTemplate(Template, WWFile):
     """A Vhost template File."""
 
+def run_command(command):
+    """A function to run os commands."""
+    try:
+        retcode = call(command, shell=True)
+        if retcode < 0:
+            print("Command was terminated by signal ", -retcode)
+            return False
+        else:
+            print("Command completed successfully.")
+    except OSError as error:
+        print("Command: '" + command + "' failed: ", error)
 
 class Vhost(Parsable, WWFile):
     """A class that describes an Apache vhost configuration.
@@ -81,23 +92,24 @@ class Vhost(Parsable, WWFile):
 
     def is_enabled(self):
         """TODO:"""
-        apache_list = os.popen("apache2ctl -S | grep ' namevhost " + \
-                               self.domain + " '").read()
-        if apache_list == '':
+        cmd = s.CMD_CHECK_IF_ENABLED.format(self.domain)
+        try:
+            if check_output(cmd, shell=True) == '':
+                return False
+            return True
+        except CalledProcessError:
             return False
-        return True
 
     def enable(self, ask=True):
         """TODO:"""
         if not ask or prompt('Enable ' + self.domain + ' in apache?'):
-            print 'Enabling ' + self.domain + ' vhost...'
-            os.system(s.CMD_ENABLE_CONFIG + self.domain)
-            os.system(s.CMD_RESTART_APACHE)
+            print('Enabling ' + self.domain + ' vhost...')
+            run_command(s.CMD_ENABLE_CONFIG + self.domain)
+            run_command(s.CMD_RESTART_APACHE)
 
     def disable(self, ask=True):
         """TODO:"""
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
-            print 'Disabling ' + self.domain + ' vhost...'
-            # TODO: Change to subprocess
-            os.system(s.CMD_DISABLE_CONFIG + self.domain)
-            os.system(s.CMD_RESTART_APACHE)
+            print('Disabling ' + self.domain + ' vhost...')
+            run_command(s.CMD_DISABLE_CONFIG + self.domain)
+            run_command(s.CMD_RESTART_APACHE)

@@ -59,7 +59,8 @@ WP_SALT_URL = 'https://api.wordpress.org/secret-key/1.1/salt/'
 # Apache commands
 CMD_RESTART_APACHE = 'sudo service apache2 restart'
 CMD_ENABLE_CONFIG  = 'sudo a2ensite '  # run as: {command} domain
-CMD_DISABLE_CONFIG = 'sudo a2dissite ' # run as: {command} domain
+CMD_DISABLE_CONFIG = 'sudo a2dissite '  # run as: {command} domain
+CMD_CHECK_IF_ENABLED = "apache2ctl -S | grep ' namevhost \"{0}\" '"  # See if apache is serving domain ({})
 
 
 # Try to import local settings. This is a temporary work-around for now.
