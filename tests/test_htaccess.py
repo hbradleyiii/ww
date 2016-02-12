@@ -6,10 +6,10 @@
 # email:            harold@bradleystudio.net
 # created on:       02/01/2016
 #
-# pylint:           disable = no-member, invalid-name, unused-argument
+# pylint:           disable = no-member,invalid-name,unused-argument
 
 """
-Unit tests for ww module's Htaccess class.
+Unit tests for ww.htaccess module's Htaccess class.
 """
 
 from mock import patch
@@ -61,6 +61,7 @@ def test_htaccess_init():
     htaccess.data = HTACCESS_DATA
     assert htaccess.path == '/the/htaccess/path'
     with patch(_INPUT, return_value='y'):
+        # TODO: what is this???
         pass
 
 def read():

@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# name:             test_wp_website.py
+# name:             test_wp_config.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
 # created on:       02/01/2016
 #
-# description:      A unit test for ww module's WPConfig class and methods.
-#
+# pylint:           disable=line-too-long,no-member
+
+"""
+A unit test for ww.wp_config module's WPConfig class and methods.
+"""
 
 import mock
-import pytest
+
 from ww import WPConfig, WPSalt
 from ww import settings as s
 
@@ -56,13 +59,13 @@ def test_wpsalt_assignment():
 
 def test_wpconfig_init():
     """Tests wpconfig initialization."""
-    config = WPConfig({ 'wp' : {
-                        'table_prefix' : 'wp_',
-                        'debug'        : 'true',
-                        'db_name'      : 'the_dbname',
-                        'db_user'      : 'the_username',
-                        'db_password'  : 'the_password',
-                        'db_host'      : 'localhost', } } )
+    config = WPConfig({'wp' : {
+        'table_prefix' : 'wp_',
+        'debug'        : 'true',
+        'db_name'      : 'the_dbname',
+        'db_user'      : 'the_username',
+        'db_password'  : 'the_password',
+        'db_host'      : 'localhost',}})
     assert config.table_prefix == 'wp_'
     assert config.debug == 'true'
     assert config.db_name == 'the_dbname'
@@ -103,7 +106,7 @@ def test_wpconfig_parse():
                 'auth_salt'        : 'salt overwritten',
                 'secure_auth_salt' : 'salt overwritten',
                 'logged_in_salt'   : 'salt overwritten',
-                'nonce_salt'       : 'salt overwritten', } } )
+                'nonce_salt'       : 'salt overwritten',}})
 
     with mock.patch(_INPUT, return_value='y'):
         config_2 = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
@@ -124,7 +127,7 @@ def test_wpconfig_parse():
         'auth_salt'        : 'salt overwritten',
         'secure_auth_salt' : 'salt overwritten',
         'logged_in_salt'   : 'salt overwritten',
-        'nonce_salt'       : 'salt overwritten', }
+        'nonce_salt'       : 'salt overwritten',}
 
     result_on_disk = {
         'debug'            : 'false',
@@ -142,7 +145,7 @@ def test_wpconfig_parse():
         'auth_salt'        : 'put your unique phrase here',
         'secure_auth_salt' : 'put your unique phrase here',
         'logged_in_salt'   : 'put your unique phrase here',
-        'nonce_salt'       : 'put your unique phrase here', }
+        'nonce_salt'       : 'put your unique phrase here',}
 
     assert config.parse() == result_in_memory
     assert config.parse(True) == result_on_disk
