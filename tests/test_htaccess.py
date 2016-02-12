@@ -72,7 +72,7 @@ TEST_SECTION = HtaccessSection({'name' : 'test_section'})
 TEST_SECTION.read = read
 
 @patch('ext_pylib.files.node.Node.verify', return_value=True)
-def test_vhost_verify_is_in(_):
+def test_vhost_verify_is_in(*args):
     """Tests htaccess verify method."""
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA
@@ -91,7 +91,7 @@ def test_vhost_verify_without_section(*args):
 
 @patch('ext_pylib.files.File.write', return_value=True)
 @patch('ext_pylib.files.node.Node.verify', return_value=True)
-def test_vhost_verify_with_altered_section(_, __):
+def test_vhost_verify_with_altered_section(*args):
     """Tests htaccess verify method."""
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA_CHANGED
