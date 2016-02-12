@@ -81,7 +81,7 @@ def test_vhost_verify_is_in(_):
 
 @patch('ext_pylib.files.File.write', return_value=True)
 @patch('ext_pylib.files.node.Node.verify', return_value=True)
-def test_vhost_verify_without_section(_, __):
+def test_vhost_verify_without_section(*args):
     """Tests htaccess verify method."""
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA_NO_SECTION
