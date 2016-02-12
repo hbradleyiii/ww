@@ -113,8 +113,8 @@ The ww package comes with three template files representing htaccess sections.
 
 * 5g-htaccess.template
 
-   This is a generic htaccess file that adds an extra layer of security. See
-   `more <https://perishablepress.com/5g-blacklist-2013/>`_
+  This is a generic htaccess file that adds an extra layer of security. See
+  `more <https://perishablepress.com/5g-blacklist-2013/>`_.
 
 
 An ``Htaccess`` class is initialized like a normal ``WW_File`` with an
