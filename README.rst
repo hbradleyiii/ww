@@ -25,7 +25,7 @@ the site from a development server to a live server.
 This software is developed for a very specific `Environment`_, but should be
 easy to modify and extend to other use cases. It assumes your server OS is
 Ubuntu running Apache (and for installing WordPress, PHP and MySQL). For
-information on extending ww see `Package Iternals`_.
+information on extending ww see `Package Internals`_.
 
 To run ww, the Python modules `ext_pylib <https://www.github.com/hbradleyiii/ext_pylib>`_,
 `MySQL-python <https://pypi.python.org/pypi/MySQL-python>`_ (for wordpress
