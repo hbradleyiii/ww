@@ -86,6 +86,8 @@ Website htaccess files are generally a collection of 'sections' that are
 responsible for particular things. For instance, a WordPress website will often
 have a section like:
 
+.. code::
+
     # BEGIN WordPress
     <IfModule mod_rewrite.c>
         RewriteEngine On
@@ -107,17 +109,19 @@ The ww package comes with three template files representing htaccess sections.
 * wordpress-hardened-htaccess.template
 
   This is a hardened WordPress htaccess file per WordPress'
-  `recommendations <http://codex.wordpress.org/Hardening_WordPress>`.
+  `recommendations <http://codex.wordpress.org/Hardening_WordPress>`_.
 
 * 5g-htaccess.template
 
    This is a generic htaccess file that adds an extra layer of security. See
-   https://perishablepress.com/5g-blacklist-2013/
+   `more <https://perishablepress.com/5g-blacklist-2013/>`_
 
 
 An ``Htaccess`` class is initialized like a normal ``WW_File`` with an
 additional 'section' attribute. ``atts['section']`` is a list of 0 or more
 dicts used to initialize an ``HtaccessSection`` file. This dict has the form:
+
+.. code:: python
 
     { 'name' : 'section_name', 'path' : '/path/to/section_template' }
 
