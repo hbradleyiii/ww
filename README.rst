@@ -22,10 +22,10 @@ it helps with removal by undoing everything it originally did. Finally, the
 application helps with packing and unpacking entire WordPress websites to move
 the site from a development server to a live server.
 
-This software is developed for a very :ref:`specific environment <specific-environment>`,
-but should be easy to modify and extend to other use cases. It assumes your
-server OS is Ubuntu running Apache (and for installing WordPress, PHP and
-MySQL). For information on extending ww see :ref:`Package Iternals <package-internals>`.
+This software is developed for a very specific `Environment`_, but should be
+easy to modify and extend to other use cases. It assumes your server OS is
+Ubuntu running Apache (and for installing WordPress, PHP and MySQL). For
+information on extending ww see `Package Iternals`_.
 
 To run ww, the Python modules `ext_pylib <https://www.github.com/hbradleyiii/ext_pylib>`_,
 `MySQL-python <https://pypi.python.org/pypi/MySQL-python>`_ (for wordpress
@@ -62,13 +62,9 @@ Usage
     $ ww verify example.com
     $ ww remove example.com
 
-.. _specific-environment:
-
-Environment Specifics
-=====================
+Environment
+===========
 TODO
-
-.. _package-internals:
 
 Package Internals
 =================
