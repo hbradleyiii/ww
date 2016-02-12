@@ -18,7 +18,7 @@ It extends WWFile.
 
 from __future__ import absolute_import, print_function
 
-from subprocess import call, check_output, CalledProcessError
+import subprocess
 
 try:
     from ext_pylib.files import Parsable, Template
@@ -30,20 +30,23 @@ from . import settings as s
 from .ww_file import WWFile
 
 
-class VhostTemplate(Template, WWFile):
-    """A Vhost template File."""
-
 def run_command(command):
     """A function to run os commands."""
     try:
-        retcode = call(command, shell=True)
-        if retcode < 0:
+        retcode = subprocess.call(command, shell=True)
+        if retcode > 0:
             print("Command was terminated by signal ", -retcode)
             return False
         else:
             print("Command completed successfully.")
+            return True
     except OSError as error:
         print("Command: '" + command + "' failed: ", error)
+
+
+class VhostTemplate(Template, WWFile):
+    """A Vhost template File."""
+
 
 class Vhost(Parsable, WWFile):
     """A class that describes an Apache vhost configuration.
@@ -51,24 +54,31 @@ class Vhost(Parsable, WWFile):
     """
 
     def __init__(self, domain, atts):
-        """TODO:"""
+        """Initializes a Vhost file."""
         self.domain = domain
         self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
-        self.regexes = {'htdocs'     : 'DocumentRoot ["]?([^"\n]*)',
-                        'error_log'  :     'ErrorLog ["]?([^"\n]*)',
-                        'access_log' :    'CustomLog ["]?([^"\n]*)',}
+        self.regexes = {'htdocs'     : ('DocumentRoot ["]?([^"\n]*)',
+                                        'DocumentRoot {0}'),
+                        'error_log'  : ('ErrorLog ["]?([^"\n]*)',
+                                        'ErrorLog {0}'),
+                        'access_log' : ('CustomLog ["]?([^"\n]*)',
+                                        'CustomLog {0}'),}
         self.setup_parsing()
 
     def create(self, data=''):
-        """TODO:"""
+        """Creates a vhost file."""
         if getattr(self, 'placeholders', None):
             data = self.template.apply_using(self.placeholders)  # pylint: disable=no-member
+        # what if there are no placeholders??
         super(Vhost, self).create(data)
         self.enable()
 
     def parse(self):
-        """TODO:"""
+        """Parses an existing vhost file (or the contents of memory).
+        Prompts when an attribute can't be found."""
+        self.read()
+
         for attribute in ['htdocs', 'error_log', 'access_log']:
             if not getattr(self, attribute, None):
                 print('Could not parse "' + attribute + '".')
@@ -80,7 +90,7 @@ class Vhost(Parsable, WWFile):
                 'log'        : {'path' : getattr(self, 'access_log').rsplit('/', 1)[0]}}
 
     def verify(self, repair=False):
-        """TODO:"""
+        """Verifies that the vhost file exists and is enabled."""
         result = super(Vhost, self).verify(repair)
         if not self.is_enabled():
             print('Vhost configuration file for ' + self.domain + ' is not enabled.')
@@ -92,25 +102,25 @@ class Vhost(Parsable, WWFile):
         return result
 
     def is_enabled(self):
-        """TODO:"""
+        """Checks if apache is serving this vhost."""
         cmd = s.CMD_CHECK_IF_ENABLED.format(self.domain)
         try:
-            if check_output(cmd, shell=True) == '':
+            if subprocess.check_output(cmd, shell=True) == '':
                 return False
             return True
-        except CalledProcessError:
+        except subprocess.CalledProcessError:
             return False
 
     def enable(self, ask=True):
-        """TODO:"""
+        """Enables vhost and restarts apache server."""
         if not ask or prompt('Enable ' + self.domain + ' in apache?'):
             print('Enabling ' + self.domain + ' vhost...')
-            run_command(s.CMD_ENABLE_CONFIG + self.domain)
-            run_command(s.CMD_RESTART_APACHE)
+            return run_command(s.CMD_ENABLE_CONFIG + self.domain) and \
+                run_command(s.CMD_RESTART_APACHE)
 
     def disable(self, ask=True):
-        """TODO:"""
+        """Disable vhost and restarts apache server."""
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
             print('Disabling ' + self.domain + ' vhost...')
-            run_command(s.CMD_DISABLE_CONFIG + self.domain)
-            run_command(s.CMD_RESTART_APACHE)
+            return run_command(s.CMD_DISABLE_CONFIG + self.domain) and \
+                run_command(s.CMD_RESTART_APACHE)

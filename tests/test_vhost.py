@@ -6,13 +6,20 @@
 # email:            harold@bradleystudio.net
 # created on:       12/11/2015
 #
-# description:      Unit tests for ww module's Vhost methods.
-#                   Most of Vhost's methods are difficult to unit test because
-#                   they are tightly coupled to an apache system.
-#
+# pylint:           disable=no-member
 
-import pytest
+"""
+Unit tests for ww module's Vhost methods. Most of Vhost's methods are
+difficult to unit test because they are tightly coupled to an apache system.
+"""
+
+from mock import patch
+
 from ww import Vhost
+from ww.vhost import run_command
+
+
+_INPUT = 'ext_pylib.input.prompts.INPUT'
 
 VHOST_DATA = """This is a sample vhost file.
 DocumentRoot /the/root/dir
@@ -20,26 +27,76 @@ ErrorLog "/the/error/log"
 CustomLog "/the/access/log"
 """
 
+DEFAULT_ARGS = {'path' : '/tmp/path'}
+DEFAULT_DOMAIN = 'example.com'
+
+@patch('subprocess.call', return_value=0)
+def test_run_command(mock_call):
+    """Tests run_command function."""
+    assert run_command('the command')
+    mock_call.assert_called_once_with('the command', shell=True)
+
+@patch('subprocess.call', return_value=1)
+def test_run_command_failed(mock_call):
+    """Tests run_command function."""
+    assert not run_command('the command')
+    mock_call.assert_called_once_with('the command', shell=True)
+
 def test_vhost_init():
-    """TODO: Test vhost init method."""
-    vhost = Vhost('domain.com', {'path' : '/tmp/path'})
+    """Tests vhost init method."""
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
     vhost.data = VHOST_DATA
+    assert vhost.domain == 'example.com'
     assert vhost.htdocs == '/the/root/dir'
     assert vhost.access_log == '/the/access/log'
     assert vhost.error_log == '/the/error/log'
 
 def test_vhost_create():
-    """TODO: Test vhost create method."""
+    """Tests vhost create method."""
     pass
 
 def test_vhost_parse():
-    """Test vhost parse method."""
-    pass
+    """Tests vhost parse method."""
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost.data = VHOST_DATA
+    assert vhost.parse() == {'htdocs'     : {'path' : '/the/root/dir'},
+                             'access_log' : {'path' : '/the/access/log'},
+                             'error_log'  : {'path' : '/the/error/log'},
+                             'log'        : {'path' : '/the/access'}}
 
-def test_vhost_verify():
-    """TODO: Test vhost get_parsed method."""
-    pass
+def test_vhost_parse_with_prompts():
+    """Tests vhost parse method with prompts."""
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost.data = ''
+    with patch(_INPUT, return_value='/a/sample/dir'):
+        assert vhost.parse() == {'htdocs'     : {'path' : '/a/sample/dir'},
+                                 'access_log' : {'path' : '/a/sample/dir'},
+                                 'error_log'  : {'path' : '/a/sample/dir'},
+                                 'log'        : {'path' : '/a/sample'}}
+    assert vhost.htdocs == '/a/sample/dir'
+    assert vhost.access_log == '/a/sample/dir'
+    assert vhost.error_log == '/a/sample/dir'
 
-def test_vhost_repair():
-    """TODO: Test vhost get_parsed method."""
-    pass
+@patch('ext_pylib.files.File.verify', return_value=True)
+@patch('ww.vhost.Vhost.is_enabled', return_value=True)
+def test_vhost_verify(mock_enabled, mock_file_verify):
+    """Tests vhost verify method."""
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    assert vhost.verify()
+    mock_enabled.return_value = False
+    assert not vhost.verify()
+    mock_enabled.return_value = True
+    mock_file_verify.return_value = False
+    assert not vhost.verify()
+
+@patch('ww.vhost.run_command', return_value=True)
+def test_vhost_enable(_):
+    """Test vhost enable method."""
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    assert vhost.enable(False)
+
+@patch('ww.vhost.run_command', return_value=True)
+def test_vhost_disable(_):
+    """Tests vhost disble method."""
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    assert vhost.disable(False)
