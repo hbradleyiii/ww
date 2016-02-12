@@ -5,12 +5,27 @@
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
 # created on:       12/11/2015
-#
-# description:      A unit test for ww module's WebsiteDomain class and methods.
-#
 
-import pytest
-from ww import WebsiteDomain
+"""
+A unit test for ww.website_domain's create_domain factory function.
+"""
 
-# This is just a stub for now. There isn't much that can be unit tested in
-# this class.
+from mock import patch
+
+from ww.website_domain import create_domain, WebsiteDomain
+
+
+_INPUT = 'ext_pylib.input.prompts.INPUT'
+
+def test_create_domain():
+    """Tests WebsiteDomain factory function."""
+    domain = WebsiteDomain('example.com')
+    assert domain == create_domain('example.com')
+
+def test_create_domain_by_prompt():
+    """Tests WebsiteDomain factory function using prompt."""
+    domain = WebsiteDomain('example.com')
+    assert domain == create_domain('example.com')
+
+    with patch(_INPUT, return_value='example.com'):
+        assert domain == create_domain()

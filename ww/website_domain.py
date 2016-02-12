@@ -38,9 +38,9 @@ def create_domain(name=None):
 class WebsiteDomain(Domain):
     """A class to describe and manage a domain name and corresponding ip address."""
 
-    def verify(self, repair = False):
+    def verify(self, repair=False):  # pylint: disable=unused-argument
         """Verifies that the domain is pointed at the server."""
-        server_ip == get_server_ip()
+        server_ip = get_server_ip()
         print 'Server IP: ' + server_ip
         print 'Current website IP: ' + self.ip
         if not server_ip == self.ip:
