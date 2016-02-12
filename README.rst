@@ -71,11 +71,71 @@ Package Internals
 
 Class: WW_Files
 ---------------
-TODO
+``WW_File`` is a class from which all other classes representing files derive.
+It provides a basic interface for consistency. It extends ``ext_pylib.file``
+File class.  Currently, its only method is ``repair()`` which offers a
+convinient wrapper for the ``verify()`` method with the repair flag set to
+``True``.
 
 Module: htaccess
 ~~~~~~~~~~~~~~~~
-TODO
+The ``ww.htaccess`` module contains the ``Htaccess`` class which represents a
+website's htaccess file and provides an interface for creating htaccess files.
+
+Website htaccess files are generally a collection of 'sections' that are
+responsible for particular things. For instance, a WordPress website will often
+have a section like:
+
+    # BEGIN WordPress
+    <IfModule mod_rewrite.c>
+        RewriteEngine On
+        RewriteBase /
+        RewriteRule ^index\.php$ - [L]
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule . /index.php [L]
+    </IfModule>
+
+    # END WordPress
+
+The ww package comes with three template files representing htaccess sections.
+
+* wordpress-htaccess.template
+
+  This is the generic WordPress htaccess file.
+
+* wordpress-hardened-htaccess.template
+
+  This is a hardened WordPress htaccess file per WordPress'
+  `recommendations <http://codex.wordpress.org/Hardening_WordPress>`.
+
+* 5g-htaccess.template
+
+   This is a generic htaccess file that adds an extra layer of security. See
+   https://perishablepress.com/5g-blacklist-2013/
+
+
+An ``Htaccess`` class is initialized like a normal ``WW_File`` with an
+additional 'section' attribute. ``atts['section']`` is a list of 0 or more
+dicts used to initialize an ``HtaccessSection`` file. This dict has the form:
+
+    { 'name' : 'section_name', 'path' : '/path/to/section_template' }
+
+An ``HtaccessSection`` class is merely a wrapper around an
+``ext_pylib.file.Section`` class. See the ext_pylib documentation for more
+information.
+
+If the htaccess file doesn't yet exist, all sections are applied to the in
+memory data at initialization. They are saved to disk by calling the ``create``
+method. If the file does already exist, the existing data is loaded into
+memory.
+
+The ``verify`` method first calls the parent ``verify`` which checks existance,
+permissions, and ownership. Then it checks to make sure any appropriate
+sections are applied. It will also warn of sections that are applied but
+contain an old or modified version of the section. If the repair flag is set to
+``True`` the method attempts to correct any errors. It does not affect any data
+outside the 'sections'. If the sections are malformed, it raises an error.
 
 Module: vhost
 ~~~~~~~~~~~~~
