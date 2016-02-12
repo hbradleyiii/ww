@@ -58,7 +58,7 @@ class Htaccess(WWFile):
         save = False
 
         for section in self.sections:
-            print('Checking htaccess for ' + section.name + ' section...', end='')
+            print('Checking htaccess for ' + section.name + ' section...', end=' ')
             if not section.is_in(self.read()):
                 if repair:
                     self.data = section.apply_to(self.read())
