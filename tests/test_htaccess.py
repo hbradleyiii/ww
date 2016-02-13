@@ -60,9 +60,6 @@ def test_htaccess_init():
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA
     assert htaccess.path == '/the/htaccess/path'
-    with patch(_INPUT, return_value='y'):
-        # TODO: what is this???
-        pass
 
 def read():
     """A mock read function."""
