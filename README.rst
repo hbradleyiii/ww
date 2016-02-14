@@ -149,6 +149,10 @@ Module: wp_config
 ~~~~~~~~~~~~~~~~~
 TODO
 
+Class WebsiteDomain
+-------------------
+TODO
+
 Class: Website
 --------------
 TODO
@@ -157,6 +161,5 @@ Class: WP_Website
 -----------------
 TODO
 
-Class WebsiteDomain
--------------------
-TODO
+----
+Soli Deo gloria.
