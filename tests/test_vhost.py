@@ -51,9 +51,29 @@ def test_vhost_init():
     assert vhost.access_log == '/the/access/log'
     assert vhost.error_log == '/the/error/log'
 
-def test_vhost_create():
+@patch('ext_pylib.files.File.create')
+@patch('ww.vhost.Vhost.enable')
+def test_vhost_create(mock_enable, mock_create):
     """Tests vhost create method."""
-    pass
+    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost.template.data = """#WEBSITE#
+#HTDOCS#
+#EMAIL#
+#ACCESS_LOG#"""
+    expected_data = """example.com
+/the/docs/
+email@example.com
+/the/logs"""
+    vhost.placeholders = {
+        '#WEBSITE#'    : 'example.com',
+        '#HTDOCS#'     : '/the/docs/',
+        '#EMAIL#'      : 'email@example.com',
+        '#ACCESS_LOG#' : '/the/logs',
+    }
+    vhost.create()
+    assert vhost.read() == expected_data
+    mock_create.assert_called_once_with()
+    mock_enable.assert_called_once_with()
 
 def test_vhost_parse():
     """Tests vhost parse method."""
