@@ -69,9 +69,9 @@ TODO
 Package Internals
 =================
 
-Class: WW_Files
+Class: WWFile
 ---------------
-``WW_File`` is a class from which all other classes representing files derive.
+``WWFile`` is a class from which all other classes representing files derive.
 It provides a basic interface for consistency. It extends ``ext_pylib.file``
 File class.  Currently, its only method is ``repair()`` which offers a
 convinient wrapper for the ``verify()`` method with the repair flag set to
@@ -117,7 +117,7 @@ The ww package comes with three template files representing htaccess sections.
   `more <https://perishablepress.com/5g-blacklist-2013/>`_.
 
 
-An ``Htaccess`` class is initialized like a normal ``WW_File`` with an
+An ``Htaccess`` class is initialized like a normal ``WWFile`` with an
 additional 'section' attribute. ``atts['section']`` is a list of 0 or more
 dicts used to initialize an ``HtaccessSection`` file. This dict has the form:
 
