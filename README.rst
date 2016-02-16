@@ -64,7 +64,29 @@ Usage
 
 Environment
 ===========
-TODO
+This application was developed specifically for a Ubuntu server running Apache,
+PHP, and MySQL. The default commands for alerting Apache to a new vhost and
+restarting Apache are based on this. These can be easily changed if on a
+different platform.
+
+This is the default directory structure that is set up by the application:
+
+```
+/etc/apache2/
+     ├── sites-available/
+     │   ├── example.com.conf { vhost file }
+
+/var/www/
+     ├── .git/ { git repository }
+     ├── htdocs/ {root directory of website}
+     │   ├── .htaccess
+     │   ├── (wp_config.php)
+     │   ├── (WordPress Installation)
+     ├── assets/ {root directory of website}
+     ├── log/
+     │   ├── access.log
+     │   ├── error.log
+```
 
 Package Internals
 =================
