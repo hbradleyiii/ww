@@ -68,7 +68,10 @@ class Vhost(Parsable, WWFile):
 
     def create(self, data=''):
         """Creates a vhost file replacing placeholders with data if they exist."""
-        if getattr(self, 'placeholders', None):
+        # pylint: disable=attribute-defined-outside-init,redefined-variable-type
+        if data:
+            self.data = data
+        elif getattr(self, 'placeholders', None):
             self.data = self.template.apply_using(self.placeholders)  # pylint: disable=no-member
         else:
             self.data = self.template.read()
