@@ -72,6 +72,7 @@ different platform.
 This is the default directory structure that is set up by the application:
 
 .. code::
+
     /etc/apache2/
         ├── sites-available/
         │   ├── example.com.conf { vhost file }
