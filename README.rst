@@ -71,22 +71,21 @@ different platform.
 
 This is the default directory structure that is set up by the application:
 
-```
-/etc/apache2/
-     ├── sites-available/
-     │   ├── example.com.conf { vhost file }
+.. code::
+    /etc/apache2/
+        ├── sites-available/
+        │   ├── example.com.conf { vhost file }
 
-/var/www/
-     ├── .git/ { git repository }
-     ├── htdocs/ {root directory of website}
-     │   ├── .htaccess
-     │   ├── (wp_config.php)
-     │   ├── (WordPress Installation)
-     ├── assets/ {root directory of website}
-     ├── log/
-     │   ├── access.log
-     │   ├── error.log
-```
+    /var/www/
+        ├── .git/ { git repository }
+        ├── htdocs/ {root directory of website}
+        │   ├── .htaccess
+        │   ├── (wp_config.php)
+        │   ├── (WordPress Installation)
+        ├── assets/ {root directory of website}
+        ├── log/
+        │   ├── access.log
+        │   ├── error.log
 
 Package Internals
 =================
