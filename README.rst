@@ -174,13 +174,15 @@ directory, and the access and error log directories.
 The default template is a generic website template with basic compression and
 caching settings turned on. It also redirects www.* to the original domain.
 
-The default commands to enable/disable a virtualhost are the default commands
-used by Ubuntu servers. Basically, there are a set of configuration files in
-/etc/apache2/sites-available that each represent a virtual host. These
-configuration files are all ignored unless they are linked to the directory
-/etc/apache2/sites-enabled. The a2ensite and a2dissite commands automatically
-take care of this linking process. This procedure could easily be implemented
-in other servers and the appropriate commands substituted in this application.
+The ``Vhost`` class also offers methods for enabling and disabling the virtual
+host in Apache.  The default commands to enable/disable a virtualhost are the
+default commands used by Ubuntu servers. Basically, there are a set of
+configuration files in /etc/apache2/sites-available that each represent a
+virtual host. These configuration files are all ignored unless they are linked
+to the directory /etc/apache2/sites-enabled. The a2ensite and a2dissite
+commands automatically take care of this linking process. This procedure could
+easily be implemented in other servers and the appropriate commands substituted
+in this application.
 
 Module: wp_config
 ~~~~~~~~~~~~~~~~~
