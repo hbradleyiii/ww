@@ -191,8 +191,9 @@ Class WebsiteDomain
 The ``ww.website_domain`` module contains the ``WebsiteDomain`` class which
 represents a domain name for a website. Currently, this class merely checks the
 A-record of the domain and compares it with the IP of the current server. It
-warns you if these are different. There are plans for implementing common DNS
-API's for correcting the A-records, but this is not yet implemented.
+warns you if these are different. There are future thoughts for possibly
+implementing common DNS API's for correcting the A-records, but this is not yet
+implemented.
 
 Class: Website
 --------------
