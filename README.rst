@@ -156,12 +156,13 @@ memory data at initialization. They are saved to disk by calling the ``create``
 method. If the file does already exist, the existing data is loaded into
 memory.
 
-The ``verify`` method first calls the parent ``verify`` which checks existance,
-permissions, and ownership. Then it checks to make sure any appropriate
-sections are applied. It will also warn of sections that are applied but
-contain an old or modified version of the section. If the repair flag is set to
-``True`` the method attempts to correct any errors. It does not affect any data
-outside the 'sections'. If the sections are malformed, it raises an error.
+The ``Htaccess.verify`` method first calls the parent ``verify`` which checks
+existance, permissions, and ownership. Then it checks to make sure any
+appropriate sections are applied. It will also warn of sections that are
+applied but contain an old or modified version of the section. If the repair
+flag is set to ``True`` the method attempts to correct any errors. It does not
+affect any data outside the 'sections'. If the sections are malformed, it
+raises an error.
 
 Module: vhost
 ~~~~~~~~~~~~~
@@ -169,7 +170,14 @@ The ``ww.vhost`` module contains the ``Vhost`` class which represents a
 website's apache virtual host configuration file. It can set up a new virtual
 host file using the default template and replacing certain placeholders with
 relevant settings. Currently, there are placeholders for the domain, htdocs
-directory, and the access and error log directories.
+directory, and the access and error log directories. A ``Vhost`` class is
+initialized like a normal ``WWFile``.
+
+If the vhost file already exists, you can call ``Vhost.parse`` to attempt to
+retieve the domain, htdocs directory, and log directory.
+
+Calling the ``Vhost.create`` method will create the file using the data from
+the template with the placeholders applied.
 
 The default template is a generic website template with basic compression and
 caching settings turned on. It also redirects www.* to the original domain.
@@ -183,6 +191,12 @@ to the directory /etc/apache2/sites-enabled. The a2ensite and a2dissite
 commands automatically take care of this linking process. This procedure could
 easily be implemented in other servers and the appropriate commands substituted
 in this application.
+
+The ``Vhost.verify`` method first calls the parent ``verify`` which checks
+existance, permissions, and ownership. Then it checks to make sure the virtual
+host is enabled in apache. If the repair flag is set to ``True``, it will
+attempt to enable itself.
+
 
 Module: wp_config
 ~~~~~~~~~~~~~~~~~
