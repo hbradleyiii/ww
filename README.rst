@@ -85,8 +85,8 @@ This is the default directory structure that is set up by the application:
         │   ├── (WordPress Installation)
         ├── assets/ {root directory of website}
         ├── log/
-        │   ├── access.log
-        │   ├── error.log
+        │   ├── access_log
+        │   ├── error_log
 
 Package Internals
 =================
