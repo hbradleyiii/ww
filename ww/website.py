@@ -14,8 +14,10 @@ ww.website
 A class to manage websites
 """
 
-import os
+from __future__ import absolute_import, print_function
+
 import tarfile
+import subprocess
 
 try:
     from ext_pylib.files import Dir, File
@@ -34,10 +36,10 @@ def localhost(function):
     the function is called and removes it after it is completed."""
     def function_wrapper(self, *args, **kwargs):
         """Adds a hostentry for self.domain to resolve to localhost."""
-        print 'Adding temporary host entry.'
+        print('Adding temporary host entry.')
         os.system("echo '127.0.0.1 " + self.domain + "' | cat >> /etc/hosts")
         function(self, *args, **kwargs)
-        print 'Removing temporary host entry.'
+        print('Removing temporary host entry.')
         os.system("sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts")
     return function_wrapper
 
@@ -70,7 +72,7 @@ class Website(object):
         """Initializes a new Website instance."""
         atts = atts or {}
 
-        print '[*] SSL not yet implemented in Website class.'
+        print('[*] SSL not yet implemented in Website class.')
 
         self.domain = WebsiteDomain(domain)
         self.dirs = {}
@@ -136,7 +138,7 @@ class Website(object):
 
         # If an apache vhost config already exists, try to parse it
         if self.vhost.exists():
-            print str(self.vhost) + ' already exists.'
+            print(str(self.vhost) + ' already exists.')
             if prompt('Parse existing vhost configuration?'):
                 atts = merge_atts(atts, self.vhost.parse())
         # TODO: Convert...or migrate?
@@ -201,7 +203,7 @@ class Website(object):
         """Installs website to server"""
         # Check if domain is already installed
         if self.is_installed():
-            print self.domain + ' is already installed.'
+            print(self.domain + ' is already installed.')
 
         self.root.create()
         self.htdocs.create()
@@ -215,8 +217,8 @@ class Website(object):
 
         self.domain.set_ip()
 
-        print str(self)
-        print 'Installation complete.'
+        print(str(self))
+        print('Installation complete.')
 
     def remove(self, ask=True):
         """Removes website from server"""
@@ -262,16 +264,16 @@ class Website(object):
                       self.assets.verify(repair),
                       self.root.verify(repair),
                       self.domain.verify(repair)])
-        print self
+        print(self)
         return result
 
     def repair(self):
         """Repairs website installation"""
-        print 'Repairing ' + self.domain + '...'
+        print('Repairing ' + self.domain + '...')
         if self.verify(True):
-            print '[OK] Repair completed successfully.'
+            print('[OK] Repair completed successfully.')
         else:
-            print '[ERROR] Repair resulted in errors.'
+            print('[ERROR] Repair resulted in errors.')
 
     def is_installed(self):
         """Returns true if vhost is enabled"""

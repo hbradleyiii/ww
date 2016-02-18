@@ -15,6 +15,8 @@ A class to manage WordPress websites
 Extends Website.
 """
 
+from __future__ import absolute_import, print_function
+
 import os
 import re
 import shutil
@@ -55,12 +57,12 @@ def download():
     """Downloads a fresh WordPress tarball, returns path of download"""
     wp_tarball = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
     if not os.path.exists(wp_tarball):
-        print 'Downloading Wordpress...'
+        print('Downloading Wordpress...')
         with open(wp_tarball, 'wb') as tarball:
             tarball.write(requests.get(s.WP_LATEST).content)
-        print 'Download Complete.'
+        print('Download Complete.')
     else:
-        print 'Already downloaded wordpress today. Using existing tarball.'
+        print('Already downloaded wordpress today. Using existing tarball.')
     return wp_tarball  # Return path to wordpress
 
 def untar(tarball):
@@ -68,11 +70,11 @@ def untar(tarball):
     wp_extract_dir = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
     wp_extracted = wp_extract_dir + 'wordpress/'
     if not os.path.exists(wp_extracted):
-        print 'Uncompressing files...'
+        print('Uncompressing files...')
         wp_tarfile = tarfile.open(tarball)
         wp_tarfile.extractall(wp_extract_dir)
         wp_tarfile.close()
-        print 'Extraction complete.'
+        print('Extraction complete.')
     return wp_extracted  # Return path to extracted files
 
 
@@ -165,7 +167,7 @@ class WPWebsite(Website):
 
     def import_db(self, mysql_dump):
         """Imports a mysql database into WordPress database."""
-        print 'Importing mysql database...'
+        print('Importing mysql database...')
 
         # find/replace in sql database if necessary
         raw_input('find and replace not yet implemented... Press enter to continue.')
@@ -177,11 +179,11 @@ class WPWebsite(Website):
             ' -p' + self.mysql['password'] + ' ' + self.domain +
             ' < ' + mysql_dump
             )
-        print 'Import complete.'
+        print('Import complete.')
 
     def import_wp_content(self, import_dir):
         """Imports wp-content into WordPress."""
-        print 'Importing wp-content...'
+        print('Importing wp-content...')
         wp_content = self.htdocs + 'wp-content'
         if os.path.exists(wp_content):
             shutil.rmtree(wp_content)
@@ -195,11 +197,11 @@ class WPWebsite(Website):
 
     def create_database(self):
         """Creates WordPress MySQL database."""
-        print 'Setting up WordPress database "' + self.db['name'] + '"...'
+        print('Setting up WordPress database "' + self.db['name'] + '"...')
         # TODO: error handling
         while True:
             if self.query(select_user(user)):
-                print '[!] MySQL user "' + user + '" already exists.'
+                print('[!] MySQL user "' + user + '" already exists.')
                 user = prompt_str('Choose another MySQL username:')
             else:
                 break
@@ -208,7 +210,7 @@ class WPWebsite(Website):
 
         while True:
             if self.query(select_database(name)):
-                print '[!] Database "' + name + '" already exists.'
+                print('[!] Database "' + name + '" already exists.')
                 name = prompt_str('Choose another MySQL database name:')
             else:
                 break
@@ -217,17 +219,17 @@ class WPWebsite(Website):
 
         self.query("GRANT ALL PRIVILEGES ON " + self.db['name'] + ".* TO " + self.db['user'] + "@localhost")
         self.query("FLUSH PRIVILEGES")
-        print 'Database ready.'
+        print('Database ready.')
 
     def remove_database(self):
         """Removes WordPress MySQL database."""
-        print 'Removing Wordpress database "' + self.db['name'] + '"...'
+        print('Removing Wordpress database "' + self.db['name'] + '"...')
         # TODO: error handling
         self.query("DROP DATABASE " + self.db['name'])
-        print 'Removing Wordpress user "' + self.db['user'] + '"...'
+        print('Removing Wordpress user "' + self.db['user'] + '"...')
         self.query("DROP USER " + self.db['user'] + "@localhost")
         self.query("FLUSH PRIVILEGES")
-        print 'Database removed.'
+        print('Database removed.')
 
     def wordpress_install(self):
         """TODO:"""
@@ -251,7 +253,7 @@ class WPWebsite(Website):
             'language'        : 'en_US'
         }
 
-        print 'Running install...'
+        print('Running install...')
         r = requests.post('http://' + self.domain + s.WP_INSTALL_URL, data=payload)
-        print r.text
-        print 'Installation complete'
+        print(r.text)
+        print('Installation complete')
