@@ -37,10 +37,19 @@ def localhost(function):
     def function_wrapper(self, *args, **kwargs):
         """Adds a hostentry for self.domain to resolve to localhost."""
         print('Adding temporary host entry.')
-        os.system("echo '127.0.0.1 " + self.domain + "' | cat >> /etc/hosts")
+        remove_entry = True
+        cmd = "echo '127.0.0.1 " + self.domain + "' | cat >> /etc/hosts"
+        if subprocess.check_output(cmd, shell=True) != 0:
+            print('[WARN] Error adding temporary host entry.')
+            remove_entry = False
+
         function(self, *args, **kwargs)
+
         print('Removing temporary host entry.')
-        os.system("sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts")
+        cmd = "sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts"  # pylint: disable=anomalous-backslash-in-string
+        if remove_entry and subprocess.check_output(cmd, shell=True) != 0:
+            print('[WARN] Error removing temporary host entry.')
+
     return function_wrapper
 
 
