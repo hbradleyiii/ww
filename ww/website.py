@@ -19,6 +19,7 @@ import tarfile
 
 try:
     from ext_pylib.files import Dir, File
+    from ext_pylib.input import prompt
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
 
@@ -65,7 +66,7 @@ class Website(object):
         htaccess    Website root htaccess file
     """
 
-    def __init__(self, domain, atts = None):
+    def __init__(self, domain, atts=None):
         """Initializes a new Website instance."""
         atts = atts or {}
 
@@ -76,58 +77,58 @@ class Website(object):
         self.files = {}
 
         default_atts = {
-                'root' : {
-                    'path'  : s.WWW_DIR + self.domain,
-                    'perms' : 0775,
-                    'owner' : s.WWW_USR,
-                    'group' : s.WWW_USR,
-                },
-                'htdocs' : {
-                    'path'  : s.WWW_DIR + self.domain + '/htdocs/',
-                    'perms' : 0775,
-                    'owner' : s.WWW_USR,
-                    'group' : s.WWW_USR,
-                },
-                'assets' : {
-                    'path'  : s.WWW_DIR + self.domain + '/assets/',
-                    'perms' : 0775,
-                    'owner' : 'root',
-                    'group' : s.WWW_ADMIN,
-                },
-                'logs' : {
-                    'path'  : s.WWW_DIR + self.domain + '/log/',
-                    'perms' : 0770,
-                    'owner' : 'root',
-                    'group' : s.WWW_ADMIN,
-                },
-                'access_log' : {
-                    'path'  : None,
-                    'perms' : 0750,
-                    'owner' : 'root',
-                    'group' : s.WWW_ADMIN,
-                },
-                'error_log' : {
-                    'path'  : None,
-                    'perms' : 0750,
-                    'owner' : 'root',
-                    'group' : s.WWW_ADMIN,
-                },
-                'vhost' : {
-                    'path'  : s.VHOST_PATH + self.domain + '.conf',
-                    'perms' : 0644,
-                    'owner' : 'root',
-                    'group' : 'root',
-                },
-                'htaccess' : {
-                    'path'  : None,
-                    'perms' : 0664,
-                    'owner' : s.WWW_USR,
-                    'group' : s.WWW_USR,
-                    'sections' : [
-                        {'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE},
-                    ]
-                },
-            }
+            'root' : {
+                'path'  : s.WWW_DIR + self.domain,
+                'perms' : 0775,
+                'owner' : s.WWW_USR,
+                'group' : s.WWW_USR,
+            },
+            'htdocs' : {
+                'path'  : s.WWW_DIR + self.domain + '/htdocs/',
+                'perms' : 0775,
+                'owner' : s.WWW_USR,
+                'group' : s.WWW_USR,
+            },
+            'assets' : {
+                'path'  : s.WWW_DIR + self.domain + '/assets/',
+                'perms' : 0775,
+                'owner' : 'root',
+                'group' : s.WWW_ADMIN,
+            },
+            'logs' : {
+                'path'  : s.WWW_DIR + self.domain + '/log/',
+                'perms' : 0770,
+                'owner' : 'root',
+                'group' : s.WWW_ADMIN,
+            },
+            'access_log' : {
+                'path'  : None,
+                'perms' : 0750,
+                'owner' : 'root',
+                'group' : s.WWW_ADMIN,
+            },
+            'error_log' : {
+                'path'  : None,
+                'perms' : 0750,
+                'owner' : 'root',
+                'group' : s.WWW_ADMIN,
+            },
+            'vhost' : {
+                'path'  : s.VHOST_PATH + self.domain + '.conf',
+                'perms' : 0644,
+                'owner' : 'root',
+                'group' : 'root',
+            },
+            'htaccess' : {
+                'path'  : None,
+                'perms' : 0664,
+                'owner' : s.WWW_USR,
+                'group' : s.WWW_USR,
+                'sections' : [
+                    {'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE},
+                ]
+            },
+        }
 
         atts = merge_atts(default_atts, atts)
 
@@ -140,10 +141,10 @@ class Website(object):
                 atts = merge_atts(atts, self.vhost.parse())
         # TODO: Convert...or migrate?
 
-        self.root   = Dir(atts['root'])
+        self.root = Dir(atts['root'])
         self.htdocs = Dir(atts['htdocs'])
         self.assets = Dir(atts['assets'])
-        self.logs   = Dir(atts['logs'])
+        self.logs = Dir(atts['logs'])
 
         # Set path of htaccess, access_log, and error_log after htdocs is set.
         if not atts['htaccess']['path']:
@@ -153,23 +154,23 @@ class Website(object):
         if not atts['error_log']['path']:
             atts['error_log']['path'] = self.logs.path + s.SITE_ERROR_LOG
 
-        self.htaccess  = Htaccess(atts['htaccess'])
+        self.htaccess = Htaccess(atts['htaccess'])
         self.access_log = File(atts['access_log'])
         self.error_log = File(atts['error_log'])
 
         # Setup vhost placeholders after attributes have been defined
         self.vhost.placeholders = {
-                '#WEBSITE#'    : self.domain.name,
-                '#HTDOCS#'     : self.htdocs.path,
-                '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
-                '#ACCESS_LOG#' : self.access_log.path,
-                '#ERROR_LOG#'  : self.error_log.path
-            }
+            '#WEBSITE#'    : self.domain.name,
+            '#HTDOCS#'     : self.htdocs.path,
+            '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
+            '#ACCESS_LOG#' : self.access_log.path,
+            '#ERROR_LOG#'  : self.error_log.path
+        }
 
 
     def __str__(self):
         """Returns a string with relevant instance information."""
-        string =  '\n\n----------------------------------------------------------'
+        string = '\n\n----------------------------------------------------------'
         string += '\n                        - Website -'
         string += '\n----------------------------------------------------------'
         string += '\n  domain:           ' + str(self.domain)
@@ -185,15 +186,15 @@ class Website(object):
         return "{0}('{1}', {'htdocs' : {2}, 'assets' : {3}, 'logs' : {4}, " + \
                "'access_log' : {5}, 'error_log' : {6}, 'htaccess' : {7}, " + \
                "'vhost' : {8}})".format(
-                    self.__class__.__name__,
-                    self.domain,
-                    self.htdocs.get_atts(),
-                    self.assets.get_atts(),
-                    self.logs.get_atts(),
-                    self.access_log.get_atts(),
-                    self.error_log.get_atts(),
-                    self.htaccess.get_atts(),
-                    self.vhost.get_atts()
+                   self.__class__.__name__,
+                   self.domain,
+                   self.htdocs.get_atts(),
+                   self.assets.get_atts(),
+                   self.logs.get_atts(),
+                   self.access_log.get_atts(),
+                   self.error_log.get_atts(),
+                   self.htaccess.get_atts(),
+                   self.vhost.get_atts()
                )
 
     def install(self):
@@ -240,7 +241,7 @@ class Website(object):
         """Todo:"""
         pass
 
-    def migrate(self, old_website = None):
+    def migrate(self, old_website=None):
         """Todo:"""
         if not old_website:
             old_website = self.existing
@@ -250,7 +251,7 @@ class Website(object):
         # for dirs and files in old copy
         # this includes vhost...
 
-    def verify(self, repair = False):
+    def verify(self, repair=False):
         """Verifies website installation"""
         result = all([self.vhost.verify(repair),
                       self.access_log.verify(repair),
@@ -268,9 +269,9 @@ class Website(object):
         """Repairs website installation"""
         print 'Repairing ' + self.domain + '...'
         if self.verify(True):
-            print 'Repair completed successfully. [OK]'
+            print '[OK] Repair completed successfully.'
         else:
-            print 'Repair resulted in errors. [ERROR]'
+            print '[ERROR] Repair resulted in errors.'
 
     def is_installed(self):
         """Returns true if vhost is enabled"""

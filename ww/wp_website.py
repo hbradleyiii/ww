@@ -19,6 +19,7 @@ import os
 import re
 import shutil
 import tarfile
+import time
 
 try:
     import MySQLdb
@@ -32,6 +33,7 @@ except ImportError:
 
 try:
     from ext_pylib.password import generate_pw
+    from ext_pylib.input import prompt
 except ImportError:
     raise ImportError('Python module ext_pylib must be installed to run ww')
 
@@ -49,7 +51,7 @@ def select_user(user):
     """Selects a specific mysql user and returns true if it exists."""
     return "SELECT user FROM mysql.user WHERE user = '" + user + "'"
 
-def download(self):
+def download():
     """Downloads a fresh WordPress tarball, returns path of download"""
     wp_tarball = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
     if not os.path.exists(wp_tarball):
@@ -61,7 +63,7 @@ def download(self):
         print 'Already downloaded wordpress today. Using existing tarball.'
     return wp_tarball  # Return path to wordpress
 
-def untar(self, tarball):
+def untar(tarball):
     """Untars WordPress to tmp dir, returns path of extracted files."""
     wp_extract_dir = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
     wp_extracted = wp_extract_dir + 'wordpress/'
@@ -77,38 +79,43 @@ def untar(self, tarball):
 class WPWebsite(Website):
     """A WordPress website class and its associated attributes and methods."""
 
-    def __init__(self, domain, atts, mysql=s.MYSQL):
+    def __init__(self, domain, atts, mysql=None):
         """Initializes a new WPWebsite instance."""
+        if not mysql:
+            mysql = s.MYSQL
 
         super(WPWebsite, self).__init__(domain, atts)
 
         # Setup MySQL connection
         self.query = MySQLdb.connect(
-                host   = mysql['host'],
-                user   = mysql['user'],
-                passwd = mysql['password']
-            ).cursor().execute
+            host=mysql['host'],
+            user=mysql['user'],
+            passwd=mysql['password']
+        ).cursor().execute
 
         # TODO: create prompts
-        db_name= re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
+        db_name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
         db_user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain)
         if len(db_user) > 10:
             db_user = db_user[:10]
         debug = 'true'
 
         default_atts = {
-                'wp_config' : {
-                    'path'  : self.htdocs.path + 'wp-config.php',
-                    'perms' : 0775,
-                    'owner' : s.WWW_USR,
-                    'group' : s.WWW_USR,
-                    'wp'    : {
-                        'table_prefix' : 'wp_',
-                        'debug'        : debug,
-                        'db_name'      : db_name,
-                        'db_user'      : db_user,
-                        'db_password'  : generate_pw(),
-                        'db_host'      : 'localhost', } } }
+            'wp_config' : {
+                'path'  : self.htdocs.path + 'wp-config.php',
+                'perms' : 0775,
+                'owner' : s.WWW_USR,
+                'group' : s.WWW_USR,
+                'wp'    : {
+                    'table_prefix' : 'wp_',
+                    'debug'        : debug,
+                    'db_name'      : db_name,
+                    'db_user'      : db_user,
+                    'db_password'  : generate_pw(),
+                    'db_host'      : 'localhost',
+                }
+            }
+        }
 
         atts = merge_atts(default_atts, atts)
 
@@ -234,15 +241,15 @@ class WPWebsite(Website):
         title = prompt_sr('What is the website\'s title?')
 
         payload = {
-                'blog_public'     : public,
-                'user_name'       : user,
-                'admin_password'  : password,
-                'pass1-text'      : password,
-                'admin_password2' : password,
-                'admin_email'     : email,
-                'weblog_title'    : title,
-                'language'        : 'en_US'
-                }
+            'blog_public'     : public,
+            'user_name'       : user,
+            'admin_password'  : password,
+            'pass1-text'      : password,
+            'admin_password2' : password,
+            'admin_email'     : email,
+            'weblog_title'    : title,
+            'language'        : 'en_US'
+        }
 
         print 'Running install...'
         r = requests.post('http://' + self.domain + s.WP_INSTALL_URL, data=payload)
