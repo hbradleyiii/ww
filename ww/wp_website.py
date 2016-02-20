@@ -35,7 +35,7 @@ except ImportError:
 
 try:
     from ext_pylib.password import generate_pw
-    from ext_pylib.input import prompt
+    from ext_pylib.input import prompt, prompt_str
 except ImportError:
     raise ImportError('Python module ext_pylib must be installed to run ww')
 
