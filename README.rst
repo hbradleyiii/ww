@@ -99,6 +99,9 @@ File class.  Currently, its only method is ``repair()`` which offers a
 convinient wrapper for the ``verify()`` method with the repair flag set to
 ``True``.
 
+See `https://github.com/hbradleyiii/ext_pylib`_ for more documentation on
+``ext_pylib``.
+
 Module: htaccess
 ~~~~~~~~~~~~~~~~
 The ``ww.htaccess`` module contains the ``Htaccess`` class which represents a
