@@ -177,7 +177,7 @@ directory, and the access and error log directories. A ``Vhost`` class is
 initialized like a normal ``WWFile``.
 
 If the vhost file already exists, you can call ``Vhost.parse`` to attempt to
-retieve the domain, htdocs directory, and log directory.
+retrieve the domain, htdocs directory, and log directory.
 
 Calling the ``Vhost.create`` method will create the file using the data from
 the template with the placeholders applied.
