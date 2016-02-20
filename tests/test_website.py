@@ -11,29 +11,33 @@
 
 import pytest
 from ww import Website
-from ww.website import merge_atts
+from ww.website import merge_atts, localhost
 
+def test_localhost_decorator():
+    pass
 
-merge_atts_args = [
-    ({ 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' },
-     { 'htdocs' : { 'path' : '/new/path' } },
-     { 'htdocs' : { 'path' : '/new/path', 'perms' : 0700 }, 'other' : 'default_value' }),
-    ({ 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' },
-     { },
-     { 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' }),
-    ({ },
-     { 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' },
-     { 'htdocs' : { 'path' : '/default/path', 'perms' : 0700 }, 'other' : 'default_value' }),
+MERGE_ATTS_ARGS = [
+    ({'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
+     {'htdocs' : {'path' : '/new/path'}},
+     {'htdocs' : {'path' : '/new/path', 'perms' : 0700}, 'other' : 'default_value'}),
+
+    ({'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
+     {},
+     {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'}),
+
+    ({},
+     {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
+     {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'}),
 ]
-@pytest.mark.parametrize(("atts", "new_atts", "expected"), merge_atts_args)
+@pytest.mark.parametrize(("atts", "new_atts", "expected"), MERGE_ATTS_ARGS)
 def test_merge_atts(atts, new_atts, expected):
     """Tests merge_atts function."""
     assert merge_atts(atts, new_atts) == expected
 
-init_args = [
-    ({ 'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None, }, None),
+INIT_ARGS = [
+    ({'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None,}, None),
 ]
-@pytest.mark.parametrize(("atts", "expected"), init_args)
+@pytest.mark.parametrize(("atts", "expected"), INIT_ARGS)
 def test_website_initialization(atts, expected):
     """Test initialize Website."""
     #website = Website(atts)

@@ -13,15 +13,14 @@ import pytest
 from ww import WPWebsite
 
 
-init_args = [
-    ({ 'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None, }, None),
+INIT_ARGS = [
+    ({'htdocs' : None, 'assets' : None, 'logs' : None, 'vhost_conf' : None, 'htaccess' : None,}, None),
 ]
-@pytest.mark.parametrize(("atts", "expected"), init_args)
+@pytest.mark.parametrize(("atts", "expected"), INIT_ARGS)
 def test_wp_website_initialize(atts, expected):
     """Test initialize WPWebsite."""
     #wp_website = WPWebsite(atts)
     #assert str(wp_website) == expected
-    pass
 
 def test_wp_website_verify():
     """TODO:"""
