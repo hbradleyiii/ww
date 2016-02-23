@@ -21,7 +21,7 @@ from __future__ import absolute_import, print_function
 import subprocess
 
 try:
-    from ext_pylib.files import Parsable, Template
+    from ext_pylib.files import Parsable, TemplateFile
     from ext_pylib.input import prompt, prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
@@ -44,10 +44,6 @@ def run_command(command):
         print("Command: '" + command + "' failed: ", error)
 
 
-class VhostTemplate(Template, WWFile):
-    """A Vhost template File."""
-
-
 class Vhost(Parsable, WWFile):
     """A class that describes an Apache vhost configuration.
     This is primarily a wrapper for vhost managment.
@@ -56,7 +52,7 @@ class Vhost(Parsable, WWFile):
     def __init__(self, domain, atts):
         """Initializes a Vhost file."""
         self.domain = domain
-        self.template = VhostTemplate({'path' : s.VHOST_TEMPLATE})
+        self.template = TemplateFile({'path' : s.VHOST_TEMPLATE})
         super(Vhost, self).__init__(atts)
         self.regexes = {'htdocs'     : ('DocumentRoot ["]?([^"\n]*)',
                                         'DocumentRoot {0}'),

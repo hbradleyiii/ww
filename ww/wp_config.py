@@ -23,7 +23,7 @@ except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
 try:
-    from ext_pylib.files import Parsable, Section, Template
+    from ext_pylib.files import Parsable, Section, TemplateFile
     from ext_pylib.input import prompt, prompt_str
 except ImportError:
     raise ImportError('Python module ext_pylib must be installed to run ww')
@@ -71,10 +71,6 @@ WP_CONF_REGEXES = dict(SALT_REGEXES, **{
 })
 
 
-class WPConfigTemplate(Template, WWFile):
-    """A WordPress configuration template file."""
-
-
 class WPSalt(Section, Parsable):
     """A class that describes a WordPress wp_config.php Salt section."""
     regexes = SALT_REGEXES
@@ -113,7 +109,7 @@ class WPConfig(Parsable, WWFile):
         if self.exists() and prompt('Parse existing wp_config.php?'):
             atts['wp'] = self.parse(True)
         else:  # Otherwise, apply the template and create salts
-            self.template = WPConfigTemplate({'path' : s.WP_CONFIG_TEMPLATE}).read()
+            self.template = TemplateFile({'path' : s.WP_CONFIG_TEMPLATE}).read()
             self.data = self.template
             for key, value in WPSalt().secrets():
                 setattr(self, key, value)

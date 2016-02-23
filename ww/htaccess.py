@@ -18,7 +18,7 @@ It extends WWFile.
 from __future__ import absolute_import, print_function
 
 try:
-    from ext_pylib.files import Section
+    from ext_pylib.files import SectionFile
     from ext_pylib.input import prompt
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
@@ -26,7 +26,7 @@ except ImportError:
 from .ww_file import WWFile
 
 
-class HtaccessSection(Section, WWFile):
+class HtaccessSection(SectionFile):
     """Htaccess section file."""
     def __str__(self):
         return getattr(self, 'name', None)
