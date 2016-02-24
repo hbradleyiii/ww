@@ -203,7 +203,34 @@ attempt to enable itself.
 
 Module: wp_config
 ~~~~~~~~~~~~~~~~~
-TODO
+The ``ww.wp_config`` module contains the ``WPConfig`` class which represents a
+WordPress website's wp_config.php file and the ``WPSalt`` class which
+represents a new set of WordPress security salts. (Pulled from
+`here <https://api.wordpress.org/secret-key/1.1/salt/>`_.)
+
+The ``WPConfig`` class can create a wp_config.php file based on a template file
+and can actively manage these WordPress configuration settings: AUTH_KEY,
+SECURE_AUTH_KEY, LOGGED_IN_KEY, NONCE_KEY, AUTH_SALT, SECURE_AUTH_SALT,
+LOGGED_IN_SALT, NONCE_SALT, WP_DEBUG, DB_NAME, DB_USER, DB_PASSWORD, DB_HOST,
+table_prefix, DISALLOW_FILE_EDIT, and FS_METHOD. A ``WPConfig`` class is
+initialized like a normal ``WWFile``.
+
+If the wp_config.php file already exists, you can call the ``WPConfig.parse``
+method to attempt to retrieve the existing configuration settings.
+
+If the wp_config.php file doesn't yet exist, placeholders can be set to modify
+memory data at initialization. They are saved to disk by calling the ``create``
+method. If the file does already exist, the existing data is loaded into
+memory.
+
+For more information, see
+`ext_pylib.files.Parsable <https://github.com/hbradleyiii/ext_pylib#parsable-mixin>`_.
+
+This class also has a ``verify`` method that first calls the parent ``verify``
+which checks existance, permissions, and ownership. Then it checks placeholder
+data against what is in memory. (This should have been set by the ``Website``
+class.) It will warn for any placeholder settings that are different. If the
+repair flag is set to ``True`` the method attempts to correct any errors.
 
 Class WebsiteDomain
 -------------------
@@ -216,10 +243,14 @@ implemented.
 
 Class: Website
 --------------
+The ``ww.website_domain`` module contains the ``WebsiteDomain`` class which
+represents a website.
 TODO
 
 Class: WP_Website
 -----------------
+The ``ww.wp_website`` module contains the ``WPWebsite`` class which represents
+a WordPress website.
 TODO
 
 ----
