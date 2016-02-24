@@ -56,6 +56,10 @@ def localhost(function):
 def merge_atts(atts, new_atts):
     """Merges two dictionaries with the second overwriting the corresponding
     values of the first and returns the result."""
+    if not atts:
+        return new_atts
+    if not new_atts:
+        return atts
     for k, _ in new_atts.iteritems():
         if (k in atts and isinstance(atts[k], dict)
                 and isinstance(new_atts[k], dict)):

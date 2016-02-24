@@ -28,6 +28,14 @@ MERGE_ATTS_ARGS = [
     ({},
      {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
      {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'}),
+
+    (None,
+     {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
+     {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'}),
+
+    ({'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
+     None,
+     {'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'}),
 ]
 @pytest.mark.parametrize(("atts", "new_atts", "expected"), MERGE_ATTS_ARGS)
 def test_merge_atts(atts, new_atts, expected):
