@@ -99,8 +99,8 @@ File class.  Currently, its only method is ``repair()`` which offers a
 convinient wrapper for the ``verify()`` method with the repair flag set to
 ``True``.
 
-See `https://github.com/hbradleyiii/ext_pylib`_ for more documentation on
-``ext_pylib``.
+See `ext_pylib https://github.com/hbradleyiii/ext_pylib`_ for more
+documentation on the ``ext_pylib`` module.
 
 Module: htaccess
 ~~~~~~~~~~~~~~~~
@@ -183,7 +183,8 @@ Calling the ``Vhost.create`` method will create the file using the data from
 the template with the placeholders applied.
 
 The default template is a generic website template with basic compression and
-caching settings turned on. It also redirects www.* to the original domain.
+caching settings turned on. It also redirects www.{example.com} to the original
+domain.
 
 The ``Vhost`` class also offers methods for enabling and disabling the virtual
 host in Apache.  The default commands to enable/disable a virtualhost are the
