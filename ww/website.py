@@ -133,6 +133,11 @@ class Website(object):
                 'perms' : 0644,
                 'owner' : 'root',
                 'group' : 'root',
+                'domain'     : self.domain,
+                'htdocs'     : s.WWW_DIR + self.domain + '/htdocs/',
+                'access_log' : s.WWW_DIR + self.domain + '/log/error_log',
+                'error_log'  : s.WWW_DIR + self.domain + '/log/access_log',
+                'email'      : s.SITE_ADMIN_EMAIL,
             },
             'htaccess' : {
                 'path'  : None,
@@ -172,16 +177,7 @@ class Website(object):
         self.htaccess = Htaccess(atts['htaccess'])
         self.access_log = File(atts['access_log'])
         self.error_log = File(atts['error_log'])
-
-        # Setup vhost placeholders after attributes have been defined
-        self.vhost.placeholders = {
-            '#WEBSITE#'    : self.domain.name,
-            '#HTDOCS#'     : self.htdocs.path,
-            '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
-            '#ACCESS_LOG#' : self.access_log.path,
-            '#ERROR_LOG#'  : self.error_log.path
-        }
-
+        self.vhost = Vhost(atts['vhost'])
 
     def __str__(self):
         """Returns a string with relevant instance information."""

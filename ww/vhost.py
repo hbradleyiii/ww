@@ -49,11 +49,9 @@ class Vhost(Parsable, WWFile):
     This is primarily a wrapper for vhost managment.
     """
 
-    def __init__(self, domain, atts):
+    def __init__(self, atts):
         """Initializes a Vhost file."""
-        self.domain = domain
         self.template = TemplateFile({'path' : s.VHOST_TEMPLATE})
-        super(Vhost, self).__init__(atts)
         self.regexes = {'htdocs'     : ('DocumentRoot ["]?([^"\n]*)',
                                         'DocumentRoot {0}'),
                         'error_log'  : ('ErrorLog ["]?([^"\n]*)',
@@ -61,6 +59,7 @@ class Vhost(Parsable, WWFile):
                         'access_log' : ('CustomLog ["]?([^"\n]*)',
                                         'CustomLog {0}'),}
         self.setup_parsing()
+        super(Vhost, self).__init__(atts)
 
     def create(self, data=''):
         """Creates a vhost file replacing placeholders with data if they exist."""

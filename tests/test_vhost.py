@@ -27,8 +27,7 @@ ErrorLog "/the/error/log"
 CustomLog "/the/access/log"
 """
 
-DEFAULT_ARGS = {'path' : '/tmp/path'}
-DEFAULT_DOMAIN = 'example.com'
+DEFAULT_ARGS = {'path' : '/tmp/path', 'domain' : 'example.com'}
 
 @patch('subprocess.call', return_value=0)
 def test_run_command(mock_call):
@@ -44,7 +43,7 @@ def test_run_command_failed(mock_call):
 
 def test_vhost_init():
     """Tests vhost init method."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     vhost.data = VHOST_DATA
     assert vhost.domain == 'example.com'
     assert vhost.htdocs == '/the/root/dir'
@@ -55,7 +54,7 @@ def test_vhost_init():
 @patch('ww.vhost.Vhost.enable')
 def test_vhost_create(mock_enable, mock_create):
     """Tests vhost create method."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     vhost.template.data = """#WEBSITE#
 #HTDOCS#
 #EMAIL#
@@ -77,7 +76,7 @@ email@example.com
 
 def test_vhost_parse():
     """Tests vhost parse method."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     vhost.data = VHOST_DATA
     assert vhost.parse() == {'htdocs'     : {'path' : '/the/root/dir'},
                              'access_log' : {'path' : '/the/access/log'},
@@ -86,7 +85,7 @@ def test_vhost_parse():
 
 def test_vhost_parse_with_prompts():
     """Tests vhost parse method with prompts."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     vhost.data = ''
     with patch(_INPUT, return_value='/a/sample/dir'):
         assert vhost.parse() == {'htdocs'     : {'path' : '/a/sample/dir'},
@@ -101,7 +100,7 @@ def test_vhost_parse_with_prompts():
 @patch('ww.vhost.Vhost.is_enabled', return_value=True)
 def test_vhost_verify(mock_enabled, mock_file_verify):
     """Tests vhost verify method."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     assert vhost.verify()
     mock_enabled.return_value = False
     assert not vhost.verify()
@@ -112,11 +111,11 @@ def test_vhost_verify(mock_enabled, mock_file_verify):
 @patch('ww.vhost.run_command', return_value=True)
 def test_vhost_enable(_):
     """Test vhost enable method."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     assert vhost.enable(False)
 
 @patch('ww.vhost.run_command', return_value=True)
 def test_vhost_disable(_):
     """Tests vhost disble method."""
-    vhost = Vhost(DEFAULT_DOMAIN, DEFAULT_ARGS)
+    vhost = Vhost(DEFAULT_ARGS)
     assert vhost.disable(False)
