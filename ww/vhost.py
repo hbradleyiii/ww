@@ -41,7 +41,8 @@ def run_command(command):
             print("Command completed successfully.")
             return True
     except OSError as error:
-        print("Command: '" + command + "' failed: ", error)
+        print("Command: '" + command + "' failed. ")
+        print(error)
 
 
 class Vhost(Parsable, WWFile):
