@@ -6,6 +6,8 @@
 # email:            harold@bradleystudio.net
 # created on:       11/03/2015
 #
+# pylint:           disable=no-member
+
 #                   TODO: add SSL capabilities
 
 """
@@ -21,7 +23,7 @@ from __future__ import absolute_import, print_function
 import subprocess
 
 try:
-    from ext_pylib.files import Parsable, TemplateFile
+    from ext_pylib.files import Parsable
     from ext_pylib.input import prompt, prompt_str
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
@@ -52,8 +54,9 @@ class Vhost(Parsable, WWFile):
 
     def __init__(self, atts):
         """Initializes a Vhost file."""
-        self.template = TemplateFile({'path' : s.VHOST_TEMPLATE})
-        self.regexes = {'htdocs'     : ('DocumentRoot ["]?([^"\n]*)',
+        self.regexes = {'directory'  : ('<Directory "([^"\n]*")',
+                                        '<Directory {0}>'),
+                        'htdocs'     : ('DocumentRoot ["]?([^"\n]*)',
                                         'DocumentRoot {0}'),
                         'error_log'  : ('ErrorLog ["]?([^"\n]*)',
                                         'ErrorLog {0}'),
@@ -67,10 +70,6 @@ class Vhost(Parsable, WWFile):
         # pylint: disable=attribute-defined-outside-init,redefined-variable-type
         if data:
             self.data = data
-        elif getattr(self, 'placeholders', None):
-            self.data = self.template.apply_using(self.placeholders)  # pylint: disable=no-member
-        else:
-            self.data = self.template.read()
         super(Vhost, self).create()
         self.enable()
 

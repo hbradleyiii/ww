@@ -21,7 +21,7 @@ import tarfile
 import subprocess
 
 try:
-    from ext_pylib.files import Dir, File
+    from ext_pylib.files import Dir, File, TemplateFile
     from ext_pylib.input import prompt
 except ImportError:
     raise ImportError('ext_pylib must be installed to run ww')
@@ -134,11 +134,7 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
                 'perms' : 0644,
                 'owner' : 'root',
                 'group' : 'root',
-                'domain'     : self.domain,
-                'htdocs'     : s.WWW_DIR + self.domain + '/htdocs/',
-                'access_log' : s.WWW_DIR + self.domain + '/log/error_log',
-                'error_log'  : s.WWW_DIR + self.domain + '/log/access_log',
-                'email'      : s.SITE_ADMIN_EMAIL,
+                'domain': self.domain,
             },
             'htaccess' : {
                 'path'  : s.WWW_DIR + self.domain + '/htdocs/.htaccess',
@@ -153,6 +149,20 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
 
         atts = merge_atts(default_atts, atts)
 
+        # Initialize Vhost first, in order to possibly parse atts from it
+        self.vhost = Vhost(atts['vhost'])
+        if self.vhost.exists() and prompt(str(self.vhost) + ' already exists.\n' + \
+            'Use existing vhost configuration for htdocs directory and log file location?'):
+            atts = merge_atts(atts, self.vhost.parse())
+        else:  # Otherwise, use the template
+            self.vhost.data = TemplateFile({'path' : s.VHOST_TEMPLATE}).apply_using({
+                '#WEBSITE#'    : self.domain.name,
+                '#HTDOCS#'     : s.WWW_DIR + self.domain + '/htdocs/',
+                '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
+                '#ACCESS_LOG#' : s.WWW_DIR + self.domain + '/log/access_log',
+                '#ERROR_LOG#'  : s.WWW_DIR + self.domain + '/log/error_log',
+            })
+
         # Initialize Directories
         self.root = Dir(atts['root'])
         self.htdocs = Dir(atts['htdocs'])
@@ -163,7 +173,6 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
         self.htaccess = Htaccess(atts['htaccess'])
         self.access_log = File(atts['access_log'])
         self.error_log = File(atts['error_log'])
-        self.vhost = Vhost(atts['vhost'])
 
     def __str__(self):
         """Returns a string with relevant instance information."""
