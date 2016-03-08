@@ -1,12 +1,12 @@
 #   -------------------------
-#      #WEBSITE#
+#      #DOMAIN#
 #   -------------------------
 <VirtualHost *:80>
 
-    ServerName #WEBSITE#
+    ServerName #DOMAIN#
     ServerAdmin #EMAIL#
 
-    DocumentRoot "/var/www/#WEBSITE#/htdocs"
+    DocumentRoot "#HTDOCS#"
 
     DirectoryIndex index.php index.html
 
@@ -75,11 +75,11 @@
 
 </VirtualHost>
 <VirtualHost *:80>
-    ServerName www.#WEBSITE#
+    ServerName www.#DOMAIN#
 
-    # redirect to #WEBSITE#
+    # redirect to #DOMAIN#
     RewriteEngine on
-    RewriteRule ^(.*)$ http://#WEBSITE#$1 [L,R=301]
+    RewriteRule ^(.*)$ http://#DOMAIN#$1 [L,R=301]
 
     # NOT logged in /var/log/apache2
     CustomLog "#ACCESS_LOG#" combined
