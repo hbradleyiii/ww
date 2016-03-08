@@ -127,7 +127,8 @@ class WPWebsite(Website):
         """Returns a string with relevant instance information."""
         string = '\n\n----------------------------------------------------------'
         string += '\n                   - Wordpress Website -'
-        string += super(WPWebsite, self).__str__()
+        string += '\n----------------------------------------------------------'
+        string += super(WPWebsite, self).__str__()[156:]
         string += '  Database:         ' + str(self.config.db_name)
         string += '\n  MySQL User:       ' + str(self.config.db_user)
         string += '\n  MySQL Password:   ' + str(self.config.db_password)
