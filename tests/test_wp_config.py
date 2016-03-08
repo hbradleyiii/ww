@@ -59,23 +59,26 @@ def test_wpsalt_assignment():
 
 def test_wpconfig_init():
     """Tests wpconfig initialization."""
-    config = WPConfig({'wp' : {
-        'table_prefix' : 'wp_',
-        'debug'        : 'true',
-        'db_name'      : 'the_dbname',
-        'db_user'      : 'the_username',
-        'db_password'  : 'the_password',
-        'db_host'      : 'localhost',}})
+    config = WPConfig({})
+    config.table_prefix = 'wp_'
     assert config.table_prefix == 'wp_'
+    config.debug = 'true'
     assert config.debug == 'true'
+    config.db_name = 'the_dbname'
     assert config.db_name == 'the_dbname'
+    config.db_user = 'the_username'
     assert config.db_user == 'the_username'
+    config.db_password = 'the_password'
     assert config.db_password == 'the_password'
+    config.db_host = 'localhost'
     assert config.db_host == 'localhost'
     config.debug = 'false'
     assert config.debug == 'false'
     config.db_name = 'a_new_db'
     assert config.db_name == 'a_new_db'
+
+    for key, value in WPSalt().secrets():
+        setattr(config, key, value)
 
     assert len(config.secure_auth_key) == 64
     assert len(config.logged_in_key) == 64
@@ -87,29 +90,26 @@ def test_wpconfig_init():
 
 def test_wpconfig_parse():
     """Test wpconfig parse()."""
-    with mock.patch(_INPUT, return_value='n'):
-        config = WPConfig({
-            'path' : s.WP_CONFIG_TEMPLATE,
-            'wp' : {
-                'debug'            : 'true',
-                'table_prefix'     : 'xyz',
-                'db_name'          : 'the_dbname',
-                'db_user'          : 'the_user',
-                'db_password'      : 'the_password',
-                'db_host'          : 'the_host',
-                'disallow_edit'    : 'false',
-                'fs_method'        : 'whatever',
-                'auth_key'         : 'salt overwritten',
-                'secure_auth_key'  : 'salt overwritten',
-                'logged_in_key'    : 'salt overwritten',
-                'nonce_key'        : 'salt overwritten',
-                'auth_salt'        : 'salt overwritten',
-                'secure_auth_salt' : 'salt overwritten',
-                'logged_in_salt'   : 'salt overwritten',
-                'nonce_salt'       : 'salt overwritten',}})
+    config = WPConfig({'path' : s.WP_CONFIG_TEMPLATE, })
+    config.set({
+        'debug'            : 'true',
+        'table_prefix'     : 'xyz',
+        'db_name'          : 'the_dbname',
+        'db_user'          : 'the_user',
+        'db_password'      : 'the_password',
+        'db_host'          : 'the_host',
+        'disallow_edit'    : 'false',
+        'fs_method'        : 'whatever',
+        'auth_key'         : 'salt overwritten',
+        'secure_auth_key'  : 'salt overwritten',
+        'logged_in_key'    : 'salt overwritten',
+        'nonce_key'        : 'salt overwritten',
+        'auth_salt'        : 'salt overwritten',
+        'secure_auth_salt' : 'salt overwritten',
+        'logged_in_salt'   : 'salt overwritten',
+        'nonce_salt'       : 'salt overwritten',})
 
-    with mock.patch(_INPUT, return_value='y'):
-        config_2 = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
+    config_2 = WPConfig({'path' : s.WP_CONFIG_TEMPLATE, })
 
     result_in_memory = {
         'debug'            : 'true',
@@ -130,12 +130,12 @@ def test_wpconfig_parse():
         'nonce_salt'       : 'salt overwritten',}
 
     result_on_disk = {
-        'debug'            : 'false',
-        'table_prefix'     : 'wp_',
         'db_name'          : 'db_name',
+        'db_host'          : 'localhost',
         'db_user'          : 'db_user',
         'db_password'      : 'db_password',
-        'db_host'          : 'localhost',
+        'table_prefix'     : 'wp_',
+        'debug'            : 'false',
         'disallow_edit'    : 'true',
         'fs_method'        : 'direct',
         'auth_key'         : 'put your unique phrase here',
@@ -153,10 +153,9 @@ def test_wpconfig_parse():
 
 def test_wpconfig_verify():
     """Test wpconfig verify() and repair."""
-    with mock.patch(_INPUT, return_value='y'):
-        config = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
+    config = WPConfig({'path' : s.WP_CONFIG_TEMPLATE})
 
-    assert config.verify()
+    assert config.verify(use_default_atts=False)
 
     config.debug = 'true'
     assert not config.verify()  # Debug should not be set to true

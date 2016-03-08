@@ -34,8 +34,9 @@ except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
 try:
-    from ext_pylib.password import generate_pw
+    from ext_pylib.files import TemplateFile
     from ext_pylib.input import prompt, prompt_str
+    from ext_pylib.password import generate_pw
 except ImportError:
     raise ImportError('Python module ext_pylib must be installed to run ww')
 
@@ -95,12 +96,10 @@ class WPWebsite(Website):
             passwd=mysql['password']
         ).cursor().execute
 
-        # TODO: create prompts
-        db_name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain)
-        db_user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain)
+        db_name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain).lower()
+        db_user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain).lower()
         if len(db_user) > 10:
             db_user = db_user[:10]
-        debug = 'true'
 
         default_atts = {
             'wp_config' : {
@@ -108,20 +107,29 @@ class WPWebsite(Website):
                 'perms' : 0775,
                 'owner' : s.WWW_USR,
                 'group' : s.WWW_USR,
-                'wp'    : {
-                    'table_prefix' : 'wp_',
-                    'debug'        : debug,
-                    'db_name'      : db_name,
-                    'db_user'      : db_user,
-                    'db_password'  : generate_pw(),
-                    'db_host'      : 'localhost',
-                }
-            }
+            },
+            'wp' : {
+                'db_name'      : db_name,
+                'db_host'      : 'localhost',
+                'db_user'      : db_user,
+                'db_password'  : generate_pw(),
+                'table_prefix' : 'wp_',
+                'debug'        : 'false',
+                'disallow_edit': 'true',
+                'fs_method'    : 'direct',
+            },
         }
 
         atts = merge_atts(default_atts, atts)
 
+        # Initialize config
         self.config = WPConfig(atts['wp_config'])
+        if self.config.exists() and prompt(str(self.config) + ' already exists.\n' + \
+            'Use existing wp_config.php configuration settings?'):
+            atts = merge_atts(atts, self.config.parse())  # atts not used at this point (force flush/read())
+        else:  # Otherwise, use the template
+            self.config.data = TemplateFile({'path' : s.WP_CONFIG_TEMPLATE}).read()
+            self.config.set(atts['wp'])
 
     def __str__(self):
         """Returns a string with relevant instance information."""

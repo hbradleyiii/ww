@@ -6,6 +6,7 @@
 # email:            harold@bradleystudio.net
 # created on:       01/23/2016
 #
+# pylint:           disable=attribute-defined-outside-init,too-many-branches
 
 """
 ww.wp_config
@@ -23,7 +24,7 @@ except ImportError:
     raise ImportError('Python module requests must be installed to run ww')
 
 try:
-    from ext_pylib.files import Parsable, Section, TemplateFile
+    from ext_pylib.files import Parsable, Section
     from ext_pylib.input import prompt, prompt_str
 except ImportError:
     raise ImportError('Python module ext_pylib must be installed to run ww')
@@ -52,18 +53,18 @@ SALT_REGEXES = {
 }
 
 WP_CONF_REGEXES = dict(SALT_REGEXES, **{
-    'debug'        : (r"define\('WP_DEBUG', ([^ \n]*)\);",
-                      "define('WP_DEBUG', {0});"),
     'db_name'      : (r"define\('DB_NAME', '([^ \n]*)'\);",
                       "define('DB_NAME', '{0}');"),
+    'db_host'      : (r"define\('DB_HOST', '(.*)'\);",
+                      "define('DB_HOST', '{0}');"),
     'db_user'      : (r"define\('DB_USER', '(.*)'\);",
                       "define('DB_USER', '{0}');"),
     'db_password'  : (r"define\('DB_PASSWORD', '(.*)'\);",
                       "define('DB_PASSWORD', '{0}');"),
-    'db_host'      : (r"define\('DB_HOST', '(.*)'\);",
-                      "define('DB_HOST', '{0}');"),
     'table_prefix' : (r"\$table_prefix[ ]*=[ ]*['\"](.*)['\"];",
                       "$table_prefix = '{0}';"),
+    'debug'        : (r"define\('WP_DEBUG', ([^ \n]*)\);",
+                      "define('WP_DEBUG', {0});"),
     'disallow_edit': (r"define\('DISALLOW_FILE_EDIT', (.*)\);",
                       "define('DISALLOW_FILE_EDIT', {0});"),
     'fs_method'    : (r"define\('FS_METHOD', '(.*)'\);",
@@ -101,25 +102,27 @@ class WPConfig(Parsable, WWFile):
 
     def __init__(self, atts):
         """Initializes WPConfig."""
-        self.setup_parsing()  # Do this first, before initializing attributes
-
         super(WPConfig, self).__init__(atts)
-        self.default_atts = atts
+        self.setup_parsing()
 
-        if self.exists() and prompt('Parse existing wp_config.php?'):
-            atts['wp'] = self.parse(True)
-        else:  # Otherwise, apply the template and create salts
-            self.template = TemplateFile({'path' : s.WP_CONFIG_TEMPLATE}).read()
-            self.data = self.template
-            for key, value in WPSalt().secrets():
-                setattr(self, key, value)
+    def create(self, data=''):
+        """Creates a vhost file replacing placeholders with data if they exist."""
+        # pylint: disable=attribute-defined-outside-init
+        if data:
+            self.data = data
 
-        if 'wp' in atts:
-            for att, value in atts['wp'].iteritems():
-                setattr(self, att, value)
+        # (re)Create salts every time
+        for key, value in WPSalt().secrets():
+            setattr(self, key, value)
 
+        super(WPConfig, self).create()
 
-    def parse(self, flush_memory=False):
+    def set(self, atts):
+        """Takes a dict of atts and sets them on the object."""
+        for att, value in atts.iteritems():
+            setattr(self, att, value)
+
+    def parse(self, flush_memory=False, ask=True):
         """Returns a dict of attributes. Passing in True as an arguement will
         force reading from disk."""
 
@@ -132,18 +135,24 @@ class WPConfig(Parsable, WWFile):
         for attribute in ['debug', 'disallow_edit']:
             if not getattr(self, attribute, None):
                 print('Could not parse WordPress attribute ' + attribute + '.')
-                self.debug = prompt('Set ' + attribute + ' to True?')
+                if ask:
+                    if prompt('Set ' + attribute + ' to True?'):
+                        self.debug = 'true'
+                    else:
+                        self.debug = 'false'
 
         for attribute in ['table_prefix', 'db_name', 'db_user',
                           'db_password', 'db_host',]:
             if not getattr(self, attribute, None):
                 print('Could not parse WordPress ' + attribute + '.')
-                setattr(self, attribute,
-                        prompt_str('What is the WordPress database table_prefix?'))
+                if ask:
+                    setattr(self, attribute,
+                            prompt_str('What is the WordPress database table_prefix?'))
 
         if not getattr(self, 'fs_method', None):
             print('Could not parse fs_method.')
-            self.fs_method = prompt_str('What should we set fs_method?', 'direct')
+            if ask:
+                self.fs_method = prompt_str('What should we set fs_method?', 'direct')
 
         for salt in ['auth_key', 'secure_auth_key', 'logged_in_key',
                      'nonce_key', 'auth_salt', 'secure_auth_salt',
@@ -154,12 +163,12 @@ class WPConfig(Parsable, WWFile):
                     setattr(self, key, value)
                 break
 
-        return {'debug'            : getattr(self, 'debug', None),
-                'table_prefix'     : getattr(self, 'table_prefix', None),
-                'db_name'          : getattr(self, 'db_name', None),
+        return {'db_name'          : getattr(self, 'db_name', None),
+                'db_host'          : getattr(self, 'db_host', None),
                 'db_user'          : getattr(self, 'db_user', None),
                 'db_password'      : getattr(self, 'db_password', None),
-                'db_host'          : getattr(self, 'db_host', None),
+                'table_prefix'     : getattr(self, 'table_prefix', None),
+                'debug'            : getattr(self, 'debug', None),
                 'disallow_edit'    : getattr(self, 'disallow_edit', None),
                 'fs_method'        : getattr(self, 'fs_method', None),
                 'auth_key'         : getattr(self, 'auth_key', None),
@@ -180,7 +189,7 @@ class WPConfig(Parsable, WWFile):
         save = False
 
         if use_default_atts:
-            correct_values = self.default_atts
+            correct_values = getattr(self, 'wp', None)
         else:
             correct_values = self.parse()  # Retrieve values in memory (and hold
                                            # for comparison and/or repair)
@@ -188,12 +197,12 @@ class WPConfig(Parsable, WWFile):
         self.read(True)  # Force reading values in from disk
 
         verify_items = {
-            'debug'         : '[!] Debug is incorrectly set to: ',
-            'table_prefix'  : '[!] WordPress table prefix is incorrectly set to: ',
             'db_name'       : '[!] WordPress database name is incorrectly set to: ',
+            'db_host'       : '[!] Databse hostname is incorrectly set to: ',
             'db_user'       : '[!] WordPress database username is incorrectly set to: ',
             'db_password'   : '[!] WordPress database password is incorrectly set to: ',
-            'db_host'       : '[!] Databse hostname is incorrectly set to: ',
+            'table_prefix'  : '[!] WordPress table prefix is incorrectly set to: ',
+            'debug'         : '[!] Debug is incorrectly set to: ',
             'disallow_edit' : '[!] DISALLOW_EDIT is incorrectly set to: ',
             'fs_method'     : '[!] FS_METHOD is incorrectly set to: ',
         }
