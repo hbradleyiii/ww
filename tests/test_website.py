@@ -131,9 +131,10 @@ def test_website_repair(mock_verify):
 
 def test_website_install_verify_remove():
     """Integration test: initializes, installs, verifies, and removes website."""
-    website = Website('example.com')
-    assert not website.is_installed(), "Website 'example.com' should not exist on this server."
+    with patch(_INPUT, return_value='y'):
+        website = Website('example.com')
 
+    assert not website.is_installed(), "Website 'example.com' should not exist on this server."
     assert not website.verify(), "Verification on a non-existing website should fail."
 
     with patch(_INPUT, return_value='y'):
