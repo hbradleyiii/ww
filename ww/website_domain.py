@@ -41,9 +41,18 @@ class WebsiteDomain(Domain):
     def verify(self, repair=False):  # pylint: disable=unused-argument
         """Verifies that the domain is pointed at the server."""
         server_ip = get_server_ip()
+        website_ip = self.get_ip()
         print 'Server IP: ' + server_ip
-        print 'Current website IP: ' + self.ip
-        if not server_ip == self.ip:
+        print 'Current website IP: ' + website_ip
+        if website_ip == '127.0.0.1':
+            print '\n    -----------------------------------------------------------'
+            print '    [WARN] Website IP is pointed to localhost! This usually'
+            print '           means there is an entry in the hosts file.  Remember'
+            print '           to check if this is what you actually want.'
+            print '    -----------------------------------------------------------\n'
+            return True
+
+        if not server_ip == website_ip:
             if repair:
                 print '    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
             print '\n    -----------------------------------------------------------'

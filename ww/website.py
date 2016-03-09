@@ -40,16 +40,21 @@ def localhost(function):
         print('Adding temporary host entry.')
         remove_entry = True
         cmd = "echo '127.0.0.1 " + self.domain + "' | cat >> /etc/hosts"
-        if subprocess.check_output(cmd, shell=True) != 0:
-            print('[WARN] Error adding temporary host entry.')
+        try:
+            subprocess.check_output(cmd, shell=True)
+        except subprocess.CalledProcessError:
+            print('[WARN] Error adding temporary host entry')
             remove_entry = False
 
-        function(self, *args, **kwargs)
+        result = function(self, *args, **kwargs)
 
-        print('Removing temporary host entry.')
-        cmd = "sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts"  # pylint: disable=anomalous-backslash-in-string
-        if remove_entry and subprocess.check_output(cmd, shell=True) != 0:
-            print('[WARN] Error removing temporary host entry.')
+        if remove_entry:
+            print('Removing temporary host entry.')
+            cmd = "sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts"  # pylint: disable=anomalous-backslash-in-string
+            if subprocess.check_output(cmd, shell=True) != 0:
+                print('[WARN] Error removing temporary host entry.')
+
+        return result
 
     return function_wrapper
 

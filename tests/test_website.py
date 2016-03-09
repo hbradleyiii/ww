@@ -14,12 +14,36 @@ Integration and unit tests for ww module's Website class and methods.
 from __future__ import absolute_import, print_function
 
 import pytest
-from ww import Website
+from ww import Website, WebsiteDomain
 from ww.website import merge_atts, localhost
 
 
 def test_localhost_decorator():
-    pass
+    """Integration test for localhost() decorator.
+
+    This sets up a domain that does not point to this server.
+    Then it wraps a function with the localhost decorator that tests if the
+    domain points to this server. At this point it should. After the function
+    is called, however, the domain should again no longer point to this server.
+    """
+    test_domain = WebsiteDomain('example.com')
+
+    print('test_domain should not point to this server to begin with.')
+    assert not test_domain.verify(), \
+            "Make sure there is *not* a host entry for example.com before running the test!"
+
+    @localhost
+    def decorator_test(test_domain):
+        """Function stub for testing localhost() decorator"""
+        print('test_domain *should* point to this server inside the decorated function.')
+
+        return test_domain.verify()
+
+    assert decorator_test(test_domain)
+
+    print('test_domain should *not* point to this server after the decorated function has run.')
+    assert not test_domain.verify()
+
 
 MERGE_ATTS_ARGS = [
     ({'htdocs' : {'path' : '/default/path', 'perms' : 0700}, 'other' : 'default_value'},
