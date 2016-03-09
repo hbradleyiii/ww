@@ -189,19 +189,15 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
 
     def __repr__(self):
         """Returns a python string that evaluates to the object instance."""
-        return "{0}('{1}', {'htdocs' : {2}, 'assets' : {3}, 'log' : {4}, " + \
-               "'access_log' : {5}, 'error_log' : {6}, 'htaccess' : {7}, " + \
-               "'vhost' : {8}})".format(
-                   self.__class__.__name__,
-                   self.domain,
-                   self.htdocs.get_atts(),
-                   self.assets.get_atts(),
-                   self.log.get_atts(),
-                   self.access_log.get_atts(),
-                   self.error_log.get_atts(),
-                   self.htaccess.get_atts(),
-                   self.vhost.get_atts()
-               )
+        return self.__class__.__name__ + "('" + \
+            self.domain.name + "', {" + \
+            "'htdocs' : " + str(self.htdocs.get_atts()) + \
+            ", 'assets' : " + str(self.assets.get_atts()) + \
+            ", 'log' : " + str(self.log.get_atts()) + \
+            ", 'access_log' : " + str(self.access_log.get_atts()) + \
+            ", 'error_log' : " + str(self.error_log.get_atts()) + \
+            ", 'htaccess' : " + str(self.htaccess.get_atts()) + \
+            ", 'vhost' : " + str(self.vhost.get_atts()) + "})"
 
     def install(self):
         """Installs website to server"""
