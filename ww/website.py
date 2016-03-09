@@ -156,7 +156,7 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
             atts = merge_atts(atts, self.vhost.parse())
         else:  # Otherwise, use the template
             self.vhost.data = TemplateFile({'path' : s.VHOST_TEMPLATE}).apply_using({
-                '#WEBSITE#'    : self.domain.name,
+                '#DOMAIN#'     : self.domain.name,
                 '#HTDOCS#'     : s.WWW_DIR + self.domain + '/htdocs/',
                 '#EMAIL#'      : s.SITE_ADMIN_EMAIL,
                 '#ACCESS_LOG#' : s.WWW_DIR + self.domain + '/log/access_log',
