@@ -91,7 +91,7 @@ def test_wpconfig_init():
 def test_wpconfig_parse():
     """Test wpconfig parse()."""
     config = WPConfig({'path' : s.WP_CONFIG_TEMPLATE, })
-    config.set({
+    config.configure({
         'debug'            : 'true',
         'table_prefix'     : 'xyz',
         'db_name'          : 'the_dbname',

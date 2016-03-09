@@ -117,7 +117,7 @@ class WPConfig(Parsable, WWFile):
 
         super(WPConfig, self).create()
 
-    def set(self, atts):
+    def configure(self, atts):
         """Takes a dict of atts and sets them on the object."""
         for att, value in atts.iteritems():
             setattr(self, att, value)
