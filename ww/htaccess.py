@@ -42,8 +42,8 @@ class Htaccess(WWFile):
         super(Htaccess, self).__init__(atts)
 
         self.sections = []
-        if 'section' in atts:
-            for sfile in atts['section']:
+        if 'sections' in atts:
+            for sfile in atts['sections']:
                 section = HtaccessSection(sfile)
                 self.sections.append(section)
 
