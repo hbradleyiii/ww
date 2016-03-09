@@ -66,7 +66,7 @@ class Vhost(Parsable, WWFile):
         super(Vhost, self).__init__(atts)
 
     def create(self, data=''):
-        """Creates a vhost file replacing placeholders with data if they exist."""
+        """Creates a vhost file."""
         # pylint: disable=attribute-defined-outside-init,redefined-variable-type
         if data:
             self.data = data
