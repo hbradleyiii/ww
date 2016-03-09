@@ -9,10 +9,6 @@
 # description:      A program for managing websites
 #
 
-__author__ = 'Harold Bradley III'
-__copyright__ = 'Copyright (c) 2015-2016 Harold Bradley III'
-__license__ = 'MIT'
-
 from __future__ import absolute_import, print_function
 
 try:
@@ -23,6 +19,11 @@ except ImportError:
 import platform
 import sys
 from ww import Website, WebsiteDomain, Vhost, WPWebsite
+
+
+__author__ = 'Harold Bradley III'
+__copyright__ = 'Copyright (c) 2015-2016 Harold Bradley III'
+__license__ = 'MIT'
 
 
 def display_help():
