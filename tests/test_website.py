@@ -6,12 +6,17 @@
 # email:            harold@bradleystudio.net
 # created on:       12/11/2015
 #
-# description:      A unit test for ww module's Website class and methods.
-#
+
+"""
+Integration and unit tests for ww module's Website class and methods.
+"""
+
+from __future__ import absolute_import, print_function
 
 import pytest
 from ww import Website
 from ww.website import merge_atts, localhost
+
 
 def test_localhost_decorator():
     pass
@@ -51,20 +56,6 @@ def test_website_initialization(atts, expected):
     #website = Website(atts)
     #assert str(website) == expected
     pass
-
-# repr_args = [
-#     ('domain.com',
-#         {},
-#         "Website('domain.com', {'htdocs' : {'perms': 509, 'path': '/var/www/domain.com/htdocs/', 'group': 'www-data', 'owner': 'www-data'}, 'assets' : {'perms': 509, 'path': '/var/www/domain.com/assets/', 'group': 'mm_admin', 'owner': 'root'}, 'logs' : {'perms': 509, 'path': '/var/www/domain.com/logs/', 'group': 'mm_admin', 'owner': 'root'}, 'htaccess' : {'perms': 436, 'path': '/var/www/domain.com/htdocs/.htaccess', 'group': 'www-data', 'owner': 'www-data'}, 'vhost_conf' : {'perms': 420, 'path': '/etc/apache2/sites-available/domain.com.conf', 'group': 'root', 'owner': 'root'}})"),
-#     ('domain.com',
-#         {'htdocs' : {'path' : '/the/new/path/'}, 'logs' : {'path' : '/the/logs/', 'perms' : 0700 } },
-#     "Website('domain.com', {'htdocs' : {'perms': None, 'path': '/the/new/path/', 'group': None, 'owner': None}, 'assets' : {'perms': 509, 'path': '/var/www/domain.com/assets/', 'group': 'mm_admin', 'owner': 'root'}, 'logs' : {'perms': 448, 'path': '/the/logs/', 'group': None, 'owner': None}, 'htaccess' : {'perms': 436, 'path': '/the/new/path/.htaccess', 'group': 'www-data', 'owner': 'www-data'}, 'vhost_conf' : {'perms': 420, 'path': '/etc/apache2/sites-available/domain.com.conf', 'group': 'root', 'owner': 'root'}})"),
-# ]
-# @pytest.mark.parametrize(("domain", "atts", "expected"), repr_args)
-# def test_website_repr(domain, atts, expected):
-#     """Test Website repr."""
-#     website = Website(domain, atts)
-#     assert website.__repr__() == expected
 
 def test_website_install():
     """TODO:"""
