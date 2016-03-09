@@ -116,7 +116,7 @@ def test_website_initialization():
 
 @patch('ww.website.Vhost.exists', return_value=True)
 @patch('ww.website.Vhost.parse', return_value={})
-def test_website_init_existing_vhost(mock_exists, _):
+def test_website_init_existing_vhost(mock_exists, *args):
     """Test initialize Website."""
     with patch(_INPUT, return_value='y'):
         Website(DEFAULT_DOMAIN, DEFAULT_ATTS)
