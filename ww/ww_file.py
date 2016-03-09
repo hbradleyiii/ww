@@ -15,6 +15,8 @@ An abstract class from which to inherit for ww files.
 Extends ext_pylib.files.File.
 """
 
+from __future__ import absolute_import
+
 try:
     from ext_pylib.files import File
 except ImportError:

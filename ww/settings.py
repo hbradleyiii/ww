@@ -9,6 +9,8 @@
 # description:      The settings file for ww
 #
 
+from __future__ import absolute_import, print_function
+
 import os
 import time
 
@@ -67,4 +69,4 @@ CMD_CHECK_IF_ENABLED = "apache2ctl -S | grep ' namevhost {0} '"  # See if apache
 try:
     from .settings_local import *
 except ImportError:
-    print "Can't find settings_local. Using default settings."
+    print("Can't find settings_local. Using default settings.")

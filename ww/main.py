@@ -13,6 +13,7 @@ __author__ = 'Harold Bradley III'
 __copyright__ = 'Copyright (c) 2015-2016 Harold Bradley III'
 __license__ = 'MIT'
 
+from __future__ import absolute_import, print_function
 
 try:
     from ext_pylib.prompt import prompt, prompt_str, warn_prompt
@@ -26,7 +27,7 @@ from ww import Website, WebsiteDomain, Vhost, WPWebsite
 
 def display_help():
     """Displays script help."""
-    print 'Help not yet implemented.'
+    print('Help not yet implemented.')
 
 def main():
     """Main entry point for the script."""
@@ -46,7 +47,7 @@ def main():
         return
 
     if command not in ['install', 'remove', 'pack', 'unpack', 'verify', 'repair']:
-        print 'ERROR: Command "' + command + '" not understood.'
+        print('ERROR: Command "' + command + '" not understood.')
         return 1
 
     wp = False
