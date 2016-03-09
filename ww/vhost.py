@@ -126,6 +126,8 @@ class Vhost(Parsable, WWFile):
 
     def enable(self, ask=True):
         """Enables vhost and restarts apache server."""
+        if self.is_enabled():
+            return True
         if not ask or prompt('Enable ' + self.domain + ' in apache?'):
             print('Enabling ' + self.domain + ' vhost...')
             return run_command(s.CMD_ENABLE_CONFIG + self.domain) and \
@@ -133,6 +135,8 @@ class Vhost(Parsable, WWFile):
 
     def disable(self, ask=True):
         """Disable vhost and restarts apache server."""
+        if not self.is_enabled():
+            return True
         if not ask or prompt('Disable ' + self.domain + ' in apache?'):
             print('Disabling ' + self.domain + ' vhost...')
             return run_command(s.CMD_DISABLE_CONFIG + self.domain) and \

@@ -6,7 +6,7 @@
 # email:            harold@bradleystudio.net
 # created on:       12/11/2015
 #
-# pylint:           disable=no-member
+# pylint:           disable=no-member,unused-argument
 
 """
 Unit tests for ww module's Vhost methods. Most of Vhost's methods are
@@ -41,7 +41,7 @@ def test_run_command_failed(mock_call):
     assert not run_command('the command')
     mock_call.assert_called_once_with('the command', shell=True)
 
-def test_vhost_init():
+def test_vhost_init(*args):
     """Tests vhost init method."""
     vhost = Vhost(DEFAULT_ARGS)
     vhost.data = VHOST_DATA
@@ -93,8 +93,9 @@ def test_vhost_verify(mock_enabled, mock_file_verify):
     mock_file_verify.return_value = False
     assert not vhost.verify()
 
+@patch('ww.vhost.Vhost.is_enabled', return_value=False)
 @patch('ww.vhost.run_command', return_value=True)
-def test_vhost_enable(_):
+def test_vhost_enable(*args):
     """Test vhost enable method."""
     vhost = Vhost(DEFAULT_ARGS)
     assert vhost.enable(False)
