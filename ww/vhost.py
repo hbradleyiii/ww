@@ -83,10 +83,24 @@ class Vhost(Parsable, WWFile):
                 print('Could not parse "' + attribute + '".')
                 setattr(self, attribute, prompt_str('What is the htdocs path?'))
 
-        return {'htdocs'     : {'path' : getattr(self, 'htdocs')},
-                'access_log' : {'path' : getattr(self, 'access_log')},
-                'error_log'  : {'path' : getattr(self, 'error_log')},
-                'log'        : {'path' : getattr(self, 'access_log').rsplit('/', 1)[0]}}
+        htdocs = getattr(self, 'htdocs')
+        if isinstance(htdocs, list):
+            htdocs = htdocs[0]
+
+        access_log = getattr(self, 'access_log')
+        if isinstance(access_log, list):
+            access_log = access_log[0]
+
+        error_log = getattr(self, 'error_log')
+        if isinstance(error_log, list):
+            error_log = error_log[0]
+
+        log = access_log.rsplit('/', 1)[0]
+
+        return {'htdocs'     : {'path' : htdocs},
+                'access_log' : {'path' : access_log},
+                'error_log'  : {'path' : error_log},
+                'log'        : {'path' : log}}
 
     def verify(self, repair=False):
         """Verifies that the vhost file exists and is enabled."""
