@@ -210,20 +210,26 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
         if self.is_installed():
             print(self.domain + ' is already installed.')
 
-        self.root.create()
-        self.htdocs.create()
-        self.assets.create()
-        self.log.create()
-        self.access_log.create()
-        self.error_log.create()
-        self.htaccess.create()
-
+        self.create_directories()
+        self.create_files()
         self.vhost.create()
-
         self.domain.set_ip()
 
         print(str(self))
         print('Installation complete.')
+
+    def create_directories(self):
+        """Creates website directories."""
+        self.root.create()
+        self.htdocs.create()
+        self.assets.create()
+        self.log.create()
+
+    def create_files(self):
+        """Creates website log files and htaccess file."""
+        self.access_log.create()
+        self.error_log.create()
+        self.htaccess.create()
 
     def remove(self, ask=True):
         """Removes website from server"""
