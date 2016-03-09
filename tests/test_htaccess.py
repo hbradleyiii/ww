@@ -69,30 +69,36 @@ TEST_SECTION = HtaccessSection({'identifier' : 'test_section'})
 TEST_SECTION.read = read
 
 @patch('ext_pylib.files.node.Node.verify', return_value=True)
-def test_vhost_verify_is_in(*args):
+@patch('ext_pylib.files.node.Node.exists', return_value=False)
+def test_vhost_verify_is_in(mock_exists, *args):
     """Tests htaccess verify method."""
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA
     htaccess.sections = [TEST_SECTION]
+    mock_exists.return_value = True
     assert htaccess.verify()
 
 @patch('ext_pylib.files.File.write', return_value=True)
 @patch('ext_pylib.files.node.Node.verify', return_value=True)
-def test_vhost_verify_without_section(*args):
+@patch('ext_pylib.files.node.Node.exists', return_value=False)
+def test_vhost_verify_without_section(mock_exists, *args):
     """Tests htaccess verify method."""
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA_NO_SECTION
     htaccess.sections = [TEST_SECTION]
+    mock_exists.return_value = True
     assert not htaccess.verify()
     assert htaccess.verify(True)  # Correct it.
 
 @patch('ext_pylib.files.File.write', return_value=True)
 @patch('ext_pylib.files.node.Node.verify', return_value=True)
-def test_vhost_verify_with_altered_section(*args):
+@patch('ext_pylib.files.node.Node.exists', return_value=False)
+def test_vhost_verify_with_altered_section(mock_exists, *args):
     """Tests htaccess verify method."""
     htaccess = Htaccess(DEFAULT_ATTS)
     htaccess.data = HTACCESS_DATA_CHANGED
     htaccess.sections = [TEST_SECTION]
+    mock_exists.return_value = True
     assert htaccess.verify()
     with patch(_INPUT, return_value='n'):
         assert htaccess.verify(True)
