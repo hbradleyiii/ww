@@ -44,7 +44,7 @@ DEFAULT_ATTS = {
     'vhost' : {'path' : '/etc/apache2/the_example.com.conf', },
     'htaccess' : {
         'path' : '/www/htdocs/.htaccess',
-        'sections' : [{'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE}, ]
+        'sections' : [{'identifier' : 'h5g', 'path' : s.HTA_5G_TEMPLATE}, ]
     },
 }
 

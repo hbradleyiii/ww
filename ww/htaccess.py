@@ -29,7 +29,7 @@ from .ww_file import WWFile
 class HtaccessSection(SectionFile):
     """Htaccess section file."""
     def __str__(self):
-        return getattr(self, 'name', None)
+        return getattr(self, 'identifier', None)
 
 
 class Htaccess(WWFile):
@@ -58,7 +58,7 @@ class Htaccess(WWFile):
         save = False
 
         for section in self.sections:
-            print('Checking htaccess for ' + section.name + ' section...', end=' ')
+            print('Checking htaccess for ' + section.identifier + ' section...', end=' ')
             if not section.is_in(self.read()):
                 if repair:
                     self.data = section.apply_to(self.read())
@@ -69,7 +69,7 @@ class Htaccess(WWFile):
             print('[OK]')
 
             if not section.is_applied(self.read()):
-                print('[!] htaccess has ' + section.name + ' section, but it is an old' + \
+                print('[!] htaccess has ' + section.identifier + ' section, but it is an old' + \
                         'version, or it has been altered.')
                 if repair and prompt('Apply template to old/altered version?'):
                     self.data = section.apply_to(self.read(), overwrite=True)

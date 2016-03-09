@@ -46,13 +46,13 @@ It has the section, but it is changed.
 
 DEFAULT_ATTS = {
     'path'  : '/the/htaccess/path',
-    'sections' : [{'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE}]
+    'sections' : [{'identifier' : 'h5g', 'path' : s.HTA_5G_TEMPLATE}]
 }
 
-def test_htaccess_section_name():
-    """Tests htaccess section name."""
-    section = HtaccessSection({'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE})
-    assert section.name == 'h5g'
+def test_htaccess_section_identifier():
+    """Tests htaccess section identifier."""
+    section = HtaccessSection({'identifier' : 'h5g', 'path' : s.HTA_5G_TEMPLATE})
+    assert section.identifier == 'h5g'
     assert str(section) == 'h5g'
 
 def test_htaccess_init():
@@ -65,7 +65,7 @@ def read():
     """A mock read function."""
     return HTACCESS_SECTION
 
-TEST_SECTION = HtaccessSection({'name' : 'test_section'})
+TEST_SECTION = HtaccessSection({'identifier' : 'test_section'})
 TEST_SECTION.read = read
 
 @patch('ext_pylib.files.node.Node.verify', return_value=True)

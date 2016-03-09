@@ -147,7 +147,7 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
                 'owner' : s.WWW_USR,
                 'group' : s.WWW_USR,
                 'sections' : [
-                    {'name' : 'h5g', 'path' : s.HTA_5G_TEMPLATE},
+                    {'identifier' : 'h5g', 'path' : s.HTA_5G_TEMPLATE},
                 ]
             },
         }
