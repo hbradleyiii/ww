@@ -48,10 +48,13 @@ Installing ww
 Running Tests
 -------------
 
+Tests must be run as root, because the integration tests are actually creating
+and removing test files.
+
 .. code:: bash
 
     $ cd <project directory>
-    $ py.test
+    $ sudo py.test
 
 Usage
 -----
