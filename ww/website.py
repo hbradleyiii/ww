@@ -101,8 +101,8 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
             'root' : {
                 'path'  : s.WWW_DIR + self.domain,
                 'perms' : 0775,
-                'owner' : s.WWW_USR,
-                'group' : s.WWW_USR,
+                'owner' : s.WWW_ADMIN,
+                'group' : s.WWW_ADMIN,
             },
             'htdocs' : {
                 'path'  : s.WWW_DIR + self.domain + '/htdocs/',
