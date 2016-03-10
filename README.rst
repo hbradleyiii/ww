@@ -99,7 +99,7 @@ File class.  Currently, its only method is ``repair()`` which offers a
 convinient wrapper for the ``verify()`` method with the repair flag set to
 ``True``.
 
-See `ext_pylib https://github.com/hbradleyiii/ext_pylib`_ for more
+See `ext_pylib <https://github.com/hbradleyiii/ext_pylib>`_ for more
 documentation on the ``ext_pylib`` module.
 
 Module: htaccess
