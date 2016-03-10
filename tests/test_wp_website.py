@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-#
 # name:             test_wp_website.py
 # author:           Harold Bradley III
 # email:            harold@bradleystudio.net
@@ -23,5 +21,13 @@ def test_wp_website_initialize(atts, expected):
     #assert str(wp_website) == expected
 
 def test_wp_website_verify():
+    """TODO:"""
+    pass
+
+def test_wp_website_install_verify_remove():
+    """TODO:"""
+    pass
+
+def test_wp_website_pack_remove_unpack_verify_remove():
     """TODO:"""
     pass
