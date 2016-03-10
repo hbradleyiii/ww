@@ -6,7 +6,7 @@
 # email:            harold@bradleystudio.net
 # created on:       12/11/2015
 #
-# pylint:           disable=invalid-name
+# pylint:           disable=invalid-name,unused-argument
 
 """
 Integration and unit tests for ww module's Website class and methods.
@@ -17,6 +17,7 @@ from __future__ import absolute_import, print_function
 import os
 from mock import patch
 import pytest
+from ext_pylib.files import File
 
 from ww import Website, WebsiteDomain
 from ww import settings as s
@@ -163,13 +164,46 @@ def test_website_install_verify_remove():
     assert not website.is_installed()
     assert not website.verify(), "Verification on a non-existing website should fail."
 
-def test_website_pack():
-    """TODO:"""
-    pass
+def test_website_pack_unpack():
+    """Integration test: initializes, installs, verifies, packs, removes,
+    unpacks and removes website."""
+    with patch(_INPUT, return_value='y'):
+        website = Website('example.com')
 
-def test_website_unpack():
-    """TODO:"""
-    pass
+    assert not website.is_installed(), "Website 'example.com' should not exist on this server."
+    assert not website.verify(), "Verification on a non-existing website should fail."
+
+    with patch(_INPUT, return_value='y'):
+        website.install()
+
+    # Create a test file in htdocs
+    the_file = File({'path' : website.htdocs + '/index.html'})
+    the_file.data = 'Test file.'
+    the_file.create()
+
+    # Pack the site
+    website.pack()
+
+    website.remove(ask=False)
+    assert not website.is_installed()
+    assert not website.verify(), "Verification on a non-existing website should fail."
+    assert not the_file.exists()
+
+    with patch(_INPUT, return_value='y'):
+        website.unpack()
+
+    assert website.is_installed()
+    def verify(website):
+        """Verify function to wrap with localhost decorator."""
+        assert website.verify()
+    localhost(verify)(website)
+    assert the_file.exists()
+
+    # Remove and check again for good measure
+    website.remove(ask=False)
+    assert not website.is_installed()
+    assert not website.verify(), "Verification on a non-existing website should fail."
+    assert not the_file.exists()
 
 def test_website_migrate():
     """TODO:"""

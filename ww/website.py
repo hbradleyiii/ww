@@ -246,18 +246,39 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
 
         self.domain.set_ip()
 
-    def pack(self):
-        """Todo:"""
-        pass
+    def pack(self, tarball=None):
+        """Packs the htdocs, assets, and vhost files into a tarball."""
+        if not tarball:
+            tarball = '/tmp/packed-' + self.domain.name + '.tar.gz'
+        with tarfile.open(tarball, 'w:gz') as tar:
+            tar.add(self.htdocs.path, arcname='htdocs')
+            tar.add(self.assets.path, arcname='assets')
+            tar.add(self.vhost.path, arcname='vhost.conf')
 
-    def unpack(self):
-        """Todo:"""
-        pass
+    def unpack(self, tarball=None, location=None, use_vhost=True):
+        """Unpacks the previously packed htdocs, assets, and vhost files."""
+
+        if not tarball:
+            tarball = '/tmp/packed-' + self.domain.name + '.tar.gz'
+        if not location:
+            location = '/tmp/unpacked-' + self.domain.name
+        with tarfile.open(tarball, 'r') as tar:
+            tar.extractall(location)
+
+        if use_vhost:
+            self.create_directories()
+            self.create_files()
+            self.vhost.create(File({'path' : location + '/vhost.conf'}).read())
+        else:
+            self.install()
+        self.htdocs.fill(Dir({'path' : location + '/htdocs/'}))
+        self.assets.fill(Dir({'path' : location + '/assets/'}))
 
     def migrate(self, old_website=None):
         """Todo:"""
-        if not old_website:
-            old_website = self.existing
+        pass
+        # if not old_website:
+        #     old_website = self.existing
         # make sure there's nothing conflicting
         # install() new
         # this overwrites vhostconf...
