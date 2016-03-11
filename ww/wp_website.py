@@ -84,10 +84,10 @@ class WPWebsite(Website):
 
     def __init__(self, domain, atts, mysql=None):
         """Initializes a new WPWebsite instance."""
+        super(WPWebsite, self).__init__(domain, atts)
+
         if not mysql:
             mysql = s.MYSQL
-
-        super(WPWebsite, self).__init__(domain, atts)
 
         # Setup MySQL connection
         self.query = MySQLdb.connect(
@@ -101,10 +101,10 @@ class WPWebsite(Website):
         if len(db_user) > 10:
             db_user = db_user[:10]
 
-        default_atts = {
+        default_atts = {  # These can be overwritten by passing the appropriate atts dict
             'wp_config' : {
                 'path'  : self.htdocs.path + 'wp-config.php',
-                'perms' : 0775,
+                'perms' : 0440,
                 'owner' : s.WWW_USR,
                 'group' : s.WWW_USR,
             },
@@ -129,7 +129,7 @@ class WPWebsite(Website):
             atts = merge_atts(atts, self.config.parse())  # atts not used at this point (force flush/read())
         else:  # Otherwise, use the template
             self.config.data = TemplateFile({'path' : s.WP_CONFIG_TEMPLATE}).read()
-            self.config.set(atts['wp'])
+            self.config.configure(atts['wp'])
 
     def __str__(self):
         """Returns a string with relevant instance information."""
