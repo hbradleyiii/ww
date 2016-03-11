@@ -143,17 +143,21 @@ class WPWebsite(Website):
         string += '\n----------------------------------------------------------\n'
         return string
 
-    ################
-    # Public Methods
-
     def install(self):
         """Copies WordPress to htdocs, sets up a new database, then runs the 5 min setup."""
         super(WPWebsite, self).install()
-        self.htdocs.fill(untar(download()))
-        self.htaccess.create()
-        self.config.create()
         self.create_database()
         self.setup()
+
+    def create_directories(self):
+        """Creates website directories."""
+        super(WPWebsite, self).create_directories()
+
+    def create_files(self):
+        """Creates website log files and htaccess file."""
+        super(WPWebsite, self).create_files()
+        self.config.create()
+        self.htdocs.fill(untar(download()))
 
     def remove(self, no_prompt=False):
         """Uninstalls WordPress."""
@@ -162,6 +166,16 @@ class WPWebsite(Website):
         if no_prompt or prompt('Remove WordPress website directory "' + self.htdocs + '"?'):
             self.remove_wordpress_files()
         super(WPWebsite, self).uninstall()
+
+    def pack(self, tarball=None):
+        """Packs the htdocs, assets, and vhost files into a tarball."""
+
+    def unpack(self, tarball=None, location=None, use_vhost=True):
+        """Unpacks the previously packed htdocs, assets, and vhost files."""
+
+    def migrate(self, old_website=None):
+        """Todo:"""
+        pass
 
     def verify(self):
         """Verifies WordPress installation."""
@@ -199,10 +213,6 @@ class WPWebsite(Website):
         shutil.copytree(import_dir, wp_content)
         # need perms of wp-content to be correct.
         os.system('chown -R www-data ' + self.htdocs)
-
-
-    ###################
-    # Private Methods
 
     def create_database(self):
         """Creates WordPress MySQL database."""
