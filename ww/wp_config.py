@@ -137,9 +137,9 @@ class WPConfig(Parsable, WWFile):
                 print('Could not parse WordPress attribute ' + attribute + '.')
                 if ask:
                     if prompt('Set ' + attribute + ' to True?'):
-                        self.debug = 'true'
+                        setattr(self, attribute, 'true')
                     else:
-                        self.debug = 'false'
+                        setattr(self, attribute, 'false')
 
         for attribute in ['table_prefix', 'db_name', 'db_user',
                           'db_password', 'db_host',]:
