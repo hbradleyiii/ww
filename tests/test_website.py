@@ -31,8 +31,8 @@ def test_superuser():
 
 _INPUT = 'ext_pylib.input.prompts.INPUT'
 
-DEFAULT_DOMAIN = 'example.com'
-DEFAULT_ATTS = {
+TEST_DOMAIN = 'example.com'
+TEST_ATTS = {
     'root' : {
         'path'  : '/www/example.com/',
         'perms' : 0775,
@@ -57,7 +57,7 @@ def test_localhost_decorator():
     domain points to this server. At this point it should. After the function
     is called, however, the domain should again no longer point to this server.
     """
-    test_domain = WebsiteDomain(DEFAULT_DOMAIN)
+    test_domain = WebsiteDomain(TEST_DOMAIN)
 
     print('test_domain should not point to this server to begin with.')
     assert not test_domain.verify(), \
@@ -103,30 +103,30 @@ def test_merge_atts(atts, new_atts, expected):
 
 def test_website_initialization():
     """Test initialize Website."""
-    website = Website(DEFAULT_DOMAIN, DEFAULT_ATTS)
-    assert website.domain == DEFAULT_DOMAIN
-    assert website.root.path == DEFAULT_ATTS['root']['path']
-    assert website.root.perms == DEFAULT_ATTS['root']['perms']
-    assert website.root.owner == DEFAULT_ATTS['root']['owner']
-    assert website.root.group == DEFAULT_ATTS['root']['group']
-    assert website.htdocs.path == DEFAULT_ATTS['htdocs']['path']
-    assert website.log.path == DEFAULT_ATTS['log']['path']
-    assert website.access_log.path == DEFAULT_ATTS['access_log']['path']
-    assert website.vhost.path == DEFAULT_ATTS['vhost']['path']
-    assert website.htaccess.path == DEFAULT_ATTS['htaccess']['path']
+    website = Website(TEST_DOMAIN, TEST_ATTS)
+    assert website.domain == TEST_DOMAIN
+    assert website.root.path == TEST_ATTS['root']['path']
+    assert website.root.perms == TEST_ATTS['root']['perms']
+    assert website.root.owner == TEST_ATTS['root']['owner']
+    assert website.root.group == TEST_ATTS['root']['group']
+    assert website.htdocs.path == TEST_ATTS['htdocs']['path']
+    assert website.log.path == TEST_ATTS['log']['path']
+    assert website.access_log.path == TEST_ATTS['access_log']['path']
+    assert website.vhost.path == TEST_ATTS['vhost']['path']
+    assert website.htaccess.path == TEST_ATTS['htaccess']['path']
 
 @patch('ww.website.Vhost.exists', return_value=True)
 @patch('ww.website.Vhost.parse', return_value={})
 def test_website_init_existing_vhost(mock_exists, *args):
     """Test initialize Website."""
     with patch(_INPUT, return_value='y'):
-        Website(DEFAULT_DOMAIN, DEFAULT_ATTS)
+        Website(TEST_DOMAIN, TEST_ATTS)
     mock_exists.assert_called_once_with()
 
 @patch('ww.website.Website.verify', return_value=True)
 def test_website_repair(mock_verify):
     """Tests Website class verify method."""
-    website = Website(DEFAULT_DOMAIN, DEFAULT_ATTS)
+    website = Website(TEST_DOMAIN, TEST_ATTS)
     website.repair()
     mock_verify.assert_called_once_with(True)
 
