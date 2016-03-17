@@ -9,23 +9,23 @@ A virtual host website deployment and management tool for Apache and WordPress
 
 ----
 
-This is a work in progress. Use at your own risk.
+*This is a work in progress. Use at your own risk.*
 
-ww is a collection of modules packaged together to create a program that is
-useful for installing and managing a number of virtualhost websites (WordPress
-in particular). It helps automate the process of creating appropriate
-directories with the correct permissions, creating a virtualhost file for
-Apache, and installing WordPress and setting up its MySQL database. This
-application solves the problem of having to manually repeat this process. It
-further helps with maintenance by verifying that everything is in order and
+Python module ww is a collection of modules packaged together to create a
+program that is useful for installing and managing a number of virtualhost
+websites (WordPress in particular). It helps automate the process of creating
+appropriate directories with the correct permissions, creating a virtualhost
+file for Apache, and installing WordPress and setting up its MySQL database.
+This application solves the problem of having to manually repeat this process.
+It further helps with maintenance by verifying that everything is in order and
 it helps with removal by undoing everything it originally did. Finally, the
 application helps with packing and unpacking entire WordPress websites to move
 the site from a development server to a live server.
 
-This software is developed for a very specific `Environment`_, but should be
+This software is developed for a very specific `environment`_, but should be
 easy to modify and extend to other use cases. It assumes your server OS is
 Ubuntu running Apache (and for installing WordPress, PHP and MySQL). For
-information on extending ww see `Package Internals`_.
+information on extending ww see `package internals`_.
 
 To run ww, the Python modules `ext_pylib <https://www.github.com/hbradleyiii/ext_pylib>`_,
 `MySQL-python <https://pypi.python.org/pypi/MySQL-python>`_ (for wordpress
@@ -259,4 +259,4 @@ TODO
 
 ----
 
-Soli Deo gloria.
+*Soli Deo gloria.*
