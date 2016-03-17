@@ -17,8 +17,7 @@ A class to manage websites
 
 from __future__ import absolute_import, print_function
 
-import tarfile
-import subprocess
+from subprocess import check_output, CalledProcessError
 
 try:
     from ext_pylib.files import Dir, File, TemplateFile
@@ -41,8 +40,8 @@ def localhost(function):
         remove_entry = True
         cmd = "echo '127.0.0.1 " + self.domain + "' | cat >> /etc/hosts"
         try:
-            subprocess.check_output(cmd, shell=True)
-        except subprocess.CalledProcessError:
+            check_output(cmd, shell=True)
+        except CalledProcessError:
             print('[WARN] Error adding temporary host entry')
             remove_entry = False
 
@@ -51,7 +50,7 @@ def localhost(function):
         if remove_entry:
             print('Removing temporary host entry.')
             cmd = "sed -i '/^127\.0\.0\.1 " + self.domain + "$/d' /etc/hosts"  # pylint: disable=anomalous-backslash-in-string
-            if subprocess.check_output(cmd, shell=True) != 0:
+            if check_output(cmd, shell=True) != 0:
                 print('[WARN] Error removing temporary host entry.')
 
         return result
@@ -248,6 +247,8 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
 
     def pack(self, tarball=None):
         """Packs the htdocs, assets, and vhost files into a tarball."""
+        import tarfile
+
         if not tarball:
             tarball = '/tmp/packed-' + self.domain.name + '.tar.gz'
         with tarfile.open(tarball, 'w:gz') as tar:
@@ -257,6 +258,7 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
 
     def unpack(self, tarball=None, location=None, use_vhost=True):
         """Unpacks the previously packed htdocs, assets, and vhost files."""
+        import tarfile
 
         if not tarball:
             tarball = '/tmp/packed-' + self.domain.name + '.tar.gz'

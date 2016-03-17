@@ -17,11 +17,9 @@ Extends Website.
 
 from __future__ import absolute_import, print_function
 
-import os
-import re
-import shutil
-import tarfile
-import time
+from os import path, system  # TODO: Change system to use subprocess.
+from re import sub as substitute
+from shutil import copytree, rmtree
 
 try:
     import MySQLdb
@@ -56,8 +54,9 @@ def select_user(user):
 
 def download():
     """Downloads a fresh WordPress tarball, returns path of download"""
-    wp_tarball = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp.tar.gz'
-    if not os.path.exists(wp_tarball):
+    from time import strftime
+    wp_tarball = '/tmp/' + strftime("%d-%m-%Y") +  '-wp.tar.gz'
+    if not path.exists(wp_tarball):
         print('Downloading Wordpress...')
         with open(wp_tarball, 'wb') as tarball:
             tarball.write(requests.get(s.WP_LATEST).content)
@@ -68,9 +67,11 @@ def download():
 
 def untar(tarball):
     """Untars WordPress to tmp dir, returns path of extracted files."""
-    wp_extract_dir = '/tmp/' + time.strftime("%d-%m-%Y") +  '-wp/'
+    import tarfile
+    from time import strftime
+    wp_extract_dir = '/tmp/' + strftime("%d-%m-%Y") +  '-wp/'
     wp_extracted = wp_extract_dir + 'wordpress/'
-    if not os.path.exists(wp_extracted):
+    if not path.exists(wp_extracted):
         print('Uncompressing files...')
         wp_tarfile = tarfile.open(tarball)
         wp_tarfile.extractall(wp_extract_dir)
@@ -96,8 +97,8 @@ class WPWebsite(Website):
             passwd=mysql['password']
         ).cursor().execute
 
-        db_name = re.sub('[^A-Za-z0-9_]', '_', 'wp_' + self.domain).lower()
-        db_user = re.sub('[^A-Za-z0-9_]', '_', 'usr_' + self.domain).lower()
+        db_name = substitute('[^A-Za-z0-9_]', '_', 'wp_' + self.domain).lower()
+        db_user = substitute('[^A-Za-z0-9_]', '_', 'usr_' + self.domain).lower()
         if len(db_user) > 10:
             db_user = db_user[:10]
 
@@ -196,7 +197,7 @@ class WPWebsite(Website):
         raw_input('find and replace not yet implemented... Press enter to continue.')
 
         # TODO: error handling
-        os.system(
+        system(
             'mysql ' +
             '-u ' + self.mysql['user'] +
             ' -p' + self.mysql['password'] + ' ' + self.domain +
@@ -208,11 +209,11 @@ class WPWebsite(Website):
         """Imports wp-content into WordPress."""
         print('Importing wp-content...')
         wp_content = self.htdocs + 'wp-content'
-        if os.path.exists(wp_content):
-            shutil.rmtree(wp_content)
-        shutil.copytree(import_dir, wp_content)
+        if path.exists(wp_content):
+            rmtree(wp_content)
+        copytree(import_dir, wp_content)
         # need perms of wp-content to be correct.
-        os.system('chown -R www-data ' + self.htdocs)
+        system('chown -R www-data ' + self.htdocs)
 
     def create_database(self):
         """Creates WordPress MySQL database."""
