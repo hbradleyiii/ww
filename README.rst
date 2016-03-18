@@ -11,7 +11,7 @@ A virtual host website deployment and management tool for Apache and WordPress
 
 *This is a work in progress. Use at your own risk.*
 
-Python module ww is a collection of modules packaged together to create a
+Python module ``ww`` is a collection of modules packaged together to create a
 program that is useful for installing and managing a number of virtualhost
 websites (WordPress in particular). It helps automate the process of creating
 appropriate directories with the correct permissions, creating a virtualhost
