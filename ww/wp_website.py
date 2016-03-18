@@ -83,7 +83,7 @@ def untar(tarball):
 class WPWebsite(Website):
     """A WordPress website class and its associated attributes and methods."""
 
-    def __init__(self, domain, atts, mysql=None):
+    def __init__(self, domain, atts=None, mysql=None):
         """Initializes a new WPWebsite instance."""
         super(WPWebsite, self).__init__(domain, atts)
 
