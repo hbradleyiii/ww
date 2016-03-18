@@ -160,11 +160,11 @@ class WPWebsite(Website):
         self.config.create()
         self.htdocs.fill(untar(download()))
 
-    def remove(self, no_prompt=False):
+    def remove(self, ask=True):
         """Uninstalls WordPress."""
-        if no_prompt or prompt('Remove WordPress website database "' + self.db['name'] + '"?'):
+        if ask and prompt('Remove WordPress website database "' + self.db['name'] + '"?'):
             self.remove_wordpress_db()
-        if no_prompt or prompt('Remove WordPress website directory "' + self.htdocs + '"?'):
+        if ask and prompt('Remove WordPress website directory "' + self.htdocs + '"?'):
             self.remove_wordpress_files()
         super(WPWebsite, self).uninstall()
 
