@@ -276,9 +276,12 @@ class Website(object):  # pylint: disable=too-many-instance-attributes
         self.htdocs.fill(Dir({'path' : location + '/htdocs/'}))
         self.assets.fill(Dir({'path' : location + '/assets/'}))
 
-    def migrate(self, old_website=None):
-        """Todo:"""
-        pass
+    def migrate(self, new_domain):
+        """Migrates a website from one domain to another.
+        This is essentially making an exact copy of the website using a
+        different domain."""
+
+        self.domain.name = new_domain
         # if not old_website:
         #     old_website = self.existing
         # make sure there's nothing conflicting
