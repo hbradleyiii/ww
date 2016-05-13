@@ -105,4 +105,10 @@
     CustomLog "/var/www/#WEBSITE#/log/access_log" combined
     ErrorLog "/var/www/#WEBSITE#/log/error_log"
 
+    SSLEngine on
+    SSLCertificateFile  /etc/ssl/certs/ssl-cert-snakeoil.pem
+    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+    SSLCertificateChainFile /etc/apache2/ssl.crt/server-ca.crt
+    SSLCACertificateFile /etc/apache2/ssl.crt/ca-bundle.crt
+
 </VirtualHost>
