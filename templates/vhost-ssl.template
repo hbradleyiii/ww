@@ -1,7 +1,7 @@
 #   -------------------------
 #      #WEBSITE#
 #   -------------------------
-<VirtualHost *:80>
+<VirtualHost *:443>
 
     ServerName #WEBSITE#
     ServerAdmin hosting@mediamarketers.com
@@ -94,7 +94,7 @@
     BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
 
 </VirtualHost>
-<VirtualHost *:80>
+<VirtualHost *:443>
     ServerName www.#WEBSITE#
 
     # redirect to #WEBSITE#
