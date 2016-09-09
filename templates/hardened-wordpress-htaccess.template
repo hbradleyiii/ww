@@ -35,4 +35,13 @@ Options All -Indexes
     satisfy all
 </files>
 
+# Blocks all POST requests to wp-login.php that have no referrer
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} POST
+    RewriteCond %{REQUEST_URI} /wp-login\.php
+    RewriteCond %{HTTP_REFERER} ^$
+    RewriteRule .* - [F,L]
+</IfModule>
+
 # END Hardened Wordpress
