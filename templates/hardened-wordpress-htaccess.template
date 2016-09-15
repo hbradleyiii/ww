@@ -45,4 +45,11 @@ Options All -Indexes
     RewriteRule (.*) http://%{REMOTE_ADDR}/$ [R=301,L]
 </IfModule>
 
+# Prevent user enumeration
+# see: http://www.acunetix.com/blog/articles/wordpress-username-enumeration-using-http-fuzzer/
+<IfModule mod_rewrite.c>
+    RewriteCond %{QUERY_STRING} author=d
+    RewriteRule ^ /? [L,R=301]
+</IfModule>
+
 # END Hardened Wordpress
