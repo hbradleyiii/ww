@@ -12,7 +12,7 @@
 A unit test for ww module's WPWebsite class and methods.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 from mock import patch
 
