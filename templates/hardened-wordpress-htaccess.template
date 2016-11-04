@@ -28,6 +28,13 @@ Options All -Indexes
     satisfy all
 </files>
 
+# Prevents discovering license and readme
+<files ~ "^(license.txt)|(readme.html)$">
+    order allow,deny
+    deny from all
+    satisfy all
+</files>
+
 # Prevents verifying google domain ownership with html file
 <files ~ "^.*google.*\.html$">
     order allow,deny
